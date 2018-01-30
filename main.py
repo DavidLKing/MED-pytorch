@@ -5,6 +5,8 @@ import unicodedata
 import string
 import re
 import random
+import argparse
+import pdb
 
 import torch
 import torch.nn as nn
@@ -26,12 +28,12 @@ class Lang:
         self.index2word = {0: "<S>", 1: "</S>", 2: "<UNK>"}
         self.n_words = 3  # Count <S>, </S>, and <UNK>
 
-    def buildSentence(self, seq_x):
-        seq_x = seq_x.split('\t')
-        seq = [letters for letters in seq_x[0]]
-        if len(seq_x) > 1:
-            seq += [feats for feats in seq_x[1].split(',')]
-        return seq
+    def buildSentence(self, sequence):
+        sequence = sequence.split('\t')
+        in_seq = [letters for letters in sequence[0]]
+        in_seq += [feats for feats in sequence[1].split(',')]
+        out_seq = [letters for letters in sequence[2]]
+        return in_seq, out_seq
 
     def addSentence(self, sentence):
         sentence = self.buildSentence(sentence)
@@ -47,3 +49,22 @@ class Lang:
             self.n_words += 1
         else:
             self.word2count[word] += 1
+
+class MED:
+
+    def __init__(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-i', '--inputs', help="training file (e.g. data/train.txt", required=True)
+        parser.add_argument('-v', '--valid', help="validation file (e.g. data/valid.txt", required=True)
+        parser.add_argument('-t', '--test', help="testing file (e.g. data/train.txt", required=True)
+        self.args = parser.parse_args()
+        # print(self.args)
+        self.train = Lang('what')
+        pdb.set_trace()
+
+    def main(self):
+        pass
+
+if __name__ == '__main__':
+    m = MED()
+    m.main()
