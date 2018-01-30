@@ -1,0 +1,10 @@
+aalen	pos=V,mood=IND,tense=PRS,per=1,num=PL
+aalen	pos=V,mood=IND,tense=PRS,per=3,num=PL
+aalen	pos=V,mood=IND,tense=PST,aspect=PFV,per=2,num=SG
+aalen	pos=V,mood=IND,tense=PST,aspect=PFV,per=3,num=SG
+aalen	pos=V,tense=PRS
+aalglatt	pos=ADJ,case=ACC,comp=CMPR,gen=NEUT,num=SG
+aalglatt	pos=ADJ,case=ACC,gen=NEUT,num=SG
+aasen	pos=V,mood=IND,tense=PST,aspect=PFV,per=2,num=PL
+Aasfliege	pos=N,case=DAT,gen=FEM,num=SG
+aasig	pos=ADJ,case=ACC,comp=CMPR,gen=NEUT,num=SG
