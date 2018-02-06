@@ -16,7 +16,7 @@ from torch.autograd import Variable
 from torch import optim
 import torch.nn.functional as F
 
-very_verbose = True
+very_verbose = False
 
 use_cuda = torch.cuda.is_available()
 
@@ -376,7 +376,7 @@ class MED:
         print(random.choice(train))
         en = EncoderRNN(50, self.train.n_words)
         de = DecoderRNN(self.train.n_words, 50)
-        self.trainIters(en, de, 1000, train, print_every=1)
+        self.trainIters(en, de, 1000, train, print_every=100)
         pdb.set_trace()
         # How to get eval on a single object
         # ' '.join(self.evaluate(en, de, self.test, "A a s f l i e g epos=N case=DAT gen=FEM num=SG")[0])
