@@ -270,8 +270,10 @@ class MED:
         return loss.data[0] / target_length
 
     # # # EVALUATION # # #
-    def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
-        input_variable = variableFromSentence(input_lang, sentence)
+    # TODO make max_length an option
+    def evaluate(self, encoder, decoder, lang, sentence, max_length=50):
+        # ORIGINALLY THIS WAS input_lang
+        input_variable = self.variableFromSentence(lang, sentence)
         input_length = input_variable.size()[0]
         encoder_hidden = encoder.initHidden()
 
@@ -292,28 +294,32 @@ class MED:
         decoder_attentions = torch.zeros(max_length, max_length)
 
         for di in range(max_length):
-            decoder_output, decoder_hidden, decoder_attention = decoder(
-                decoder_input, decoder_hidden, encoder_outputs)
-            decoder_attentions[di] = decoder_attention.data
+            # decoder_output, decoder_hidden, decoder_attention = decoder(
+            decoder_output, decoder_hidden = decoder(
+                decoder_input, decoder_hidden)
+                # decoder_input, decoder_hidden, encoder_outputs)
+            # decoder_attentions[di] = decoder_attention.data
             topv, topi = decoder_output.data.topk(1)
             ni = topi[0][0]
             if ni == EOS_token:
                 decoded_words.append('<EOS>')
                 break
             else:
-                decoded_words.append(output_lang.index2word[ni])
+                # ORIGINALLY THIS WAS output_lang
+                # decoded_words.append(output_lang.index2word[ni])
+                decoded_words.append(lang.index2word[ni])
 
             decoder_input = Variable(torch.LongTensor([[ni]]))
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         return decoded_words, decoder_attentions[:di + 1]
 
-    def evaluateRandomly(encoder, decoder, n=10):
+    def evaluateRandomly(self, encoder, pairs, lang, decoder, n=10):
         for i in range(n):
             pair = random.choice(pairs)
             print('>', pair[0])
             print('=', pair[1])
-            output_words, attentions = evaluate(encoder, decoder, pair[0])
+            output_words, attentions = self.evaluate(encoder, decoder, lang, pair[0])
             output_sentence = ' '.join(output_words)
             print('<', output_sentence)
             print('')
@@ -372,6 +378,8 @@ class MED:
         de = DecoderRNN(self.train.n_words, 50)
         self.trainIters(en, de, 1000, train, print_every=1)
         pdb.set_trace()
+        # How to get eval on a single object
+        # ' '.join(self.evaluate(en, de, self.test, "A a s f l i e g epos=N case=DAT gen=FEM num=SG")[0])
         # FROM TUTORIAL
         # hidden_size = 256
         # encoder1 = EncoderRNN(input_lang.n_words, hidden_size)
