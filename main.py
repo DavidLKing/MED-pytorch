@@ -9,6 +9,7 @@ import argparse
 import pdb
 import time
 import math
+import yaml
 
 import torch
 import torch.nn as nn
@@ -17,6 +18,9 @@ from torch import optim
 import torch.nn.functional as F
 
 very_verbose = False
+
+with open('config.yml') as f:
+    config = yaml.safe_load(f)
 
 use_cuda = torch.cuda.is_available()
 
@@ -376,6 +380,8 @@ class MED:
         print(random.choice(train))
         en = EncoderRNN(50, self.train.n_words)
         de = DecoderRNN(self.train.n_words, 50)
+        # TODO only run this during training---iters = num epochs * lines / batches
+        # len(train) gets us that
         self.trainIters(en, de, 1000, train, print_every=100)
         pdb.set_trace()
         # How to get eval on a single object

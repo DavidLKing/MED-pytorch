@@ -1,0 +1,6 @@
+epochs: 50
+train: True
+print every: 100
+max length: 50
+sample every: 20
+batch size: 50
