@@ -13,6 +13,8 @@ import yaml
 
 import torch
 import torch.nn as nn
+# for batching
+import torch.utils.data
 from torch.autograd import Variable
 from torch import optim
 import torch.nn.functional as F
@@ -22,7 +24,12 @@ very_verbose = False
 with open('config.yml') as f:
     config = yaml.safe_load(f)
 
+# TODO BUG when using torch, we get cuDNN error with sigmorphon data
+# TODO when not, we get an index out of range error
+# possibly helpful---https://discuss.pytorch.org/t/resolved-torch-backends-cudnn-cudnnerror-4-bcudnn-status-internal-error/4024/3:
+# CUDA_CACHE_PATH='/home/david/cudacache' ./main.py -i data/german/train.txt -v data/german/valid.txt -t data/german/test.txt
 use_cuda = torch.cuda.is_available()
+# use_cuda = False
 
 SOS_token = 0
 EOS_token = 1
@@ -356,7 +363,7 @@ class MED:
             l = l.split('\t')
             new_l = ' '.join(l[0])
             feats = [f for f in l[1].split(',')]
-            new_l += ' '.join(feats)
+            new_l += ' ' + ' '.join(feats)
             inseq.append(new_l)
             outseq.append(' '.join(l[2].strip()))
         return inseq, outseq
@@ -378,14 +385,18 @@ class MED:
         valid = self.pairdata(valid_in, valid_out, self.valid)
         test = self.pairdata(test_in, test_out, self.test)
         print(random.choice(train))
-        en = EncoderRNN(50, self.train.n_words)
-        de = DecoderRNN(self.train.n_words, 50)
+        # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
+        en = EncoderRNN(300, self.train.n_words)
+        de = DecoderRNN(self.train.n_words, 300)
         if use_cuda:
             en = en.cuda()
             de = de.cuda()
         # TODO only run this during training---iters = num epochs * lines / batches
         # len(train) gets us that
-        self.trainIters(en, de, 1000, train, print_every=100)
+        train = torch.utils.data.DataLoader(train, batch_size = 50)
+        for batch_num, batch in enumerate(train):
+            # TODO 50 is the current hard coded batch size---make that an option
+            self.trainIters(en, de, 50, batch, print_every=10)
         # pdb.set_trace()
         # How to get eval on a single object
         # ' '.join(self.evaluate(en, de, self.test, "A a s f l i e g epos=N case=DAT gen=FEM num=SG")[0])
