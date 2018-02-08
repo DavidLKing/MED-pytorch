@@ -179,6 +179,8 @@ class MED:
     def trainIters(self, encoder, decoder, n_iters, pairs,
                    print_every=1000, plot_every=100,
                    learning_rate=0.01):
+        # TODO 50 is the current hard coded batch size---make that an option
+        pairs = torch.utils.data.DataLoader(pairs, batch_size = 50)
         start = time.time()
         plot_losses = []
         print_loss_total = 0  # Reset every print_every
@@ -186,30 +188,31 @@ class MED:
 
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-        training_pairs = [self.variablesFromPair(self.train, random.choice(pairs))
-                          for i in range(n_iters)]
-        criterion = nn.NLLLoss()
+        for batch_num, batch in enumerate(pairs):
+            training_pairs = [self.variablesFromPair(self.train, random.choice(batch))
+                              for i in range(n_iters)]
+            criterion = nn.NLLLoss()
 
-        for iter in range(1, n_iters + 1):
-            training_pair = training_pairs[iter - 1]
-            input_variable = training_pair[0]
-            target_variable = training_pair[1]
+            for iter in range(1, n_iters + 1):
+                training_pair = training_pairs[iter - 1]
+                input_variable = training_pair[0]
+                target_variable = training_pair[1]
 
-            loss = self.train_step(input_variable, target_variable, encoder,
-                         decoder, encoder_optimizer, decoder_optimizer, criterion)
-            print_loss_total += loss
-            plot_loss_total += loss
+                loss = self.train_step(input_variable, target_variable, encoder,
+                             decoder, encoder_optimizer, decoder_optimizer, criterion)
+                print_loss_total += loss
+                plot_loss_total += loss
 
-            if iter % print_every == 0:
-                print_loss_avg = print_loss_total / print_every
-                print_loss_total = 0
-                print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
-                                             iter, iter / n_iters * 100, print_loss_avg))
+                if iter % print_every == 0:
+                    print_loss_avg = print_loss_total / print_every
+                    print_loss_total = 0
+                    print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
+                                                 iter, iter / n_iters * 100, print_loss_avg))
 
-            if iter % plot_every == 0:
-                plot_loss_avg = plot_loss_total / plot_every
-                plot_losses.append(plot_loss_avg)
-                plot_loss_total = 0
+                if iter % plot_every == 0:
+                    plot_loss_avg = plot_loss_total / plot_every
+                    plot_losses.append(plot_loss_avg)
+                    plot_loss_total = 0
 
         # showPlot(plot_losses)
 
@@ -393,10 +396,9 @@ class MED:
             de = de.cuda()
         # TODO only run this during training---iters = num epochs * lines / batches
         # len(train) gets us that
-        train = torch.utils.data.DataLoader(train, batch_size = 50)
-        for batch_num, batch in enumerate(train):
-            # TODO 50 is the current hard coded batch size---make that an option
-            self.trainIters(en, de, 50, batch, print_every=10)
+        # for batch_num, batch in enumerate(train):
+        # TODO 50 is the current hard coded batch size---make that an option
+        self.trainIters(en, de, 50, train, print_every=10)
         # pdb.set_trace()
         # How to get eval on a single object
         # ' '.join(self.evaluate(en, de, self.test, "A a s f l i e g epos=N case=DAT gen=FEM num=SG")[0])
