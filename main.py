@@ -198,9 +198,14 @@ class MED:
         rs = es - s
         return '%s (- %s)' % (self.asMinutes(s), self.asMinutes(rs))
 
-    def trainIters(self, encoder, decoder, n_iters, in_pairs,
-                   print_every=1000, plot_every=100,
-                   learning_rate=0.01):
+    def trainIters(self, encoder, decoder, n_iters, in_pairs, valid, test,
+                   print_every=config['print every'], plot_every=config['plot every'],
+                   learning_rate=config['learning rate']):
+        # Record keeping #
+        epoch = 1
+        train_len = len(in_pairs)
+
+        # batching the data
         pairs = torch.utils.data.DataLoader(in_pairs, batch_size=config['batch size'])
         start = time.time()
         plot_losses = []
@@ -212,19 +217,6 @@ class MED:
 
         for batch_num, batch in enumerate(pairs):
             
-            # For printing out a sample
-            # TODO CURRENTLY THIS ISN'T ACTUALLY DOING ANYTHING
-            # if batch_num > 0:
-                # sample = random.choice(range(config['batch size']))
-                # sample_in = batch[0][sample]
-                # sample_targ = batch[1][sample]
-                # pdb.set_trace()
-                # guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
-                # print("Input:", sample_in, "\n",
-                      # "Target:", sample_targ, "\n",
-                      # "Predicted:", ''.join(guess[0])
-                      # )
-
             training_pairs = [self.variablesFromPair(self.train, random.choice(batch))
                               for i in range(n_iters)]
             criterion = nn.NLLLoss()
@@ -256,6 +248,18 @@ class MED:
                           "Target:", sample_targ, "\n",
                           "Predicted:", ''.join(guess[0])
                           )
+
+                if iter % train_len == 0:
+                    if iter > config['batch size']:
+                        print("### FINISHED EPOCH", epoch, "###")
+                        epoch += 1
+                        # TODO can we abstract this into a function?
+                        if config['eval val']:
+                            print("Evaluating the validation set:")
+                            self.manualEval(valid, self.valid, encoder, decoder)
+                        if config['eval test']:
+                            print("Evaluating the test set:")
+                            self.manualEval(test, self.test, encoder, decoder)
 
                 if iter % plot_every == 0:
                     plot_loss_avg = plot_loss_total / plot_every
@@ -482,8 +486,10 @@ class MED:
         # TODO 50 is the current hard coded batch size---make that an option
         train_iter = config['epochs'] * len(train)
         if config['train']:
-            self.trainIters(en, de, train_iter, train, print_every=config['print every'],
-                            plot_every=config['plot every'], learning_rate=config['learning rate'])
+            self.trainIters(en, de, train_iter, train, valid, test,
+                            print_every=config['print every'],
+                            plot_every=config['plot every'], 
+                            learning_rate=config['learning rate'])
         # TODO have guesses  written out so we can do error analysis, sig testing, etc... later on
         if config['eval val']:
             print("Evaluating the validation set:")
@@ -493,7 +499,7 @@ class MED:
             self.manualEval(test, self.test, en, de)
         if config['save model']:
             self.saveModel(en, de, self.train, self.valid, self.test)
-        pdb.set_trace()
+        # pdb.set_trace()
 
 
 if __name__ == '__main__':
