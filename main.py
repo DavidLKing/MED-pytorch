@@ -22,6 +22,7 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
+import pickle as pkl
 
 very_verbose = False
 
@@ -446,7 +447,14 @@ class MED:
     # # # MODEL SAVING # # #
 
     def saveModel(self, encoder, decoder, tr_lang, va_lang, te_lang):
-        pass
+        model = open(config['save name'], 'wb')
+        pkl.dump((encoder, decoder, tr_lang, va_lang, te_lang), model)
+        model.close()
+
+    def loadModel(self):
+        # encoder, decoder, tr_lang, va_lang, te_lang
+        with open(config['save name'], 'rb') as model:
+            return pkl.load(model)
 
     # # # MAIN FUNCTION # # #
 
@@ -459,12 +467,15 @@ class MED:
         valid = self.pairdata(valid_in, valid_out, self.valid)
         test = self.pairdata(test_in, test_out, self.test)
         print("Sample training:\n", random.choice(train))
-        # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
-        en = EncoderRNN(config['encoder embed'], self.train.n_words)
-        de = DecoderRNN(self.train.n_words, config['decoder embed'])
-        if use_cuda:
-            en = en.cuda()
-            de = de.cuda()
+        if config['load model']:
+            en, de, self.train, self.valid, self.text = self.loadModel()
+        else:
+            # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
+            en = EncoderRNN(config['encoder embed'], self.train.n_words)
+            de = DecoderRNN(self.train.n_words, config['decoder embed'])
+            if use_cuda:
+                en = en.cuda()
+                de = de.cuda()
         # TODO only run this during training---iters = num epochs * lines / batches
         # len(train) gets us that
         # for batch_num, batch in enumerate(train):
@@ -480,6 +491,8 @@ class MED:
         if config['eval test']:
             print("Evaluating the test set:")
             self.manualEval(test, self.test, en, de)
+        if config['save model']:
+            self.saveModel(en, de, self.train, self.valid, self.test)
         pdb.set_trace()
 
 
