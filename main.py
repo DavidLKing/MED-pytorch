@@ -43,8 +43,6 @@ EPS_token = 3
 
 class EncoderRNN(nn.Module):
     def __init__(self, input_size, hidden_size):
-        # why does this need to be a super class?
-        # oh! 'cause we're getting nn.Module gru stuff
         super(EncoderRNN, self).__init__()
         self.hidden_size = hidden_size
 
@@ -175,15 +173,17 @@ class Plot:
 class MED:
 
     def __init__(self):
+        # print(self.args)
+        self.train = Lang('train')
+        self.valid = Lang('valid')
+        self.test = Lang('test')
+
+    def getArgs(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('-i', '--inputs', help="training file (e.g. data/train.txt", required=True)
         parser.add_argument('-v', '--valid', help="validation file (e.g. data/valid.txt", required=True)
         parser.add_argument('-t', '--test', help="testing file (e.g. data/train.txt", required=True)
         self.args = parser.parse_args()
-        # print(self.args)
-        self.train = Lang('train')
-        self.valid = Lang('valid')
-        self.test = Lang('test')
 
     def asMinutes(self, s):
         m = math.floor(s / 60)
@@ -197,10 +197,10 @@ class MED:
         rs = es - s
         return '%s (- %s)' % (self.asMinutes(s), self.asMinutes(rs))
 
-    def trainIters(self, encoder, decoder, n_iters, pairs,
+    def trainIters(self, encoder, decoder, n_iters, in_pairs,
                    print_every=1000, plot_every=100,
                    learning_rate=0.01):
-        pairs = torch.utils.data.DataLoader(pairs, batch_size=config['batch size'])
+        pairs = torch.utils.data.DataLoader(in_pairs, batch_size=config['batch size'])
         start = time.time()
         plot_losses = []
         print_loss_total = 0  # Reset every print_every
@@ -208,7 +208,22 @@ class MED:
 
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+
         for batch_num, batch in enumerate(pairs):
+            
+            # For printing out a sample
+            # TODO CURRENTLY THIS ISN'T ACTUALLY DOING ANYTHING
+            # if batch_num > 0:
+                # sample = random.choice(range(config['batch size']))
+                # sample_in = batch[0][sample]
+                # sample_targ = batch[1][sample]
+                # pdb.set_trace()
+                # guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
+                # print("Input:", sample_in, "\n",
+                      # "Target:", sample_targ, "\n",
+                      # "Predicted:", ''.join(guess[0])
+                      # )
+
             training_pairs = [self.variablesFromPair(self.train, random.choice(batch))
                               for i in range(n_iters)]
             criterion = nn.NLLLoss()
@@ -217,6 +232,7 @@ class MED:
                 training_pair = training_pairs[iter - 1]
                 input_variable = training_pair[0]
                 target_variable = training_pair[1]
+
 
                 loss = self.train_step(input_variable, target_variable, encoder,
                                        decoder, encoder_optimizer, decoder_optimizer, criterion)
@@ -228,6 +244,17 @@ class MED:
                     print_loss_total = 0
                     print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
                                                  iter, iter / n_iters * 100, print_loss_avg))
+                
+                # SAMPLING for stdout monitoring
+                if iter % config['print sample every'] == 0:
+                    sample = random.choice(in_pairs)
+                    sample_in = sample[0]
+                    sample_targ = sample[1]
+                    guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
+                    print(" Input:", sample_in, "\n",
+                          "Target:", sample_targ, "\n",
+                          "Predicted:", ''.join(guess[0])
+                          )
 
                 if iter % plot_every == 0:
                     plot_loss_avg = plot_loss_total / plot_every
@@ -416,16 +443,22 @@ class MED:
             dataset.addSentence(s2)
         return pairseq
 
+    # # # MODEL SAVING # # #
+
+    def saveModel(self, encoder, decoder, tr_lang, va_lang, te_lang):
+        pass
+
     # # # MAIN FUNCTION # # #
 
     def main(self):
+        self.getArgs()
         train_in, train_out = self.splitdata(self.args.inputs)
         valid_in, valid_out = self.splitdata(self.args.valid)
         test_in, test_out = self.splitdata(self.args.test)
         train = self.pairdata(train_in, train_out, self.train)
         valid = self.pairdata(valid_in, valid_out, self.valid)
         test = self.pairdata(test_in, test_out, self.test)
-        print(random.choice(train))
+        print("Sample training:\n", random.choice(train))
         # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
         en = EncoderRNN(config['encoder embed'], self.train.n_words)
         de = DecoderRNN(self.train.n_words, config['decoder embed'])
@@ -447,7 +480,7 @@ class MED:
         if config['eval test']:
             print("Evaluating the test set:")
             self.manualEval(test, self.test, en, de)
-        # pdb.set_trace()
+        pdb.set_trace()
 
 
 if __name__ == '__main__':
