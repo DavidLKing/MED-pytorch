@@ -18,6 +18,10 @@ import torch.utils.data
 from torch.autograd import Variable
 from torch import optim
 import torch.nn.functional as F
+# for plotting
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import numpy as np
 
 very_verbose = False
 
@@ -34,6 +38,8 @@ use_cuda = torch.cuda.is_available()
 SOS_token = 0
 EOS_token = 1
 UNK_token = 2
+EPS_token = 3
+
 
 class EncoderRNN(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -57,6 +63,7 @@ class EncoderRNN(nn.Module):
             return result.cuda()
         else:
             return result
+
 
 class DecoderRNN(nn.Module):
     def __init__(self, hidden_size, output_size):
@@ -82,9 +89,9 @@ class DecoderRNN(nn.Module):
         else:
             return result
 
-# TODO make max length option
+
 class AttnDecoderRNN(nn.Module):
-    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=50):
+    def __init__(self, hidden_size, output_size, dropout_p=config['dropout'], max_length=config['max length']):
         super(AttnDecoderRNN, self).__init__()
         self.hidden_size = hidden_size
         self.output_size = output_size
@@ -123,14 +130,14 @@ class AttnDecoderRNN(nn.Module):
         else:
             return result
 
+
 class Lang:
     def __init__(self, name):
         self.name = name
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {0: "<S>", 1: "</S>", 2: "<UNK>"}
-        self.n_words = 3  # Count <S>, </S>, and <UNK>
-
+        self.index2word = {0: "<S>", 1: "</S>", 2: "<UNK>", 3: "EPS"}
+        self.n_words = 4  # Count <S>, </S>, and <UNK>
 
     def addSentence(self, sentence):
         # sentence = self.buildSentence(sentence)
@@ -149,6 +156,21 @@ class Lang:
     def indices2sent(self, indices):
         return "".join([self.index2word.get(wi, "BUG")
                         for wi in indices])
+
+
+# # # PLOTTING # # #
+class Plot:
+    def __init__(self):
+        pass
+
+    def showPlot(self, points):
+        plt.figure()
+        fig, ax = plt.subplots()
+        # this locator puts ticks at regular intervals
+        loc = ticker.MultipleLocator(base=0.2)
+        ax.yaxis.set_major_locator(loc)
+        plt.plot(points)
+
 
 class MED:
 
@@ -175,12 +197,10 @@ class MED:
         rs = es - s
         return '%s (- %s)' % (self.asMinutes(s), self.asMinutes(rs))
 
-    # TODO tune these and make them options
     def trainIters(self, encoder, decoder, n_iters, pairs,
                    print_every=1000, plot_every=100,
                    learning_rate=0.01):
-        # TODO 50 is the current hard coded batch size---make that an option
-        pairs = torch.utils.data.DataLoader(pairs, batch_size = 50)
+        pairs = torch.utils.data.DataLoader(pairs, batch_size=config['batch size'])
         start = time.time()
         plot_losses = []
         print_loss_total = 0  # Reset every print_every
@@ -199,7 +219,7 @@ class MED:
                 target_variable = training_pair[1]
 
                 loss = self.train_step(input_variable, target_variable, encoder,
-                             decoder, encoder_optimizer, decoder_optimizer, criterion)
+                                       decoder, encoder_optimizer, decoder_optimizer, criterion)
                 print_loss_total += loss
                 plot_loss_total += loss
 
@@ -214,11 +234,20 @@ class MED:
                     plot_losses.append(plot_loss_avg)
                     plot_loss_total = 0
 
-        # showPlot(plot_losses)
+        # TODO Unless we need this, I'm holding off on the moment
+        # This application failed to start because it could not find or load the Qt platform plugin "xcb"
+        # in "".
+        #
+        # Available platform plugins are: minimal, offscreen, xcb.
+        #
+        # Reinstalling the application may fix this problem.
+        # Aborted (core dumped)
+        # p = plot()
+        # p.showplot(plot_losses)
 
-    # TODO make max_length and teacher forcing be options
-    def train_step(self, input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion,
-              max_length=50, teacher_forcing_ratio=0.5):
+    def train_step(self, input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer,
+                   criterion,
+                   max_length=config['max length'], teacher_forcing_ratio=0.5):
         encoder_hidden = encoder.initHidden()
 
         encoder_optimizer.zero_grad()
@@ -242,7 +271,7 @@ class MED:
 
         decoder_hidden = encoder_hidden
 
-        #use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
+        # use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
         use_teacher_forcing = False
 
         decoder_out = []
@@ -284,8 +313,7 @@ class MED:
         return loss.data[0] / target_length
 
     # # # EVALUATION # # #
-    # TODO make max_length an option
-    def evaluate(self, encoder, decoder, lang, sentence, max_length=50):
+    def evaluate(self, encoder, decoder, lang, sentence, max_length=config['max length']):
         # ORIGINALLY THIS WAS input_lang
         input_variable = self.variableFromSentence(lang, sentence)
         input_length = input_variable.size()[0]
@@ -311,7 +339,7 @@ class MED:
             # decoder_output, decoder_hidden, decoder_attention = decoder(
             decoder_output, decoder_hidden = decoder(
                 decoder_input, decoder_hidden)
-                # decoder_input, decoder_hidden, encoder_outputs)
+            # decoder_input, decoder_hidden, encoder_outputs)
             # decoder_attentions[di] = decoder_attention.data
             topv, topi = decoder_output.data.topk(1)
             ni = topi[0][0]
@@ -327,6 +355,16 @@ class MED:
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         return decoded_words, decoder_attentions[:di + 1]
+
+    def manualEval(self, pairs, lang, encoder, decoder):
+        correct = 0
+        total = 0
+        for pair in pairs:
+            total += 1
+            guess = self.evaluate(encoder, decoder, lang, pair[0], max_length=config['max length'])
+            if ' '.join(guess[0]) == pair[1] + ' <EOS>':
+                correct += 1
+        print("accuracy:", correct / total)
 
     def evaluateRandomly(self, encoder, pairs, lang, decoder, n=10):
         for i in range(n):
@@ -389,8 +427,8 @@ class MED:
         test = self.pairdata(test_in, test_out, self.test)
         print(random.choice(train))
         # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
-        en = EncoderRNN(300, self.train.n_words)
-        de = DecoderRNN(self.train.n_words, 300)
+        en = EncoderRNN(config['encoder embed'], self.train.n_words)
+        de = DecoderRNN(self.train.n_words, config['decoder embed'])
         if use_cuda:
             en = en.cuda()
             de = de.cuda()
@@ -398,20 +436,19 @@ class MED:
         # len(train) gets us that
         # for batch_num, batch in enumerate(train):
         # TODO 50 is the current hard coded batch size---make that an option
-        self.trainIters(en, de, 50, train, print_every=10)
+        train_iter = config['epochs'] * len(train)
+        if config['train']:
+            self.trainIters(en, de, train_iter, train, print_every=config['print every'],
+                            plot_every=config['plot every'], learning_rate=config['learning rate'])
+        # TODO have guesses  written out so we can do error analysis, sig testing, etc... later on
+        if config['eval val']:
+            print("Evaluating the validation set:")
+            self.manualEval(valid, self.valid, en, de)
+        if config['eval test']:
+            print("Evaluating the test set:")
+            self.manualEval(test, self.test, en, de)
         # pdb.set_trace()
-        # How to get eval on a single object
-        # ' '.join(self.evaluate(en, de, self.test, "A a s f l i e g epos=N case=DAT gen=FEM num=SG")[0])
-        # FROM TUTORIAL
-        # hidden_size = 256
-        # encoder1 = EncoderRNN(input_lang.n_words, hidden_size)
-        # attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1)
-        #
-        # if use_cuda:
-        #     encoder1 = encoder1.cuda()
-        #     attn_decoder1 = attn_decoder1.cuda()
-        #
-        # trainIters(encoder1, attn_decoder1, 75000, print_every=5000)
+
 
 if __name__ == '__main__':
     m = MED()
