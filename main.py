@@ -484,7 +484,7 @@ class MED:
         # len(train) gets us that
         # for batch_num, batch in enumerate(train):
         # TODO 50 is the current hard coded batch size---make that an option
-        train_iter = config['epochs'] * len(train) / config['batch size']
+        train_iter = config['epochs'] * len(train) // config['batch size']
         if config['train']:
             self.trainIters(en, de, train_iter, train, valid, test,
                             print_every=config['print every'],
