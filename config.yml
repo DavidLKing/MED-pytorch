@@ -3,14 +3,14 @@ eval val: True
 eval test: False
 print every: 100
 plot every: 1000
-print sample every: 1000
+print sample every: 1
 max length: 50
 batch size: 50
-epochs: 50
+epochs: 500
 encoder embed: 300
 decoder embed: 300
 dropout: 0.5
 learning rate: 0.01
 save name: model.pkl
-save model: True
+save model: False
 load model: False

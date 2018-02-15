@@ -206,7 +206,8 @@ class MED:
         train_len = len(in_pairs)
 
         # batching the data
-        pairs = torch.utils.data.DataLoader(in_pairs, batch_size=config['batch size'])
+        pairs = in_pairs
+        # pairs = torch.utils.data.DataLoader(in_pairs, batch_size=config['batch size'])
         start = time.time()
         plot_losses = []
         print_loss_total = 0  # Reset every print_every
@@ -215,31 +216,34 @@ class MED:
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
 
-        for batch_num, batch in enumerate(pairs):
+        # for batch_num, batch in enumerate(pairs):
             
-            training_pairs = [self.variablesFromPair(self.train, random.choice(batch))
-                              for i in range(n_iters)]
-            criterion = nn.NLLLoss()
+            # TODO why are we randomizing the batch?
+        # training_pairs = [self.variablesFromPair(self.train, random.choice(batch))
+        training_pairs = [self.variablesFromPair(self.train, random.choice(pairs))
+                          for i in range(n_iters)]
+        criterion = nn.NLLLoss()
 
-            for iter in range(1, n_iters + 1):
-                training_pair = training_pairs[iter - 1]
-                input_variable = training_pair[0]
-                target_variable = training_pair[1]
+        for iter in range(1, n_iters + 1):
+            training_pair = training_pairs[iter - 1]
+            input_variable = training_pair[0]
+            target_variable = training_pair[1]
 
 
-                loss = self.train_step(input_variable, target_variable, encoder,
-                                       decoder, encoder_optimizer, decoder_optimizer, criterion)
-                print_loss_total += loss
-                plot_loss_total += loss
+            loss = self.train_step(input_variable, target_variable, encoder,
+                                   decoder, encoder_optimizer, decoder_optimizer, criterion)
+            print_loss_total += loss
+            plot_loss_total += loss
 
-                if iter % print_every == 0:
-                    print_loss_avg = print_loss_total / print_every
-                    print_loss_total = 0
-                    print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
-                                                 iter, iter / n_iters * 100, print_loss_avg))
-                
-                # SAMPLING for stdout monitoring
-                if iter % config['print sample every'] == 0:
+            if iter % print_every == 0:
+                print_loss_avg = print_loss_total / print_every
+                print_loss_total = 0
+                print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
+                                             iter, iter / n_iters * 100, print_loss_avg))
+            
+            # SAMPLING for stdout monitoring
+            if iter % config['print sample every'] == 0 and iter > 1:
+                try:
                     sample = random.choice(in_pairs)
                     sample_in = sample[0]
                     sample_targ = sample[1]
@@ -248,23 +252,25 @@ class MED:
                           "Target:", sample_targ, "\n",
                           "Predicted:", ''.join(guess[0])
                           )
+                except:
+                    pdb.set_trace()
 
-                if iter % train_len == 0:
-                    if iter > config['batch size']:
-                        print("### FINISHED EPOCH", epoch, "###")
-                        epoch += 1
-                        # TODO can we abstract this into a function?
-                        if config['eval val']:
-                            print("Evaluating the validation set:")
-                            self.manualEval(valid, self.valid, encoder, decoder)
-                        if config['eval test']:
-                            print("Evaluating the test set:")
-                            self.manualEval(test, self.test, encoder, decoder)
+            if iter % train_len == 0:
+                if iter > config['batch size']:
+                    print("### FINISHED EPOCH", epoch, "###")
+                    epoch += 1
+                    # TODO can we abstract this into a function?
+                    if config['eval val']:
+                        print("Evaluating the validation set:")
+                        self.manualEval(valid, self.valid, encoder, decoder)
+                    if config['eval test']:
+                        print("Evaluating the test set:")
+                        self.manualEval(test, self.test, encoder, decoder)
 
-                if iter % plot_every == 0:
-                    plot_loss_avg = plot_loss_total / plot_every
-                    plot_losses.append(plot_loss_avg)
-                    plot_loss_total = 0
+            if iter % plot_every == 0:
+                plot_loss_avg = plot_loss_total / plot_every
+                plot_losses.append(plot_loss_avg)
+                plot_loss_total = 0
 
         # TODO Unless we need this, I'm holding off on the moment
         # This application failed to start because it could not find or load the Qt platform plugin "xcb"
