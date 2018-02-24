@@ -243,17 +243,14 @@ class MED:
             
             # SAMPLING for stdout monitoring
             if iter % config['print sample every'] == 0 and iter > 1:
-                try:
-                    sample = random.choice(in_pairs)
-                    sample_in = sample[0]
-                    sample_targ = sample[1]
-                    guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
-                    print(" Input:", sample_in, "\n",
-                          "Target:", sample_targ, "\n",
-                          "Predicted:", ''.join(guess[0])
-                          )
-                except:
-                    pdb.set_trace()
+                sample = random.choice(in_pairs)
+                sample_in = sample[0]
+                sample_targ = sample[1]
+                guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
+                print(" Input:", sample_in, "\n",
+                      "Target:", sample_targ, "\n",
+                      "Predicted:", ''.join(guess[0])
+                      )
 
             if iter % train_len == 0:
                 if iter > config['batch size']:
@@ -387,7 +384,10 @@ class MED:
             else:
                 # ORIGINALLY THIS WAS output_lang
                 # decoded_words.append(output_lang.index2word[ni])
-                decoded_words.append(lang.index2word[ni])
+                try:
+                    decoded_words.append(lang.index2word[ni])
+                except:
+                    pdb.set_trace()
 
             decoder_input = Variable(torch.LongTensor([[ni]]))
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input

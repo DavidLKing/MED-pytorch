@@ -3,7 +3,7 @@ eval val: True
 eval test: False
 print every: 100
 plot every: 1000
-print sample every: 1
+print sample every: 5
 max length: 50
 batch size: 50
 epochs: 500
