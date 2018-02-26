@@ -204,6 +204,7 @@ class MED:
         # Record keeping #
         epoch = 1
         train_len = len(in_pairs)
+        epoch_num = train_len // config['batch size']
 
         # batching the data
         pairs = in_pairs
@@ -242,7 +243,11 @@ class MED:
                                              iter, iter / n_iters * 100, print_loss_avg))
             
             # SAMPLING for stdout monitoring
-            if iter % config['print sample every'] == 0 and iter > 1:
+            if iter % config['print sample every'] == 0 and iter > 500:
+                """
+                TODO the iter > 500 thing is a hack. Do we need to be concerned that
+                the decoder predicts OOV character in the beginning of training?
+                """
                 sample = random.choice(in_pairs)
                 sample_in = sample[0]
                 sample_targ = sample[1]
@@ -252,17 +257,21 @@ class MED:
                       "Predicted:", ''.join(guess[0])
                       )
 
-            if iter % train_len == 0:
-                if iter > config['batch size']:
-                    print("### FINISHED EPOCH", epoch, "###")
-                    epoch += 1
-                    # TODO can we abstract this into a function?
-                    if config['eval val']:
-                        print("Evaluating the validation set:")
-                        self.manualEval(valid, self.valid, encoder, decoder)
-                    if config['eval test']:
-                        print("Evaluating the test set:")
-                        self.manualEval(test, self.test, encoder, decoder)
+            try:
+                if iter > 0:
+                    if iter % epoch_num == 0 and epoch_num > 0:
+                        if iter > config['batch size']:
+                            print("### FINISHED EPOCH", epoch, "###")
+                            epoch += 1
+                            # TODO can we abstract this into a function?
+                            if config['eval val']:
+                                print("Evaluating the validation set:")
+                                self.manualEval(valid, self.valid, encoder, decoder)
+                            if config['eval test']:
+                                print("Evaluating the test set:")
+                                self.manualEval(test, self.test, encoder, decoder)
+            except:
+                pdb.set_trace()
 
             if iter % plot_every == 0:
                 plot_loss_avg = plot_loss_total / plot_every
@@ -384,10 +393,10 @@ class MED:
             else:
                 # ORIGINALLY THIS WAS output_lang
                 # decoded_words.append(output_lang.index2word[ni])
-                try:
-                    decoded_words.append(lang.index2word[ni])
-                except:
-                    pdb.set_trace()
+                # try:
+                decoded_words.append(lang.index2word[ni])
+                # except:
+                #     pdb.set_trace()
 
             decoder_input = Variable(torch.LongTensor([[ni]]))
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
@@ -490,7 +499,7 @@ class MED:
         # len(train) gets us that
         # for batch_num, batch in enumerate(train):
         # TODO 50 is the current hard coded batch size---make that an option
-        train_iter = config['epochs'] * len(train) // config['batch size']
+        train_iter = (config['epochs'] * len(train)) // config['batch size']
         if config['train']:
             self.trainIters(en, de, train_iter, train, valid, test,
                             print_every=config['print every'],

@@ -3,9 +3,9 @@ eval val: True
 eval test: False
 print every: 100
 plot every: 1000
-print sample every: 5
+print sample every: 300
 max length: 50
-batch size: 50
+batch size: 1
 epochs: 500
 encoder embed: 300
 decoder embed: 300
