@@ -16,6 +16,7 @@ import torch.nn as nn
 # for batching
 import torch.utils.data
 from torch.autograd import Variable
+import torch.nn
 from torch import optim
 import torch.nn.functional as F
 # for plotting
@@ -48,7 +49,7 @@ class EncoderRNN(nn.Module):
         self.hidden_size = hidden_size
 
         self.embedding = nn.Embedding(input_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=True)
 
     def forward(self, input, hidden):
         embedded = self.embedding(input).view(1, 1, -1)
@@ -57,7 +58,8 @@ class EncoderRNN(nn.Module):
         return output, hidden
 
     def initHidden(self):
-        result = Variable(torch.zeros(1, 1, self.hidden_size))
+        result = Variable(torch.zeros(2, 1, self.hidden_size))
+        # result = Variable(torch.zeros(1, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
         else:
@@ -67,21 +69,26 @@ class EncoderRNN(nn.Module):
 class DecoderRNN(nn.Module):
     def __init__(self, hidden_size, output_size):
         super(DecoderRNN, self).__init__()
-        self.hidden_size = hidden_size
-
-        self.embedding = nn.Embedding(output_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size)
-        self.out = nn.Linear(hidden_size, output_size)
+        self.hidden_size = hidden_size * 2
+        # self.hidden_size = hidden_size
+        self.embedding = nn.Embedding(output_size, self.hidden_size)
+        self.gru = nn.GRU(self.hidden_size, self.hidden_size)
+        self.out = nn.Linear(self.hidden_size, output_size)
         self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, input, hidden):
         output = self.embedding(input).view(1, 1, -1)
         output = F.tanh(output)
-        output, hidden = self.gru(output, hidden)
+        # TODO is this the correct way to handle this
+        # probably not since it doesn't work
+        # output = torch.cat((output, output), 0)
+        # output, hidden = self.gru(output, hidden)
+        output, hidden = self.gru(output, hidden.view(1,1,-1))
         output = self.softmax(self.out(output[0]))
         return output, hidden
 
     def initHidden(self):
+        # result = Variable(torch.zeros(2, 1, self.hidden_size))
         result = Variable(torch.zeros(1, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
@@ -133,7 +140,7 @@ class AttnDecoderRNN(nn.Module):
 class Lang:
     def __init__(self, name):
         self.name = name
-        self.word2index = {}
+        self.word2index = {"<S>": 0, "</S>": 1, "<UNK>": 2, "EPS": 3}
         self.word2count = {}
         self.index2word = {0: "<S>", 1: "</S>", 2: "<UNK>", 3: "EPS"}
         self.n_words = 4  # Count <S>, </S>, and <UNK>
@@ -175,6 +182,7 @@ class MED:
 
     def __init__(self):
         # print(self.args)
+        # Initialize language objects
         self.train = Lang('train')
         self.valid = Lang('valid')
         self.test = Lang('test')
@@ -198,17 +206,46 @@ class MED:
         rs = es - s
         return '%s (- %s)' % (self.asMinutes(s), self.asMinutes(rs))
 
-    def trainIters(self, encoder, decoder, n_iters, in_pairs, valid, test,
+    # # # PADDING FOR MINIBATCHING # # #
+
+    def pad(self, seq, lang):
+        # max length
+        longest = max([x.shape[0] for x in seq])
+        if use_cuda:
+            pad = lambda x: torch.cat((
+                x, 
+                torch.autograd.variable.Variable(
+                    torch.cuda.LongTensor(
+                        [lang.word2index['</S>']] * (longest - x.shape[0])
+                    )
+                )
+            ))
+        else:
+            pad = lambda x: torch.cat((
+                x, 
+                torch.autograd.variable.Variable(
+                    torch.LongTensor(
+                        [lang.word2index['</S>']] * (longest - x.shape[0])
+                    )
+                )
+            ))
+        newseq = torch.stack([pad(s) for s in seq])
+        return newseq
+
+    def trainIters(self, encoder, decoder, epochs, n_iters, in_pairs, valid, test,
                    print_every=config['print every'], plot_every=config['plot every'],
                    learning_rate=config['learning rate']):
         # Record keeping #
-        epoch = 1
+        epoch = 0
         train_len = len(in_pairs)
-        epoch_num = train_len // config['batch size']
+        # epoch_num = train_len // config['batch size']
+        place = 0
 
         # batching the data
-        pairs = in_pairs
-        # pairs = torch.utils.data.DataLoader(in_pairs, batch_size=config['batch size'])
+        # pairs = in_pairs
+        pairs = torch.utils.data.DataLoader(in_pairs, batch_size=config['batch size'])
+        # record keeping cont.
+        epoch_num = len(pairs)
         start = time.time()
         plot_losses = []
         print_loss_total = 0  # Reset every print_every
@@ -217,66 +254,76 @@ class MED:
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
 
-        # for batch_num, batch in enumerate(pairs):
-            
-            # TODO why are we randomizing the batch?
-        # training_pairs = [self.variablesFromPair(self.train, random.choice(batch))
-        training_pairs = [self.variablesFromPair(self.train, random.choice(pairs))
-                          for i in range(n_iters)]
-        criterion = nn.NLLLoss()
+        for num in range(epochs):
+            for batch_num, batch in enumerate(pairs):
 
-        for iter in range(1, n_iters + 1):
-            training_pair = training_pairs[iter - 1]
-            input_variable = training_pair[0]
-            target_variable = training_pair[1]
+                training_pairs = [self.variablesFromPair(self.train, (batch[0][i], batch[1][i]))
+                                  for i in range(len(batch[0]))]
+                # inputs = [self.variableFromSentence(self.train, batch[0][i]) for i in len(batch[0])]
+                # outputs = [self.variableFromSentence(self.train, batch[1][i]) for i in len(batch[0])]
+                # training_pairs = [self.variablesFromPair(self.train, random.choice(pairs))
+                # for i in range(n_iters)]/
 
+                place += config['batch size']
 
-            loss = self.train_step(input_variable, target_variable, encoder,
-                                   decoder, encoder_optimizer, decoder_optimizer, criterion)
-            print_loss_total += loss
-            plot_loss_total += loss
+                criterion = nn.NLLLoss()
 
-            if iter % print_every == 0:
-                print_loss_avg = print_loss_total / print_every
-                print_loss_total = 0
-                print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
-                                             iter, iter / n_iters * 100, print_loss_avg))
-            
-            # SAMPLING for stdout monitoring
-            if iter % config['print sample every'] == 0 and iter > 500:
-                """
-                TODO the iter > 500 thing is a hack. Do we need to be concerned that
-                the decoder predicts OOV character in the beginning of training?
-                """
-                sample = random.choice(in_pairs)
-                sample_in = sample[0]
-                sample_targ = sample[1]
-                guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
-                print(" Input:", sample_in, "\n",
-                      "Target:", sample_targ, "\n",
-                      "Predicted:", ''.join(guess[0])
-                      )
-
-            try:
-                if iter > 0:
-                    if iter % epoch_num == 0 and epoch_num > 0:
-                        if iter > config['batch size']:
-                            print("### FINISHED EPOCH", epoch, "###")
-                            epoch += 1
-                            # TODO can we abstract this into a function?
-                            if config['eval val']:
-                                print("Evaluating the validation set:")
-                                self.manualEval(valid, self.valid, encoder, decoder)
-                            if config['eval test']:
-                                print("Evaluating the test set:")
-                                self.manualEval(test, self.test, encoder, decoder)
-            except:
+                # TODO MAKE SURE MINITBATCHING IS ACTUALLY MAKING MINIBATCHES
+                # TODO should self.train be 'lang' here?
+                # for iter in range(1, len(batch[0]) + 1):
+                # training_pair = training_pairs [iter - 1]
+                input_variable = torch.stack(self.pad([x[0] for x in training_pairs], self.train))
+                # input_variable = training_pair[0]
+                target_variable = torch.stack(self.pad([y[1] for y in training_pairs], self.train))
+                # target_variable = training_pair[1]
                 pdb.set_trace()
+                # input_variable = inputs[iter - 1]
+                # target_variable = outputs[iter - 1]
 
-            if iter % plot_every == 0:
-                plot_loss_avg = plot_loss_total / plot_every
-                plot_losses.append(plot_loss_avg)
-                plot_loss_total = 0
+                loss = self.train_step(input_variable, target_variable, encoder,
+                                       decoder, encoder_optimizer, decoder_optimizer, criterion)
+                print_loss_total += loss
+                plot_loss_total += loss
+
+                if place % print_every == 0:
+                    print_loss_avg = print_loss_total / print_every
+                    print_loss_total = 0
+                    print('%s (%d %d%%) %.4f' % (self.timeSince(start, place / n_iters),
+                                                 place, place / n_iters * 100, print_loss_avg))
+
+                # SAMPLING for stdout monitoring
+                if place % config['print sample every'] == 0 and place > 500:
+                    """
+                    TODO the iter > 500 thing is a hack. Do we need to be concerned that
+                    the decoder predicts OOV character in the beginning of training?
+                    """
+                    sample = random.choice(in_pairs)
+                    sample_in = sample[0]
+                    sample_targ = sample[1]
+                    guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
+                    print(" Input:", sample_in, "\n",
+                          "Target:", sample_targ, "\n",
+                          "Predicted:", ''.join(guess[0])
+                          )
+
+            # if place > 0:
+            #     if place % len(pairs) == 0:
+            #         if place > config['batch size']:
+            epoch += 1
+            if epoch > 1:
+                print("### FINISHED EPOCH", epoch, "of", epochs, "###")
+                # TODO can we abstract this into a function?
+                if config['eval val']:
+                    print("Evaluating the validation set:")
+                    self.manualEval(valid, self.valid, encoder, decoder)
+                if config['eval test']:
+                    print("Evaluating the test set:")
+                    self.manualEval(test, self.test, encoder, decoder)
+
+            # if iter % plot_every == 0:
+            #     plot_loss_avg = plot_loss_total / plot_every
+            #     plot_losses.append(plot_loss_avg)
+            #     plot_loss_total = 0
 
         # TODO Unless we need this, I'm holding off on the moment
         # This application failed to start because it could not find or load the Qt platform plugin "xcb"
@@ -300,16 +347,19 @@ class MED:
         input_length = input_variable.size()[0]
         target_length = target_variable.size()[0]
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
+        # added *2 for bidirectional input
+        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         loss = 0
-
+        
+        # TODO do we need manually reverse the input for bidirectionality
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(
                 input_variable[ei], encoder_hidden)
             encoder_outputs[ei] = encoder_output[0][0]
 
+        
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
@@ -345,7 +395,18 @@ class MED:
                 loss += criterion(decoder_output, target_variable[di])
                 if ni == EOS_token:
                     break
-
+        
+        # TODO touble check loss
+        # Python 3.5.2 (default, Nov 23 2017, 16:37:01) 
+        # [GCC 5.4.0 20160609] on linux
+        # Type "help", "copyright", "credits" or "license" for more information.
+        # >>> import math
+        # >>> math.log(1/50)
+        # -3.912023005428146
+        # >>> math.log(1/2)
+        # -0.6931471805599453
+        # >>> math.exp(-.0004)
+        # 0.9996000799893344
         loss.backward()
 
         encoder_optimizer.step()
@@ -363,7 +424,7 @@ class MED:
         input_length = input_variable.size()[0]
         encoder_hidden = encoder.initHidden()
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
+        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         for ei in range(input_length):
@@ -394,9 +455,10 @@ class MED:
                 # ORIGINALLY THIS WAS output_lang
                 # decoded_words.append(output_lang.index2word[ni])
                 # try:
-                decoded_words.append(lang.index2word[ni])
-                # except:
-                #     pdb.set_trace()
+                try:
+                    decoded_words.append(lang.index2word[ni])
+                except:
+                    decoded_words.append('<UNK>')
 
             decoder_input = Variable(torch.LongTensor([[ni]]))
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
@@ -411,6 +473,7 @@ class MED:
             guess = self.evaluate(encoder, decoder, lang, pair[0], max_length=config['max length'])
             if ' '.join(guess[0]) == pair[1] + ' <EOS>':
                 correct += 1
+            # pdb.set_trace()
         print("accuracy:", correct / total)
 
     def evaluateRandomly(self, encoder, pairs, lang, decoder, n=10):
@@ -491,17 +554,18 @@ class MED:
         else:
             # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
             en = EncoderRNN(config['encoder embed'], self.train.n_words)
+            # en = torch.nn.GRU(config['encoder embed', bidirectional=True)
+            # EnboderRNN(config['encoder embed'], self.train.n_words)
             de = DecoderRNN(self.train.n_words, config['decoder embed'])
+            # de = DecoderRNN(self.train.n_words, config['decoder embed'] * 2)
             if use_cuda:
                 en = en.cuda()
                 de = de.cuda()
         # TODO only run this during training---iters = num epochs * lines / batches
         # len(train) gets us that
-        # for batch_num, batch in enumerate(train):
-        # TODO 50 is the current hard coded batch size---make that an option
         train_iter = (config['epochs'] * len(train)) // config['batch size']
         if config['train']:
-            self.trainIters(en, de, train_iter, train, valid, test,
+            self.trainIters(en, de, config['epochs'], train_iter, train, valid, test,
                             print_every=config['print every'],
                             plot_every=config['plot every'], 
                             learning_rate=config['learning rate'])
@@ -514,7 +578,6 @@ class MED:
             self.manualEval(test, self.test, en, de)
         if config['save model']:
             self.saveModel(en, de, self.train, self.valid, self.test)
-        # pdb.set_trace()
 
 
 if __name__ == '__main__':
