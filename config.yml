@@ -14,3 +14,6 @@ learning rate: 0.01
 save name: model.test.german.pkl
 save model: True
 load model: False
+train: data/german/german-task1-train
+valid: data/german/german-task1-dev
+test: data/german/german-task1-test

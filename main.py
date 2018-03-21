@@ -189,9 +189,9 @@ class MED:
 
     def getArgs(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('-i', '--inputs', help="training file (e.g. data/train.txt", required=True)
-        parser.add_argument('-v', '--valid', help="validation file (e.g. data/valid.txt", required=True)
-        parser.add_argument('-t', '--test', help="testing file (e.g. data/train.txt", required=True)
+        # parser.add_argument('-i', '--inputs', help="training file (e.g. data/train.txt", required=True)
+        # parser.add_argument('-v', '--valid', help="validation file (e.g. data/valid.txt", required=True)
+        # parser.add_argument('-t', '--test', help="testing file (e.g. data/train.txt", required=True)
         self.args = parser.parse_args()
 
     def asMinutes(self, s):
@@ -211,6 +211,8 @@ class MED:
     def pad(self, seq, lang):
         # max length
         longest = max([x.shape[0] for x in seq])
+        # hack to make padding work for the longest seq
+        longest += 1
         if use_cuda:
             pad = lambda x: torch.cat((
                 x, 
@@ -223,9 +225,11 @@ class MED:
         else:
             pad = lambda x: torch.cat((
                 x, 
-                torch.autograd.variable.Variable(
-                    torch.LongTensor(
-                        [lang.word2index['</S>']] * (longest - x.shape[0])
+                torch.stack(
+                    torch.autograd.variable.Variable(
+                        torch.LongTensor(
+                            [lang.word2index['</S>']] * (longest - x.shape[0])
+                        )
                     )
                 )
             ))
@@ -542,9 +546,12 @@ class MED:
 
     def main(self):
         self.getArgs()
-        train_in, train_out = self.splitdata(self.args.inputs)
-        valid_in, valid_out = self.splitdata(self.args.valid)
-        test_in, test_out = self.splitdata(self.args.test)
+        # train_in, train_out = self.splitdata(self.args.inputs)
+        train_in, train_out = self.splitdata(config['train'])
+        # valid_in, valid_out = self.splitdata(self.args.valid)
+        valid_in, valid_out = self.splitdata(config['valid'])
+        # test_in, test_out = self.splitdata(self.args.test)
+        test_in, test_out = self.splitdata(config['test'])
         train = self.pairdata(train_in, train_out, self.train)
         valid = self.pairdata(valid_in, valid_out, self.valid)
         test = self.pairdata(test_in, test_out, self.test)
