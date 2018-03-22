@@ -280,7 +280,7 @@ class MED:
                 # input_variable = training_pair[0]
                 target_variable = torch.stack(self.pad([y[1] for y in training_pairs], self.train))
                 # target_variable = training_pair[1]
-                pdb.set_trace()
+                # pdb.set_trace()
                 # input_variable = inputs[iter - 1]
                 # target_variable = outputs[iter - 1]
 
@@ -348,8 +348,8 @@ class MED:
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
 
-        input_length = input_variable.size()[0]
-        target_length = target_variable.size()[0]
+        input_length = input_variable.size()[1]
+        target_length = target_variable.size()[1]
 
         # added *2 for bidirectional input
         encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
@@ -359,6 +359,7 @@ class MED:
         
         # TODO do we need manually reverse the input for bidirectionality
         for ei in range(input_length):
+            pdb.set_trace()
             encoder_output, encoder_hidden = encoder(
                 input_variable[ei], encoder_hidden)
             encoder_outputs[ei] = encoder_output[0][0]
