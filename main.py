@@ -215,7 +215,7 @@ class MED:
         longest += 1
         if use_cuda:
             pad = lambda x: torch.cat((
-                x, 
+                x,
                 torch.autograd.variable.Variable(
                     torch.cuda.LongTensor(
                         [lang.word2index['</S>']] * (longest - x.shape[0])
@@ -224,7 +224,7 @@ class MED:
             ))
         else:
             pad = lambda x: torch.cat((
-                x, 
+                x,
                 torch.stack(
                     torch.autograd.variable.Variable(
                         torch.LongTensor(
@@ -276,13 +276,16 @@ class MED:
                 # TODO should self.train be 'lang' here?
                 # for iter in range(1, len(batch[0]) + 1):
                 # training_pair = training_pairs [iter - 1]
-                input_variable = torch.stack(self.pad([x[0] for x in training_pairs], self.train))
+                input_variable = [x[0] for x in training_pairs]
+                # input_variable = torch.stack(self.pad([x[0] for x in training_pairs], self.train))
                 # input_variable = training_pair[0]
-                target_variable = torch.stack(self.pad([y[1] for y in training_pairs], self.train))
+                target_variable = [y[1] for y in training_pairs]
+                # target_variable = torch.stack(self.pad([y[1] for y in training_pairs], self.train))
                 # target_variable = training_pair[1]
                 # pdb.set_trace()
                 # input_variable = inputs[iter - 1]
                 # target_variable = outputs[iter - 1]
+
 
                 loss = self.train_step(input_variable, target_variable, encoder,
                                        decoder, encoder_optimizer, decoder_optimizer, criterion)
@@ -348,6 +351,8 @@ class MED:
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
 
+        pdb.set_trace()
+
         input_length = input_variable.size()[1]
         target_length = target_variable.size()[1]
 
@@ -359,7 +364,6 @@ class MED:
         
         # TODO do we need manually reverse the input for bidirectionality
         for ei in range(input_length):
-            pdb.set_trace()
             encoder_output, encoder_hidden = encoder(
                 input_variable[ei], encoder_hidden)
             encoder_outputs[ei] = encoder_output[0][0]
