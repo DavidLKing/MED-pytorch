@@ -19,6 +19,7 @@ from torch.autograd import Variable
 import torch.nn
 from torch import optim
 import torch.nn.functional as F
+
 # for plotting
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -42,19 +43,15 @@ EOS_token = 1
 UNK_token = 2
 EPS_token = 3
 
-
 class EncoderRNN(nn.Module):
-    # TESTING
-    def __init__(self, vocab_size, max_len, hidden_size,
-        input_dropout_p=0, dropout_p=0,
-        n_layers=1, bidirectional=False, rnn_cell='gru', variable_lengths=False):
-        super(EncoderRNN, self).__init__(vocab_size, max_len, hidden_size,
-        input_dropout_p, dropout_p, n_layers, rnn_cell)
+    def __init__(self, input_size, hidden_size, variable_lengths=False):
+        super(EncoderRNN, self).__init__()
+        self.hidden_size = hidden_size
         self.variable_lengths = variable_lengths
-        self.embedding = nn.Embedding(vocab_size, hidden_size)
-        self.rnn = self.rnn_cell(hidden_size, hidden_size, n_layers,
-        batch_first=True, bidirectional=bidirectional, dropout=dropout_p)
-        
+        self.embedding = nn.Embedding(input_size, hidden_size)
+        # self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=True)
+        self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True)
+
     def forward(self, input_var, input_lengths=None):
         """
         Applies a multi-layer RNN to an input sequence.
@@ -67,7 +64,7 @@ class EncoderRNN(nn.Module):
         - **hidden** (num_layers * num_directions, batch, hidden_size): variable containing the features in the hidden state h
         """
         embedded = self.embedding(input_var)
-        embedded = self.input_dropout(embedded)
+        # embedded = self.input_dropout(embedded)
         if self.variable_lengths:
             embedded = nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
             output, hidden = self.rnn(embedded)
@@ -75,20 +72,12 @@ class EncoderRNN(nn.Module):
             output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
         return output, hidden
 
-
-class EncoderRNNOLD(nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super(EncoderRNN, self).__init__()
-        self.hidden_size = hidden_size
-
-        self.embedding = nn.Embedding(input_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=True)
-
-    def forward(self, input, hidden):
-        embedded = self.embedding(input).view(1, 1, -1)
-        output = embedded
-        output, hidden = self.gru(output, hidden)
-        return output, hidden
+    # def forward(self, input, hidden):
+    #     embedded = self.embedding(input).view(1, 1, -1)
+    #     embedded = self.input_dropout(embedded)
+    #     output = embedded
+    #     output, hidden = self.gru(output, hidden)
+    #     return output, hidden
 
     def initHidden(self):
         result = Variable(torch.zeros(2, 1, self.hidden_size))
@@ -384,6 +373,7 @@ class MED:
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
 
+        input_variable = torch.stack(self.pad(input_variable, self.train))
         pdb.set_trace()
 
         input_length = input_variable.size()[1]
@@ -598,8 +588,7 @@ class MED:
             en, de, self.train, self.valid, self.text = self.loadModel()
         else:
             # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
-            en = EncoderRNN(config['encoder embed'], self.train.n_words)
-            # en = torch.nn.GRU(config['encoder embed', bidirectional=True)
+            en = EncoderRNN(config['encoder embed'], self.train.n_words, variable_lengths=True)
             # EnboderRNN(config['encoder embed'], self.train.n_words)
             de = DecoderRNN(self.train.n_words, config['decoder embed'])
             # de = DecoderRNN(self.train.n_words, config['decoder embed'] * 2)
