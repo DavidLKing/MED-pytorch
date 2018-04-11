@@ -68,7 +68,6 @@ class EncoderRNN(nn.Module):
         embedded = self.embedding(input_var)
         # embedded = self.input_dropout(embedded)
         output, hidden = self.rnn(embedded)
-        # pdb.set_trace()
         return output, hidden
 
     # def forward(self, input, hidden):
@@ -161,7 +160,7 @@ class AttnDecoderRNN(nn.Module):
         output, hidden = self.gru(embedded, hidden)
 
         # output = F.log_softmax(self.out(output[0]), dim=1)
-        output = F.log_softmax(self.out(output), dim=1)
+        output = F.log_softmax(self.out(output), dim=2)
         return output, hidden # , attn_weights
 
     def initHidden(self):
@@ -302,9 +301,9 @@ class MED:
 
                 place += config['batch size']
 
-                # criterion = nn.NLLLoss()
+                criterion = nn.NLLLoss()
                 # criterion = nn.MSELoss()
-                criterion = nn.CrossEntropyLoss()
+                # criterion = nn.CrossEntropyLoss()
 
                 # TODO MAKE SURE MINITBATCHING IS ACTUALLY MAKING MINIBATCHES
                 # TODO should self.train be 'lang' here?
@@ -326,14 +325,16 @@ class MED:
                 print_loss_total += loss
                 plot_loss_total += loss
 
-                if place % print_every == 0:
+                # if place % print_every == 0:
+                if True:
                     print_loss_avg = print_loss_total / print_every
                     print_loss_total = 0
                     print('%s (%d %d%%) %.4f' % (self.timeSince(start, place / n_iters),
                                                  place, place / n_iters * 100, print_loss_avg))
 
                 # SAMPLING for stdout monitoring
-                if place % config['print sample every'] == 0 and place > 500:
+                # if place % config['print sample every'] == 0 and place > 500:
+                if True:
                     """
                     TODO the iter > 500 thing is a hack. Do we need to be concerned that
                     the decoder predicts OOV character in the beginning of training?
@@ -445,7 +446,6 @@ class MED:
             decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
             for di in range(target_variable.shape[1]):
                 # TODO delete this once loss is figured out
-                print("On", di)
                 # decoder_output, decoder_hidden, decoder_attention = decoder(
                 decoder_output, decoder_hidden = decoder(
                         decoder_input, decoder_hidden, encoder_outputs)
@@ -460,7 +460,6 @@ class MED:
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
                 loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
-            pdb.set_trace()
                 # loss += criterion(decoder_output, target_variable[di])
             # if ni == EOS_token:
                 # break
@@ -485,6 +484,7 @@ class MED:
             print(self.train.indices2sent(decoder_out))
 
         return loss.data[0] / config['batch size']
+        # return loss.data[0]
 
     # # # EVALUATION # # #
     def evaluate(self, encoder, decoder, lang, sentence, max_length=config['max length']):
@@ -496,27 +496,39 @@ class MED:
         encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
-        for ei in range(input_length):
-            encoder_output, encoder_hidden = encoder(input_variable[ei],
-                                                     encoder_hidden)
-            encoder_outputs[ei] = encoder_outputs[ei] + encoder_output[0][0]
+        pdb.set_trace()
+        # TODO getting weird dimensionalities. 
+        # input_variable.t() seems to help, but isn't the whole answer
+        encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden)
+        encoder_outputs = encoder_output
 
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))  # SOS
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         decoder_hidden = encoder_hidden
-
+        # decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
+        pdb.set_trace()
+        decoder_hidden = decoder_hidden.view(1, 1, -1)
+       
         decoded_words = []
+        decoder_out = []
         decoder_attentions = torch.zeros(max_length, max_length)
 
         for di in range(max_length):
+            # TODO delete this once loss is figured out
             # decoder_output, decoder_hidden, decoder_attention = decoder(
+            pdb.set_trace()
             decoder_output, decoder_hidden = decoder(
-                decoder_input, decoder_hidden)
-            # decoder_input, decoder_hidden, encoder_outputs)
-            # decoder_attentions[di] = decoder_attention.data
+                    decoder_input, decoder_hidden, encoder_outputs)
+            decoder_out.append(decoder_output)
+            # TODO here's where beam search and n-best come from
             topv, topi = decoder_output.data.topk(1)
-            ni = topi[0][0]
+            ni = topi.squeeze(-1)
+            
+            decoder_out.append(ni)
+            
+            decoder_input = Variable(ni)
+            decoder_input = decoder_input.cuda() if use_cuda else decoder_input
             if ni == EOS_token:
                 decoded_words.append('<EOS>')
                 break
