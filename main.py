@@ -50,7 +50,7 @@ class EncoderRNN(nn.Module):
         self.variable_lengths = variable_lengths
         self.embedding = nn.Embedding(input_size, hidden_size)
         # self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=True)
-        self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True)
+        self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True, batch_first=True)
 
     def forward(self, input_var, input_lengths=None):
         """
@@ -65,10 +65,10 @@ class EncoderRNN(nn.Module):
         """
 
         # test = torch.nn.utils.rnn.PackedSequence(input_var, config['batch size'])
-        # pdb.set_trace()
         embedded = self.embedding(input_var)
         # embedded = self.input_dropout(embedded)
         output, hidden = self.rnn(embedded)
+        # pdb.set_trace()
         return output, hidden
 
     # def forward(self, input, hidden):
@@ -108,6 +108,7 @@ class DecoderRNN(nn.Module):
         # output, hidden = self.gru(output, hidden)
         # convert hidden to 1x22x600: hidden.view(1,22,-1)
         # output, hidden = self.gru(output, hidden.view(1,1,-1))
+        # TODO 22 here shouldn't be hard coded, this changes
         hidden = hidden.view(1,22,-1) #.repeat(config['batch size'], 1, 1)
         tester = torch.stack([torch.stack([hidden[0][-1]])])
         pdb.set_trace()
@@ -127,7 +128,7 @@ class DecoderRNN(nn.Module):
 class AttnDecoderRNN(nn.Module):
     def __init__(self, output_size, hidden_size, dropout_p=config['dropout'], max_length=config['max length']):
         super(AttnDecoderRNN, self).__init__()
-        self.hidden_size = hidden_size
+        self.hidden_size = hidden_size * 2
         self.output_size = output_size
         self.dropout_p = dropout_p
         self.max_length = max_length
@@ -136,26 +137,32 @@ class AttnDecoderRNN(nn.Module):
         self.attn = nn.Linear(self.hidden_size * 2, self.max_length)
         self.attn_combine = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.dropout = nn.Dropout(self.dropout_p)
-        self.gru = nn.GRU(self.hidden_size, self.hidden_size)
+        self.gru = nn.GRU(self.hidden_size, self.hidden_size, batch_first=True)
         self.out = nn.Linear(self.hidden_size, self.output_size)
 
     def forward(self, input, hidden, encoder_outputs):
-        embedded = self.embedding(input).view(1, 1, -1)
+        # DLK---I don't think this is required
+        # embedded = self.embedding(input).view(1, 1, -1)
+        embedded = self.embedding(input)
         embedded = self.dropout(embedded)
 
-        attn_weights = F.softmax(
-            self.attn(torch.cat((embedded[0], hidden[0]), 1)), dim=1)
-        attn_applied = torch.bmm(attn_weights.unsqueeze(0),
-                                 encoder_outputs.unsqueeze(0))
+    
+        # TODO finish this once normal encoding and decoding is working
+        # attn_weights = F.softmax(
+        #     self.attn(torch.cat((embedded[0], hidden[0]), 1)), dim=1)
+        # attn_applied = torch.bmm(attn_weights.unsqueeze(0),
+        #                          encoder_outputs.unsqueeze(0))
 
-        output = torch.cat((embedded[0], attn_applied[0]), 1)
-        output = self.attn_combine(output).unsqueeze(0)
+        # output = torch.cat((embedded[0], attn_applied[0]), 1)
+        # output = self.attn_combine(output).unsqueeze(0)
 
-        output = F.relu(output)
-        output, hidden = self.gru(output, hidden)
+        # output = F.relu(output)
+        # output, hidden = self.gru(output, hidden)
+        output, hidden = self.gru(embedded, hidden)
 
-        output = F.log_softmax(self.out(output[0]), dim=1)
-        return output, hidden, attn_weights
+        # output = F.log_softmax(self.out(output[0]), dim=1)
+        output = F.log_softmax(self.out(output), dim=1)
+        return output, hidden # , attn_weights
 
     def initHidden(self):
         result = Variable(torch.zeros(1, 1, self.hidden_size))
@@ -168,9 +175,9 @@ class AttnDecoderRNN(nn.Module):
 class Lang:
     def __init__(self, name):
         self.name = name
-        self.word2index = {"<S>": 0, "</S>": 1, "<UNK>": 2, "EPS": 3}
+        self.word2index = {"<S>": 0, "</S>": 1, "<UNK>": 2, "<EPS>": 3}
         self.word2count = {}
-        self.index2word = {0: "<S>", 1: "</S>", 2: "<UNK>", 3: "EPS"}
+        self.index2word = {0: "<S>", 1: "</S>", 2: "<UNK>", 3: "<EPS>"}
         self.n_words = 4  # Count <S>, </S>, and <UNK>
 
     def addSentence(self, sentence):
@@ -217,9 +224,6 @@ class MED:
 
     def getArgs(self):
         parser = argparse.ArgumentParser()
-        # parser.add_argument('-i', '--inputs', help="training file (e.g. data/train.txt", required=True)
-        # parser.add_argument('-v', '--valid', help="validation file (e.g. data/valid.txt", required=True)
-        # parser.add_argument('-t', '--test', help="testing file (e.g. data/train.txt", required=True)
         self.args = parser.parse_args()
 
     def asMinutes(self, s):
@@ -298,7 +302,9 @@ class MED:
 
                 place += config['batch size']
 
-                criterion = nn.NLLLoss()
+                # criterion = nn.NLLLoss()
+                # criterion = nn.MSELoss()
+                criterion = nn.CrossEntropyLoss()
 
                 # TODO MAKE SURE MINITBATCHING IS ACTUALLY MAKING MINIBATCHES
                 # TODO should self.train be 'lang' here?
@@ -381,7 +387,7 @@ class MED:
         # pdb.set_trace()
 
         input_variable = torch.stack(self.pad(input_variable, self.train)).squeeze(-1)
-        target_variable = torch.stack(self.pad(target_variable, self.train))
+        target_variable = torch.stack(self.pad(target_variable, self.train)).squeeze(-1)
 
         # input_length = input_variable.shape[1]
         # target_length = target_variable.shape[1]
@@ -398,7 +404,6 @@ class MED:
 
         loss = 0
 
-        # testing = torch.nn.utils.rnn.PackedSequence(input_variable, config['batch size'])
 
         # THIS IS WORKING ON SEQUENCES, FINALLY, BUT IT IS NOT WORKING ON MINIBATCHES
         # I THOUGHT THIS WAS A DIM ISSUE, BUT STACKING THE ENCODER_HIDDEN DOESN'T SEEM TO WORK
@@ -414,6 +419,8 @@ class MED:
         # encoder_outputs[ei] = encoder_output[0][0]
 
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))
+        # DLK lengthening for batch
+        decoder_input = decoder_input.repeat(config['batch size'],1)
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         decoder_hidden = encoder_hidden
@@ -424,6 +431,7 @@ class MED:
         decoder_out = []
 
         if use_teacher_forcing:
+            # TODO be ready to fix this
             # Teacher forcing: Feed the target as the next input
             decoder_output, decoder_hidden, decoder_attention = decoder(decoder_input, decoder_hidden, encoder_outputs)
             loss += criterion(decoder_output, target_variable)
@@ -431,29 +439,29 @@ class MED:
 
         else:
             # Without teacher forcing: use its own predictions as the next input
-            # TDOD notes on decoding
-            # decoding starts with a start sent character
-            # Currently complains about sizes, expects 1x1x600
-            # current options include
-            # decoder hidden: 2, 22, 300: decoder_hidden.transpose(0,1)[0]
-            test = decoder_hidden.transpose(0,1)[-1]
-            #   testflat = test.view(test.numel())
-            testflat = torch.cat((test[0], test[1]))
-            # encoder output: 50, 22, 600
-            # pdb.set_trace()
-            # decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, encoder_outputs)
-            decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden)
-            #  input_word[di]
-            # TODO here's where beam search and n-best come from
-            topv, topi = decoder_output.data.topk(1)
-            ni = topi[0][0]
+            # TODO finish this
+            # waiting on Lifeng to verify how this works
+            decoder_out = []
+            decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
+            for di in range(target_variable.shape[1]):
+                # TODO delete this once loss is figured out
+                print("On", di)
+                # decoder_output, decoder_hidden, decoder_attention = decoder(
+                decoder_output, decoder_hidden = decoder(
+                        decoder_input, decoder_hidden, encoder_outputs)
+                decoder_out.append(decoder_output)
+                # TODO here's where beam search and n-best come from
+                topv, topi = decoder_output.data.topk(1)
+                ni = topi.squeeze(-1)
+                
+                decoder_out.append(ni)
+                
+                decoder_input = Variable(ni)
+                decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
-            decoder_out.append(ni)
-
-            decoder_input = Variable(torch.LongTensor([[ni]]))
-            decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-
-            loss += criterion(decoder_output, target_variable[di])
+                loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
+            pdb.set_trace()
+                # loss += criterion(decoder_output, target_variable[di])
             # if ni == EOS_token:
                 # break
 
@@ -619,8 +627,8 @@ class MED:
             # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
             en = EncoderRNN(self.train.n_words, config['encoder embed'], variable_lengths=True)
             # EnboderRNN(config['encoder embed'], self.train.n_words)
-            de = DecoderRNN(self.train.n_words, config['decoder embed'])
-            # de = AttnDecoderRNN(self.train.n_words, config['decoder embed'], )
+            # de = DecoderRNN(self.train.n_words, config['decoder embed'])
+            de = AttnDecoderRNN(self.train.n_words, config['decoder embed'], dropout_p=config['dropout'])
             # de = DecoderRNN(self.train.n_words, config['decoder embed'] * 2)
             if use_cuda:
                 en = en.cuda()
