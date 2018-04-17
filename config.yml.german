@@ -5,7 +5,7 @@ print every: 100
 plot every: 1000
 print sample every: 500
 max length: 50
-batch size: 1
+batch size: 10
 epochs: 50
 encoder embed: 300
 decoder embed: 300
@@ -14,6 +14,6 @@ learning rate: 0.01
 save name: model.test.german.pkl
 save model: True
 load model: False
-train: data/testing/train.txt
-valid: data/testing/valid.txt
-test: data/testing/test.txt
+train: data/german/german-task1-train
+valid: data/german/german-task1-dev
+test: data/german/german-task1-test

@@ -44,11 +44,13 @@ UNK_token = 2
 EPS_token = 3
 
 class EncoderRNN(nn.Module):
-    def __init__(self, input_size, hidden_size, variable_lengths=False):
+    def __init__(self, input_size, hidden_size, dropout_p, variable_lengths=False):
         super(EncoderRNN, self).__init__()
         self.hidden_size = hidden_size
         self.variable_lengths = variable_lengths
         self.embedding = nn.Embedding(input_size, hidden_size)
+        self.dropout_p = dropout_p
+        self.dropout = nn.Dropout(self.dropout_p)
         # self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=True)
         self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True, batch_first=True)
 
@@ -66,7 +68,7 @@ class EncoderRNN(nn.Module):
 
         # test = torch.nn.utils.rnn.PackedSequence(input_var, config['batch size'])
         embedded = self.embedding(input_var)
-        # embedded = self.input_dropout(embedded)
+        # embedded = self.dropout(embedded)
         output, hidden = self.rnn(embedded)
         return output, hidden
 
@@ -80,43 +82,6 @@ class EncoderRNN(nn.Module):
     def initHidden(self):
         result = Variable(torch.zeros(2, 1, self.hidden_size))
         # result = Variable(torch.zeros(1, 1, self.hidden_size))
-        if use_cuda:
-            return result.cuda()
-        else:
-            return result
-
-
-class DecoderRNN(nn.Module):
-    def __init__(self, output_size, hidden_size):
-        super(DecoderRNN, self).__init__()
-        self.hidden_size = hidden_size * 2
-        # self.hidden_size = hidden_size
-        self.embedding = nn.Embedding(output_size, self.hidden_size)
-        self.gru = nn.GRU(self.hidden_size, self.hidden_size)
-        self.out = nn.Linear(self.hidden_size, output_size)
-        self.softmax = nn.LogSoftmax(dim=1)
-
-    def forward(self, input, hidden):
-        # for batch size
-        input = input.repeat(config['batch size'], 1)
-        output = self.embedding(input) #.view(1, 1, -1)
-        output = F.tanh(output)
-        # TODO is this the correct way to handle this
-        # probably not since it doesn't work
-        # output = torch.cat((output, output), 0)
-        # output, hidden = self.gru(output, hidden)
-        # convert hidden to 1x22x600: hidden.view(1,22,-1)
-        # output, hidden = self.gru(output, hidden.view(1,1,-1))
-        # TODO 22 here shouldn't be hard coded, this changes
-        hidden = hidden.view(1,22,-1) #.repeat(config['batch size'], 1, 1)
-        tester = torch.stack([torch.stack([hidden[0][-1]])])
-        output, hidden = self.gru(output, hidden)
-        output = self.softmax(self.out(output[0]))
-        return output, hidden
-
-    def initHidden(self):
-        # result = Variable(torch.zeros(2, 1, self.hidden_size))
-        result = Variable(torch.zeros(1, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
         else:
@@ -156,10 +121,9 @@ class AttnDecoderRNN(nn.Module):
 
         # output = F.relu(output)
         # output, hidden = self.gru(output, hidden)
-        try:
-            output, hidden = self.gru(embedded, hidden)
-        except:
-            pdb.set_trace()
+        # if hidden.size()[2] == 480 or embedded.size()[2] == 480:
+        #     pdb.set_trace()
+        output, hidden = self.gru(embedded, hidden)
 
         # output = F.log_softmax(self.out(output[0]), dim=1)
         output = F.log_softmax(self.out(output), dim=2)
@@ -304,9 +268,9 @@ class MED:
 
                 place += config['batch size']
 
-                criterion = nn.NLLLoss()
+                # criterion = nn.NLLLoss()
                 # criterion = nn.MSELoss()
-                # criterion = nn.CrossEntropyLoss()
+                criterion = nn.CrossEntropyLoss()
 
                 # TODO MAKE SURE MINITBATCHING IS ACTUALLY MAKING MINIBATCHES
                 # TODO should self.train be 'lang' here?
@@ -321,34 +285,34 @@ class MED:
                 # input_variable = inputs[iter - 1]
                 # target_variable = outputs[iter - 1]
 
+                if len(input_variable) == config['batch size']:
+                    loss = self.train_step(input_variable, target_variable, encoder,
+                                           decoder, encoder_optimizer, decoder_optimizer, criterion)
+                    print_loss_total += loss
+                    plot_loss_total += loss
 
-                loss = self.train_step(input_variable, target_variable, encoder,
-                                       decoder, encoder_optimizer, decoder_optimizer, criterion)
-                print_loss_total += loss
-                plot_loss_total += loss
+                    if place % print_every == 0:
+                        # if True:
+                        print_loss_avg = print_loss_total / print_every
+                        print_loss_total = 0
+                        print('%s (%d %d%%) %.4f' % (self.timeSince(start, place / n_iters),
+                                                     place, place / n_iters * 100, print_loss_avg))
 
-                if place % print_every == 0:
-                    # if True:
-                    print_loss_avg = print_loss_total / print_every
-                    print_loss_total = 0
-                    print('%s (%d %d%%) %.4f' % (self.timeSince(start, place / n_iters),
-                                                 place, place / n_iters * 100, print_loss_avg))
-
-                # SAMPLING for stdout monitoring
-                if place % config['print sample every'] == 0 and place > 500:
-                    # if True:
-                    """
-                    TODO the iter > 500 thing is a hack. Do we need to be concerned that
-                    the decoder predicts OOV character in the beginning of training?
-                    """
-                    sample = random.choice(in_pairs)
-                    sample_in = sample[0]
-                    sample_targ = sample[1]
-                    guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
-                    print(" Input:", sample_in, "\n",
-                          "Target:", sample_targ, "\n",
-                          "Predicted:", ''.join(guess[0])
-                          )
+                    # SAMPLING for stdout monitoring
+                    if place % config['print sample every'] == 0 and place > 500:
+                        # if True:
+                        """
+                        TODO the iter > 500 thing is a hack. Do we need to be concerned that
+                        the decoder predicts OOV character in the beginning of training?
+                        """
+                        sample = random.choice(in_pairs)
+                        sample_in = sample[0]
+                        sample_targ = sample[1]
+                        guess = self.evaluate(encoder, decoder, self.train, sample_in, max_length=config['max length'])
+                        print(" Input:", sample_in, "\n",
+                              "Target:", sample_targ, "\n",
+                              "Predicted:", ''.join(guess[0])
+                              )
 
             # if place > 0:
             #     if place % len(pairs) == 0:
@@ -443,7 +407,9 @@ class MED:
             # TODO finish this
             # waiting on Lifeng to verify how this works
             decoder_out = []
+            # TODO what to do about training data that is too small for a batch
             decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
+            # decoder_hidden = decoder_hidden.view(1, batch_len, -1)
             for di in range(target_variable.size()[1]):
                 # TODO delete this once loss is figured out
                 # decoder_output, decoder_hidden, decoder_attention = decoder(
@@ -453,9 +419,9 @@ class MED:
                 # TODO here's where beam search and n-best come from
                 topv, topi = decoder_output.data.topk(1)
                 ni = topi.squeeze(-1)
-                
+
                 decoder_out.append(ni)
-                
+
                 decoder_input = Variable(ni)
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
@@ -465,7 +431,7 @@ class MED:
                 # break
 
         # TODO touble check loss
-        # Python 3.5.2 (default, Nov 23 2017, 16:37:01) 
+        # Python 3.5.2 (default, Nov 23 2017, 16:37:01)
         # [GCC 5.4.0 20160609] on linux
         # Type "help", "copyright", "credits" or "license" for more information.
         # >>> import math
@@ -483,8 +449,8 @@ class MED:
         if very_verbose:
             print(self.train.indices2sent(decoder_out))
 
-        return loss.data[0] / config['batch size']
-        # return loss.data[0]
+        # return loss.data[0] * config['batch size']
+        return loss.data[0]
 
     # # # EVALUATION # # #
     def evaluate(self, encoder, decoder, lang, sentence, max_length=config['max length']):
@@ -633,7 +599,7 @@ class MED:
             en, de, self.train, self.valid, self.text = self.loadModel()
         else:
             # possibly related to the number of embeddings: https://github.com/pytorch/pytorch/issues/1998
-            en = EncoderRNN(self.train.n_words, config['encoder embed'], variable_lengths=True)
+            en = EncoderRNN(self.train.n_words, config['encoder embed'], dropout_p=config['dropout'], variable_lengths=True)
             # EnboderRNN(config['encoder embed'], self.train.n_words)
             # de = DecoderRNN(self.train.n_words, config['decoder embed'])
             de = AttnDecoderRNN(self.train.n_words, config['decoder embed'], dropout_p=config['dropout'])
