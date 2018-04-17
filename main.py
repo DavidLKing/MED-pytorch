@@ -290,6 +290,7 @@ class MED:
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
 
         for num in range(epochs):
+            epoch = num
             for batch_num, batch in enumerate(pairs):
 
                 training_pairs = [self.variablesFromPair(self.train, (batch[0][i], batch[1][i]))
@@ -351,7 +352,6 @@ class MED:
             # if place > 0:
             #     if place % len(pairs) == 0:
             #         if place > config['batch size']:
-            epoch += 1
             if epoch > 1:
                 print("### FINISHED EPOCH", epoch, "of", epochs, "###")
                 # TODO can we abstract this into a function?
