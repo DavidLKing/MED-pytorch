@@ -110,7 +110,6 @@ class DecoderRNN(nn.Module):
         # TODO 22 here shouldn't be hard coded, this changes
         hidden = hidden.view(1,22,-1) #.repeat(config['batch size'], 1, 1)
         tester = torch.stack([torch.stack([hidden[0][-1]])])
-        pdb.set_trace()
         output, hidden = self.gru(output, hidden)
         output = self.softmax(self.out(output[0]))
         return output, hidden
@@ -145,7 +144,7 @@ class AttnDecoderRNN(nn.Module):
         embedded = self.embedding(input)
         embedded = self.dropout(embedded)
 
-    
+
         # TODO finish this once normal encoding and decoding is working
         # attn_weights = F.softmax(
         #     self.attn(torch.cat((embedded[0], hidden[0]), 1)), dim=1)
@@ -157,7 +156,10 @@ class AttnDecoderRNN(nn.Module):
 
         # output = F.relu(output)
         # output, hidden = self.gru(output, hidden)
-        output, hidden = self.gru(embedded, hidden)
+        try:
+            output, hidden = self.gru(embedded, hidden)
+        except:
+            pdb.set_trace()
 
         # output = F.log_softmax(self.out(output[0]), dim=1)
         output = F.log_softmax(self.out(output), dim=2)
@@ -241,7 +243,6 @@ class MED:
 
     def pad(self, seq, lang):
         # max length
-        # pdb.set_trace()
         longest = max([x.size()[0] for x in seq])
         # hack to make padding work for the longest seq
         longest += 1
@@ -317,7 +318,6 @@ class MED:
                 target_variable = [y[1] for y in training_pairs]
                 # target_variable = torch.stack(self.pad([y[1] for y in training_pairs], self.train))
                 # target_variable = training_pair[1]
-                # pdb.set_trace()
                 # input_variable = inputs[iter - 1]
                 # target_variable = outputs[iter - 1]
 
@@ -386,7 +386,6 @@ class MED:
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
-        # pdb.set_trace()
 
         input_variable = torch.stack(self.pad(input_variable, self.train)).squeeze(-1)
         target_variable = torch.stack(self.pad(target_variable, self.train)).squeeze(-1)
@@ -448,7 +447,6 @@ class MED:
             for di in range(target_variable.size()[1]):
                 # TODO delete this once loss is figured out
                 # decoder_output, decoder_hidden, decoder_attention = decoder(
-                pdb.set_trace()
                 decoder_output, decoder_hidden = decoder(
                         decoder_input, decoder_hidden, encoder_outputs)
                 decoder_out.append(decoder_output)
@@ -498,8 +496,7 @@ class MED:
         encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
-        # pdb.set_trace()
-        # TODO getting weird dimensionalities. 
+        # TODO getting weird dimensionalities.
         # input_variable.t() seems to help, but isn't the whole answer
         encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden)
         encoder_outputs = encoder_output
@@ -509,7 +506,6 @@ class MED:
 
         decoder_hidden = encoder_hidden
         # decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
-        # pdb.set_trace()
         decoder_hidden = decoder_hidden.view(1, 1, -1)
        
         decoded_words = []
@@ -542,7 +538,6 @@ class MED:
                 except:
                     decoded_words.append('<UNK>')
 
-            # pdb.set_trace()
             # decoder_input = Variable(torch.LongTensor([[ni]]))
             # decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
@@ -556,7 +551,6 @@ class MED:
             guess = self.evaluate(encoder, decoder, lang, pair[0], max_length=config['max length'])
             if ' '.join(guess[0]) == pair[1] + ' <EOS>':
                 correct += 1
-            # pdb.set_trace()
         print("accuracy:", correct / total)
 
     def evaluateRandomly(self, encoder, pairs, lang, decoder, n=10):
