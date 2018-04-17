@@ -325,16 +325,16 @@ class MED:
                 print_loss_total += loss
                 plot_loss_total += loss
 
-                # if place % print_every == 0:
-                if True:
+                if place % print_every == 0:
+                    # if True:
                     print_loss_avg = print_loss_total / print_every
                     print_loss_total = 0
                     print('%s (%d %d%%) %.4f' % (self.timeSince(start, place / n_iters),
                                                  place, place / n_iters * 100, print_loss_avg))
 
                 # SAMPLING for stdout monitoring
-                # if place % config['print sample every'] == 0 and place > 500:
-                if True:
+                if place % config['print sample every'] == 0 and place > 500:
+                    # if True:
                     """
                     TODO the iter > 500 thing is a hack. Do we need to be concerned that
                     the decoder predicts OOV character in the beginning of training?
@@ -496,7 +496,7 @@ class MED:
         encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
-        pdb.set_trace()
+        # pdb.set_trace()
         # TODO getting weird dimensionalities. 
         # input_variable.t() seems to help, but isn't the whole answer
         encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden)
@@ -507,7 +507,7 @@ class MED:
 
         decoder_hidden = encoder_hidden
         # decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
-        pdb.set_trace()
+        # pdb.set_trace()
         decoder_hidden = decoder_hidden.view(1, 1, -1)
        
         decoded_words = []
@@ -517,19 +517,18 @@ class MED:
         for di in range(max_length):
             # TODO delete this once loss is figured out
             # decoder_output, decoder_hidden, decoder_attention = decoder(
-            pdb.set_trace()
             decoder_output, decoder_hidden = decoder(
                     decoder_input, decoder_hidden, encoder_outputs)
             decoder_out.append(decoder_output)
             # TODO here's where beam search and n-best come from
             topv, topi = decoder_output.data.topk(1)
             ni = topi.squeeze(-1)
-            
+
             decoder_out.append(ni)
             
             decoder_input = Variable(ni)
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-            if ni == EOS_token:
+            if ni[0][0] == EOS_token:
                 decoded_words.append('<EOS>')
                 break
             else:
@@ -537,12 +536,13 @@ class MED:
                 # decoded_words.append(output_lang.index2word[ni])
                 # try:
                 try:
-                    decoded_words.append(lang.index2word[ni])
+                    decoded_words.append(lang.index2word[ni[0][0]])
                 except:
                     decoded_words.append('<UNK>')
 
-            decoder_input = Variable(torch.LongTensor([[ni]]))
-            decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+            # pdb.set_trace()
+            # decoder_input = Variable(torch.LongTensor([[ni]]))
+            # decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         return decoded_words, decoder_attentions[:di + 1]
 
