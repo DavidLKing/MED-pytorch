@@ -241,8 +241,8 @@ class MED:
 
     def pad(self, seq, lang):
         # max length
-        pdb.set_trace()
-        longest = max([x.shape[0] for x in seq])
+        # pdb.set_trace()
+        longest = max([x.size()[0] for x in seq])
         # hack to make padding work for the longest seq
         longest += 1
         if use_cuda:
@@ -250,7 +250,7 @@ class MED:
                 x,
                 torch.autograd.variable.Variable(
                     torch.cuda.LongTensor(
-                        [lang.word2index['</S>']] * (longest - x.shape[0])
+                        [lang.word2index['</S>']] * (longest - x.size()[0])
                     )
                 )
             ))
@@ -260,7 +260,7 @@ class MED:
                 torch.stack(
                     torch.autograd.variable.Variable(
                         torch.LongTensor(
-                            [lang.word2index['</S>']] * (longest - x.shape[0])
+                            [lang.word2index['</S>']] * (longest - x.size()[0])
                         )
                     )
                 )
@@ -445,9 +445,10 @@ class MED:
             # waiting on Lifeng to verify how this works
             decoder_out = []
             decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
-            for di in range(target_variable.shape[1]):
+            for di in range(target_variable.size()[1]):
                 # TODO delete this once loss is figured out
                 # decoder_output, decoder_hidden, decoder_attention = decoder(
+                pdb.set_trace()
                 decoder_output, decoder_hidden = decoder(
                         decoder_input, decoder_hidden, encoder_outputs)
                 decoder_out.append(decoder_output)
