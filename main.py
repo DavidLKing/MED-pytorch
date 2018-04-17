@@ -241,6 +241,7 @@ class MED:
 
     def pad(self, seq, lang):
         # max length
+        pdb.set_trace()
         longest = max([x.shape[0] for x in seq])
         # hack to make padding work for the longest seq
         longest += 1
