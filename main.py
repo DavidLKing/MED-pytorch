@@ -252,8 +252,10 @@ class MED:
         print_loss_total = 0  # Reset every print_every
         plot_loss_total = 0  # Reset every plot_every
 
-        encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
-        decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+        encoder_optimizer = optim.Adadelta(encoder.parameters(), lr=learning_rate)
+        # encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
+        decoder_optimizer = optim.Adadelta(decoder.parameters(), lr=learning_rate)
+        # decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
 
         for num in range(epochs):
             epoch = num
@@ -268,9 +270,9 @@ class MED:
 
                 place += config['batch size']
 
-                # criterion = nn.NLLLoss()
+                criterion = nn.NLLLoss()
                 # criterion = nn.MSELoss()
-                criterion = nn.CrossEntropyLoss()
+                # criterion = nn.CrossEntropyLoss()
 
                 # TODO MAKE SURE MINITBATCHING IS ACTUALLY MAKING MINIBATCHES
                 # TODO should self.train be 'lang' here?
@@ -314,34 +316,26 @@ class MED:
                               "Predicted:", ''.join(guess[0])
                               )
 
-            # if place > 0:
-            #     if place % len(pairs) == 0:
-            #         if place > config['batch size']:
-            if epoch > 1:
-                print("### FINISHED EPOCH", epoch, "of", epochs, "###")
-                # TODO can we abstract this into a function?
-                if config['eval val']:
-                    print("Evaluating the validation set:")
-                    self.manualEval(valid, self.valid, encoder, decoder)
-                if config['eval test']:
-                    print("Evaluating the test set:")
-                    self.manualEval(test, self.test, encoder, decoder)
+                    if place % plot_every == 0:
+                        plot_loss_avg = plot_loss_total / plot_every
+                        plot_losses.append(plot_loss_avg)
+                        plot_loss_total = 0
+            
+            print("### FINISHED EPOCH", epoch + 1, "of", epochs, "###")
+            # TODO can we abstract this into a function?
+            if config['eval val']:
+                print("Evaluating the validation set:")
+                self.manualEval(valid, self.valid, encoder, decoder)
+            if config['eval test']:
+                print("Evaluating the test set:")
+                self.manualEval(test, self.test, encoder, decoder)
+            # if epoch > 20:
+            #     print("Hit 'c' to continue, and 'q' to quit")
+            #     pdb.set_trace()
 
-            # if iter % plot_every == 0:
-            #     plot_loss_avg = plot_loss_total / plot_every
-            #     plot_losses.append(plot_loss_avg)
-            #     plot_loss_total = 0
-
-        # TODO Unless we need this, I'm holding off on the moment
-        # This application failed to start because it could not find or load the Qt platform plugin "xcb"
-        # in "".
-        #
-        # Available platform plugins are: minimal, offscreen, xcb.
-        #
-        # Reinstalling the application may fix this problem.
-        # Aborted (core dumped)
-        # p = plot()
-        # p.showplot(plot_losses)
+        # TODO make plotting into a switch
+        # p = Plot()
+        # p.showPlot(plot_losses)
 
     def train_step(self, input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer,
                    criterion,
@@ -623,6 +617,7 @@ class MED:
             print("Evaluating the test set:")
             self.manualEval(test, self.test, en, de)
         if config['save model']:
+            print("Saving model to:", config['save name'])
             self.saveModel(en, de, self.train, self.valid, self.test)
 
 

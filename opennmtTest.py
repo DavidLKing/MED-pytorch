@@ -4,22 +4,26 @@ import sys
 import pdb
 
 
-print("Sample usage: ./opennmtTest.py sigmorphfile source.txt targ.txt")
+print("Sample usage: ./opennmtTest.py sigmorphtrain sigmorphfile source.txt targ.txt")
 
 featset = set()
-data = open(sys.argv[1], 'r').readlines()
-
-infile = open(sys.argv[2], 'w')
-outfile = open(sys.argv[3], 'w')
+featdata = open(sys.argv[1], 'r').readlines()
+data = open(sys.argv[2], 'r').readlines()
+infile = open(sys.argv[3], 'w')
+outfile = open(sys.argv[4], 'w')
 
 def featvec(feats, featlist):
     fvec = []
     feats = feats.split(',')
     for f in featlist:
         if f in feats:
-            fvec.append(featlist.index(f))
+            f += "=1"
+            # fvec.append(f += "=1")
+            # fvec.append(featlist.index(f))
         else:
-            fvec.append(0)
+            f += "=0"
+            # fvec.append('='.join([f.split('=')[0], str(0)]))
+        fvec.append(f)
     assert(len(fvec) == len(featlist))
     return fvec
 
@@ -31,13 +35,14 @@ def srcformat(feats, src):
         outdata.append(char)
     return ' '.join(outdata)
 
-for line in data:
+for line in featdata:
     line = line.strip().split('\t')
     feats = line[1]
     for f in feats.split(','):
        featset.add(f)
 
-featset = list(featset)
+# featset = list(featset)
+featset = sorted(featset)
 
 for line in data:
     line = line.strip().split('\t')
