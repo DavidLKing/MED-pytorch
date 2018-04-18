@@ -54,22 +54,24 @@ class EncoderRNN(nn.Module):
         # self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=True)
         self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True, batch_first=True)
 
-    def forward(self, input_var, input_lengths=None):
+    def forward(self, input_var, hidden, mask, input_lengths=None):
         """
         Applies a multi-layer RNN to an input sequence.
         Args:
-        input_var (batch, seq_len): tensor containing the features of the input sequence.
+        input_var (batch, seq_len): tensor containing the features of the input sequence.type
         input_lengths (list of int, optional): A list that contains the lengths of sequences
         in the mini-batch
         Returns: output, hidden
         - **output** (batch, seq_len, hidden_size): variable containing the encoded features of the input sequence
         - **hidden** (num_layers * num_directions, batch, hidden_size): variable containing the features in the hidden state h
         """
-
         # test = torch.nn.utils.rnn.PackedSequence(input_var, config['batch size'])
         embedded = self.embedding(input_var)
+        # Variable(mask.unsqueeze(-1)) * embedded
+        embedded = embedded * mask
+        # pdb.set_trace()
         # embedded = self.dropout(embedded)
-        output, hidden = self.rnn(embedded)
+        output, hidden = self.rnn(embedded, hidden)
         return output, hidden
 
     # def forward(self, input, hidden):
@@ -79,8 +81,8 @@ class EncoderRNN(nn.Module):
     #     output, hidden = self.gru(output, hidden)
     #     return output, hidden
 
-    def initHidden(self):
-        result = Variable(torch.zeros(2, 1, self.hidden_size))
+    def initHidden(self, size):
+        result = Variable(torch.zeros(2, size, self.hidden_size))
         # result = Variable(torch.zeros(1, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
@@ -103,10 +105,12 @@ class AttnDecoderRNN(nn.Module):
         self.gru = nn.GRU(self.hidden_size, self.hidden_size, batch_first=True)
         self.out = nn.Linear(self.hidden_size, self.output_size)
 
-    def forward(self, input, hidden, encoder_outputs):
+    def forward(self, input, hidden, encoder_outputs, mask):
         # DLK---I don't think this is required
         # embedded = self.embedding(input).view(1, 1, -1)
+        # pdb.set_trace()
         embedded = self.embedding(input)
+        embedded = embedded * mask
         embedded = self.dropout(embedded)
 
 
@@ -231,7 +235,14 @@ class MED:
                 )
             ))
         newseq = torch.stack([pad(s) for s in seq])
-        return newseq
+        mask = torch.stack([self.build_mask(x, longest) for x in seq])
+        # pdb.set_trace()
+        return newseq, mask
+
+    def build_mask(self, seq, longest):
+        ones = Variable(torch.ones(len(seq)))
+        zeros = Variable(torch.zeros(longest- len(seq)))
+        return torch.cat((ones, zeros))
 
     def trainIters(self, encoder, decoder, epochs, n_iters, in_pairs, valid, test,
                    print_every=config['print every'], plot_every=config['plot every'],
@@ -340,13 +351,17 @@ class MED:
     def train_step(self, input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer,
                    criterion,
                    max_length=config['max length'], teacher_forcing_ratio=0.5):
-        encoder_hidden = encoder.initHidden()
+        encoder_hidden = encoder.initHidden(config['batch size'])
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
 
-        input_variable = torch.stack(self.pad(input_variable, self.train)).squeeze(-1)
-        target_variable = torch.stack(self.pad(target_variable, self.train)).squeeze(-1)
+        input_variable, input_mask = self.pad(input_variable, self.train)
+        input_variable = torch.stack(input_variable).squeeze(-1)
+        input_mask = input_mask.unsqueeze(-1)
+        target_variable, target_mask = self.pad(target_variable, self.train)
+        target_variable = torch.stack(target_variable).squeeze(-1)
+        target_mask = target_mask.unsqueeze(-1)
 
         # input_length = input_variable.shape[1]
         # target_length = target_variable.shape[1]
@@ -370,7 +385,7 @@ class MED:
         # ** *AssertionError
         # encoder(input_variable[0], encoder_hidden)
         # THE ABOVE WORKS
-        encoder_output, encoder_hidden = encoder(input_variable, encoder_hidden)
+        encoder_output, encoder_hidden = encoder(input_variable, encoder_hidden, input_mask)
         # TEMP FIX TODO CLEAN UP
         # encoder_outputs = encoder_output[0][0]
         encoder_outputs = encoder_output
@@ -392,7 +407,7 @@ class MED:
         if use_teacher_forcing:
             # TODO be ready to fix this
             # Teacher forcing: Feed the target as the next input
-            decoder_output, decoder_hidden, decoder_attention = decoder(decoder_input, decoder_hidden, encoder_outputs)
+            decoder_output, decoder_hidden, decoder_attention = decoder(decoder_input, decoder_hidden, encoder_outputs, target_mask)
             loss += criterion(decoder_output, target_variable)
             decoder_input = target_variable  # Teacher forcing
 
@@ -405,10 +420,11 @@ class MED:
             decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
             # decoder_hidden = decoder_hidden.view(1, batch_len, -1)
             for di in range(target_variable.size()[1]):
+                mask = target_mask.t()[di].unsqueeze(-1)
                 # TODO delete this once loss is figured out
                 # decoder_output, decoder_hidden, decoder_attention = decoder(
                 decoder_output, decoder_hidden = decoder(
-                        decoder_input, decoder_hidden, encoder_outputs)
+                        decoder_input, decoder_hidden, encoder_outputs, mask)
                 decoder_out.append(decoder_output)
                 # TODO here's where beam search and n-best come from
                 topv, topi = decoder_output.data.topk(1)
@@ -420,6 +436,7 @@ class MED:
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
                 loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
+                # pdb.set_trace()
                 # loss += criterion(decoder_output, target_variable[di])
             # if ni == EOS_token:
                 # break
@@ -451,14 +468,18 @@ class MED:
         # ORIGINALLY THIS WAS input_lang
         input_variable = self.variableFromSentence(lang, sentence)
         input_length = input_variable.size()[0]
-        encoder_hidden = encoder.initHidden()
+        input_mask = Variable(torch.ones(input_length)).unsqueeze(-1)
+        input_mask = input_mask.cuda() if use_cuda else input_mask
+
+        encoder_hidden = encoder.initHidden(1)
 
         encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         # TODO getting weird dimensionalities.
         # input_variable.t() seems to help, but isn't the whole answer
-        encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden)
+        # pdb.set_trace()
+        encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden, input_mask)
         encoder_outputs = encoder_output
 
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))  # SOS
@@ -473,10 +494,12 @@ class MED:
         decoder_attentions = torch.zeros(max_length, max_length)
 
         for di in range(max_length):
+            target_mask = Variable(torch.ones(1)).unsqueeze(-1)
             # TODO delete this once loss is figured out
             # decoder_output, decoder_hidden, decoder_attention = decoder(
+            # pdb.set_trace()
             decoder_output, decoder_hidden = decoder(
-                    decoder_input, decoder_hidden, encoder_outputs)
+                    decoder_input, decoder_hidden, encoder_outputs, target_mask)
             decoder_out.append(decoder_output)
             # TODO here's where beam search and n-best come from
             topv, topi = decoder_output.data.topk(1)
