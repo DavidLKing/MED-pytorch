@@ -15,7 +15,7 @@ import torch
 import torch.nn as nn
 # for batching
 import torch.utils.data
-from torch.autograd import Variable
+# from torch.autograd import Variable
 import torch.nn
 from torch import optim
 import torch.nn.functional as F
@@ -66,9 +66,9 @@ class EncoderRNN(nn.Module):
         - **hidden** (num_layers * num_directions, batch, hidden_size): variable containing the features in the hidden state h
         """
         # test = torch.nn.utils.rnn.PackedSequence(input_var, config['batch size'])
+        input_var = input_var * mask
         embedded = self.embedding(input_var)
         # Variable(mask.unsqueeze(-1)) * embedded
-        embedded = embedded * mask
         # pdb.set_trace()
         # embedded = self.dropout(embedded)
         output, hidden = self.rnn(embedded, hidden)
@@ -82,7 +82,7 @@ class EncoderRNN(nn.Module):
     #     return output, hidden
 
     def initHidden(self, size):
-        result = Variable(torch.zeros(2, size, self.hidden_size))
+        result = torch.zeros(2, size, self.hidden_size)
         # result = Variable(torch.zeros(1, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
@@ -108,9 +108,9 @@ class AttnDecoderRNN(nn.Module):
     def forward(self, input, hidden, encoder_outputs, mask):
         # DLK---I don't think this is required
         # embedded = self.embedding(input).view(1, 1, -1)
-        # pdb.set_trace()
+        pdb.set_trace()
         embedded = self.embedding(input)
-        embedded = embedded * mask
+        # embedded = embedded * mask
         embedded = self.dropout(embedded)
 
 
@@ -134,7 +134,7 @@ class AttnDecoderRNN(nn.Module):
         return output, hidden # , attn_weights
 
     def initHidden(self):
-        result = Variable(torch.zeros(1, 1, self.hidden_size))
+        result = torch.zeros(1, 1, self.hidden_size)
         if use_cuda:
             return result.cuda()
         else:
@@ -216,32 +216,29 @@ class MED:
         longest += 1
         if use_cuda:
             pad = lambda x: torch.cat((
-                x,
-                torch.autograd.variable.Variable(
-                    torch.cuda.LongTensor(
-                        [lang.word2index['</S>']] * (longest - x.size()[0])
-                    )
+                x.squeeze(-1),
+                torch.cuda.LongTensor(
+                    [lang.word2index['</S>']] * (longest - x.size()[0])
                 )
             ))
         else:
             pad = lambda x: torch.cat((
-                x,
-                torch.stack(
-                    torch.autograd.variable.Variable(
-                        torch.LongTensor(
-                            [lang.word2index['</S>']] * (longest - x.size()[0])
-                        )
-                    )
+                x.squeeze(-1),
+                torch.LongTensor(
+                    [lang.word2index['</S>']] * (longest - x.size()[0])
                 )
             ))
         newseq = torch.stack([pad(s) for s in seq])
         mask = torch.stack([self.build_mask(x, longest) for x in seq])
-        # pdb.set_trace()
         return newseq, mask
 
     def build_mask(self, seq, longest):
-        ones = Variable(torch.ones(len(seq)))
-        zeros = Variable(torch.zeros(longest- len(seq)))
+        # TODO make sure we actually want to apply the mask over the input
+        # and not over the embeddings
+        ones = torch.ones(len(seq))
+        ones = torch.tensor([int(x) for x in ones])
+        zeros = torch.zeros(longest- len(seq))
+        zeros = torch.tensor([int(x) for x in zeros])
         return torch.cat((ones, zeros))
 
     def trainIters(self, encoder, decoder, epochs, n_iters, in_pairs, valid, test,
@@ -357,11 +354,11 @@ class MED:
         decoder_optimizer.zero_grad()
 
         input_variable, input_mask = self.pad(input_variable, self.train)
-        input_variable = torch.stack(input_variable).squeeze(-1)
-        input_mask = input_mask.unsqueeze(-1)
+        # input_variable = torch.stack(input_variable).squeeze(-1)
+        # input_mask = input_mask.unsqueeze(-1)
         target_variable, target_mask = self.pad(target_variable, self.train)
-        target_variable = torch.stack(target_variable).squeeze(-1)
-        target_mask = target_mask.unsqueeze(-1)
+        # target_variable = torch.stack(target_variable).squeeze(-1)
+        # target_mask = target_mask.unsqueeze(-1)
 
         # input_length = input_variable.shape[1]
         # target_length = target_variable.shape[1]
@@ -373,7 +370,7 @@ class MED:
         # pack = torch.nn.utils.rnn.pack_padded_sequence(self.pad(input_variable, self.train), seq_len, batch_first=True)
 
         # added *2 for bidirectional input
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
+        encoder_outputs = torch.zeros(max_length, encoder.hidden_size * 2)
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         loss = 0
@@ -392,7 +389,7 @@ class MED:
         # encoder_output, encoder_hidden = encoder(input_variable, encoder_hidden)
         # encoder_outputs[ei] = encoder_output[0][0]
 
-        decoder_input = Variable(torch.LongTensor([[SOS_token]]))
+        decoder_input = torch.LongTensor([[SOS_token]])
         # DLK lengthening for batch
         decoder_input = decoder_input.repeat(config['batch size'],1)
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
@@ -432,7 +429,8 @@ class MED:
 
                 decoder_out.append(ni)
 
-                decoder_input = Variable(ni)
+                # necessary
+                decoder_input = ni
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
                 loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
@@ -468,12 +466,12 @@ class MED:
         # ORIGINALLY THIS WAS input_lang
         input_variable = self.variableFromSentence(lang, sentence)
         input_length = input_variable.size()[0]
-        input_mask = Variable(torch.ones(input_length)).unsqueeze(-1)
+        input_mask = torch.ones(input_length).unsqueeze(-1)
         input_mask = input_mask.cuda() if use_cuda else input_mask
 
         encoder_hidden = encoder.initHidden(1)
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size * 2))
+        encoder_outputs = torch.zeros(max_length, encoder.hidden_size * 2)
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         # TODO getting weird dimensionalities.
@@ -482,7 +480,7 @@ class MED:
         encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden, input_mask)
         encoder_outputs = encoder_output
 
-        decoder_input = Variable(torch.LongTensor([[SOS_token]]))  # SOS
+        decoder_input = torch.LongTensor([[SOS_token]])  # SOS
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         decoder_hidden = encoder_hidden
@@ -494,7 +492,7 @@ class MED:
         decoder_attentions = torch.zeros(max_length, max_length)
 
         for di in range(max_length):
-            target_mask = Variable(torch.ones(1)).unsqueeze(-1)
+            target_mask = torch.ones(1).unsqueeze(-1)
             # TODO delete this once loss is figured out
             # decoder_output, decoder_hidden, decoder_attention = decoder(
             # pdb.set_trace()
@@ -507,7 +505,7 @@ class MED:
 
             decoder_out.append(ni)
             
-            decoder_input = Variable(ni)
+            decoder_input = ni
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
             if ni[0][0] == EOS_token:
                 decoded_words.append('<EOS>')
@@ -553,7 +551,7 @@ class MED:
     def variableFromSentence(self, lang, sentence):
         indexes = self.indexesFromSentence(lang, sentence)
         indexes.append(EOS_token)
-        result = Variable(torch.LongTensor(indexes).view(-1, 1))
+        result = torch.LongTensor(indexes).view(-1, 1)
         if use_cuda:
             return result.cuda()
         else:
