@@ -69,6 +69,8 @@ class EncoderRNN(nn.Module):
         input_var = input_var * mask
         embedded = self.embedding(input_var)
         # Variable(mask.unsqueeze(-1)) * embedded
+        # mask.unsqueeze(-1)) * embedded
+        # embedded = embedded * mask
         # pdb.set_trace()
         # embedded = self.dropout(embedded)
         output, hidden = self.rnn(embedded, hidden)
@@ -84,6 +86,7 @@ class EncoderRNN(nn.Module):
     def initHidden(self, size):
         result = torch.zeros(2, size, self.hidden_size)
         # result = Variable(torch.zeros(1, 1, self.hidden_size))
+        # result = torch.zeros(1, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
         else:
@@ -113,25 +116,28 @@ class AttnDecoderRNN(nn.Module):
         # embedded = embedded * mask
         embedded = self.dropout(embedded)
 
-
         # TODO finish this once normal encoding and decoding is working
-        # attn_weights = F.softmax(
-        #     self.attn(torch.cat((embedded[0], hidden[0]), 1)), dim=1)
-        # attn_applied = torch.bmm(attn_weights.unsqueeze(0),
-        #                          encoder_outputs.unsqueeze(0))
+        # embedded = 10,1,600, hidden = 1.10.600?
+        # TODO dim= param may be wrong
+        attn_weights = F.softmax(
+            self.attn(torch.cat((embedded.view(1,10,-1), hidden), -1)), dim=2)
+        pdb.set_trace()
+        attn_applied = torch.bmm(attn_weights.unsqueeze(0),
+                                 encoder_outputs.unsqueeze(0))
 
-        # output = torch.cat((embedded[0], attn_applied[0]), 1)
-        # output = self.attn_combine(output).unsqueeze(0)
+        output = torch.cat((embedded[0], attn_applied[0]), 1)
+        output = self.attn_combine(output).unsqueeze(0)
 
-        # output = F.relu(output)
-        # output, hidden = self.gru(output, hidden)
+        output = F.relu(output)
+        output, hidden = self.gru(output, hidden)
+        # BEGIN SANS ATTN MODEL #
         # if hidden.size()[2] == 480 or embedded.size()[2] == 480:
         #     pdb.set_trace()
-        output, hidden = self.gru(embedded, hidden)
+        # output, hidden = self.gru(embedded, hidden)
 
         # output = F.log_softmax(self.out(output[0]), dim=1)
         output = F.log_softmax(self.out(output), dim=2)
-        return output, hidden # , attn_weights
+        return output, hidden, attn_weights
 
     def initHidden(self):
         result = torch.zeros(1, 1, self.hidden_size)
@@ -216,7 +222,6 @@ class MED:
         longest += 1
         if use_cuda:
             pad = lambda x: torch.cat((
-                x.squeeze(-1),
                 torch.cuda.LongTensor(
                     [lang.word2index['</S>']] * (longest - x.size()[0])
                 )
@@ -233,12 +238,8 @@ class MED:
         return newseq, mask
 
     def build_mask(self, seq, longest):
-        # TODO make sure we actually want to apply the mask over the input
-        # and not over the embeddings
         ones = torch.ones(len(seq))
-        ones = torch.tensor([int(x) for x in ones])
         zeros = torch.zeros(longest- len(seq))
-        zeros = torch.tensor([int(x) for x in zeros])
         return torch.cat((ones, zeros))
 
     def trainIters(self, encoder, decoder, epochs, n_iters, in_pairs, valid, test,
@@ -420,7 +421,7 @@ class MED:
                 mask = target_mask.t()[di].unsqueeze(-1)
                 # TODO delete this once loss is figured out
                 # decoder_output, decoder_hidden, decoder_attention = decoder(
-                decoder_output, decoder_hidden = decoder(
+                decoder_output, decoder_hidden, attn_weights = decoder(
                         decoder_input, decoder_hidden, encoder_outputs, mask)
                 decoder_out.append(decoder_output)
                 # TODO here's where beam search and n-best come from
@@ -429,7 +430,6 @@ class MED:
 
                 decoder_out.append(ni)
 
-                # necessary
                 decoder_input = ni
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
@@ -493,6 +493,7 @@ class MED:
 
         for di in range(max_length):
             target_mask = torch.ones(1).unsqueeze(-1)
+            target_mask = target_mask.cuda() if use_cuda else target_mask
             # TODO delete this once loss is figured out
             # decoder_output, decoder_hidden, decoder_attention = decoder(
             # pdb.set_trace()
@@ -519,7 +520,7 @@ class MED:
                 except:
                     decoded_words.append('<UNK>')
 
-            # decoder_input = Variable(torch.LongTensor([[ni]]))
+            # decoder_input = torch.LongTensor([[ni]]))
             # decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         return decoded_words, decoder_attentions[:di + 1]
@@ -572,7 +573,9 @@ class MED:
             l = l.split('\t')
             new_l = ' '.join(l[0])
             feats = [f for f in l[1].split(',')]
-            new_l += ' ' + ' '.join(feats)
+            # new_l += ' ' + ' '.join(feats)
+            # testing
+            new_l = ' '.join(feats) + ' ' + new_l
             inseq.append(new_l)
             outseq.append(' '.join(l[2].strip()))
         return inseq, outseq
