@@ -66,12 +66,15 @@ class EncoderRNN(nn.Module):
         - **hidden** (num_layers * num_directions, batch, hidden_size): variable containing the features in the hidden state h
         """
         # test = torch.nn.utils.rnn.PackedSequence(input_var, config['batch size'])
-        input_var = input_var * mask
+        # input_var = input_var * mask
         embedded = self.embedding(input_var)
         # Variable(mask.unsqueeze(-1)) * embedded
         # mask.unsqueeze(-1)) * embedded
-        # embedded = embedded * mask
-        # pdb.set_trace()
+        # convert mask to mask size
+        mask = mask.unsqueeze(2)
+        mask = mask.repeat(1, 1, 300)
+        # TODO is this the correct place to apply the mask
+        embedded = embedded * mask
         # embedded = self.dropout(embedded)
         output, hidden = self.rnn(embedded, hidden)
         return output, hidden
@@ -102,7 +105,9 @@ class AttnDecoderRNN(nn.Module):
         self.max_length = max_length
 
         self.embedding = nn.Embedding(self.output_size, self.hidden_size)
+        # TODO WHY IS this over the max length? Possibly wrong from tutorial
         self.attn = nn.Linear(self.hidden_size * 2, self.max_length)
+        # self.attn = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.attn_combine = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.dropout = nn.Dropout(self.dropout_p)
         self.gru = nn.GRU(self.hidden_size, self.hidden_size, batch_first=True)
@@ -111,33 +116,79 @@ class AttnDecoderRNN(nn.Module):
     def forward(self, input, hidden, encoder_outputs, mask):
         # DLK---I don't think this is required
         # embedded = self.embedding(input).view(1, 1, -1)
-        pdb.set_trace()
         embedded = self.embedding(input)
-        # embedded = embedded * mask
+        mask = mask.unsqueeze(2)
+        mask = mask.repeat(1, 1, 600)
+        embedded = embedded * mask
         embedded = self.dropout(embedded)
 
-        # TODO finish this once normal encoding and decoding is working
-        # embedded = 10,1,600, hidden = 1.10.600?
-        # TODO dim= param may be wrong
-        attn_weights = F.softmax(
-            self.attn(torch.cat((embedded.view(1,10,-1), hidden), -1)), dim=2)
-        pdb.set_trace()
-        attn_applied = torch.bmm(attn_weights.unsqueeze(0),
-                                 encoder_outputs.unsqueeze(0))
 
-        output = torch.cat((embedded[0], attn_applied[0]), 1)
-        output = self.attn_combine(output).unsqueeze(0)
-
-        output = F.relu(output)
+        # embedded = embedded.squeeze(1)
+        # hidden = hidden.squeeze(0)
+        #
+        # attn_weights = F.softmax(
+        #     self.attn(torch.cat((embedded, hidden), -1)))
+        # shaping stuff
+        # todo is this correct
+        # pdb.set_trace()
+        # attn_applied = torch.bmm(attn_weights.unsqueeze(-1),
+        #                          encoder_outputs.unsqueeze(1))
+        """
+        last attempt:
+        (Pdb)
+        torch.cat((embedded.unsqueeze(1), attn_applied), 1).shape
+        torch.Size([10, 51, 600])
+        (Pdb)
+        test = torch.cat((embedded.unsqueeze(1), attn_applied), 1).shape
+        (Pdb)
+        self.attn_combine(test)
+        ** *AttributeError: 'torch.Size'
+        object
+        has
+        no
+        attribute
+        'dim'
+        (Pdb)
+        attn_combine = nn.Linear(600, 300)
+        (Pdb)
+        attn_combine(test)
+        ** *AttributeError: 'torch.Size'
+        object
+        has
+        no
+        attribute
+        'dim'
+        (Pdb)
+        type(test)
+        <
+        
+        class 'torch.Size'>
+        
+        (Pdb)
+        test = torch.cat((embedded.unsqueeze(1), attn_applied), 1)
+        (Pdb)
+        self.attn(test)
+        ** *RuntimeError: size
+        mismatch, m1: [510 x 600], m2: [1200 x 50]
+        at / opt / conda / conda - bld / pytorch - cpu_1532576596369 / work / aten / src / TH / generic / THTensorMath.cpp: 2070
+        (Pdb)
+        """
+        # pdb.set_trace()
+        # output = torch.cat((embedded[0], attn_applied[0]), 1)
+        # pdb.set_trace()
+        # output = self.attn_combine(output).unsqueeze(0)
+        # pdb.set_trace()
+        # output = F.relu(output)
+        output = F.relu(embedded)
         output, hidden = self.gru(output, hidden)
         # BEGIN SANS ATTN MODEL #
         # if hidden.size()[2] == 480 or embedded.size()[2] == 480:
-        #     pdb.set_trace()
         # output, hidden = self.gru(embedded, hidden)
 
         # output = F.log_softmax(self.out(output[0]), dim=1)
         output = F.log_softmax(self.out(output), dim=2)
-        return output, hidden, attn_weights
+        # return output, hidden, attn_weights
+        return output, hidden, hidden
 
     def initHidden(self):
         result = torch.zeros(1, 1, self.hidden_size)
@@ -341,7 +392,6 @@ class MED:
                 self.manualEval(test, self.test, encoder, decoder)
             # if epoch > 20:
             #     print("Hit 'c' to continue, and 'q' to quit")
-            #     pdb.set_trace()
 
         # TODO make plotting into a switch
         # p = Plot()
@@ -361,6 +411,9 @@ class MED:
         target_variable, target_mask = self.pad(target_variable, self.train)
         # target_variable = torch.stack(target_variable).squeeze(-1)
         # target_mask = target_mask.unsqueeze(-1)
+        # TODO I believe Transposing is the correct things to do
+        # input_variable = input_variable.t()
+        # target_variable = target_variable.t()
 
         # input_length = input_variable.shape[1]
         # target_length = target_variable.shape[1]
@@ -385,9 +438,10 @@ class MED:
         # encoder(input_variable[0], encoder_hidden)
         # THE ABOVE WORKS
         encoder_output, encoder_hidden = encoder(input_variable, encoder_hidden, input_mask)
-        # TEMP FIX TODO CLEAN UP
-        # encoder_outputs = encoder_output[0][0]
-        encoder_outputs = encoder_output
+
+        # TODO I'm pretty sure this is correct. Enocoder output is batch x length x dim
+        # decoder needs time step x dim iteratively over the length
+        encoder_outputs = encoder_output.permute(1, 0, 2)
         # encoder_output, encoder_hidden = encoder(input_variable, encoder_hidden)
         # encoder_outputs[ei] = encoder_output[0][0]
 
@@ -423,7 +477,7 @@ class MED:
                 # TODO delete this once loss is figured out
                 # decoder_output, decoder_hidden, decoder_attention = decoder(
                 decoder_output, decoder_hidden, attn_weights = decoder(
-                        decoder_input, decoder_hidden, encoder_outputs, mask)
+                        decoder_input, decoder_hidden, encoder_outputs[di], mask)
                 decoder_out.append(decoder_output)
                 # TODO here's where beam search and n-best come from
                 topv, topi = decoder_output.data.topk(1)
@@ -435,7 +489,6 @@ class MED:
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
                 loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
-                # pdb.set_trace()
                 # loss += criterion(decoder_output, target_variable[di])
             # if ni == EOS_token:
                 # break
@@ -477,7 +530,6 @@ class MED:
 
         # TODO getting weird dimensionalities.
         # input_variable.t() seems to help, but isn't the whole answer
-        # pdb.set_trace()
         encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden, input_mask)
         encoder_outputs = encoder_output
 
@@ -497,9 +549,8 @@ class MED:
             target_mask = target_mask.cuda() if use_cuda else target_mask
             # TODO delete this once loss is figured out
             # decoder_output, decoder_hidden, decoder_attention = decoder(
-            # pdb.set_trace()
             decoder_output, decoder_hidden = decoder(
-                    decoder_input, decoder_hidden, encoder_outputs, target_mask)
+                    decoder_input, decoder_hidden, encoder_outputs[di], target_mask)
             decoder_out.append(decoder_output)
             # TODO here's where beam search and n-best come from
             topv, topi = decoder_output.data.topk(1)
