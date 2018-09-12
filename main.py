@@ -220,19 +220,20 @@ class MED:
         longest = max([x.size()[0] for x in seq])
         # hack to make padding work for the longest seq
         longest += 1
-        if use_cuda:
-            pad = lambda x: torch.cat((
-                torch.cuda.LongTensor(
-                    [lang.word2index['</S>']] * (longest - x.size()[0])
-                )
-            ))
-        else:
-            pad = lambda x: torch.cat((
-                x.squeeze(-1),
-                torch.LongTensor(
-                    [lang.word2index['</S>']] * (longest - x.size()[0])
-                )
-            ))
+        # if use_cuda:
+        pad = lambda x: torch.cat((
+            torch.cuda.LongTensor(
+                [lang.word2index['</S>']] * (longest - x.size()[0])
+            )
+        ))
+        # else:
+        cpupad = lambda x: torch.cat((
+            x.squeeze(-1),
+            torch.LongTensor(
+                [lang.word2index['</S>']] * (longest - x.size()[0])
+            )
+        ))
+        pdb.set_trace()
         newseq = torch.stack([pad(s) for s in seq])
         mask = torch.stack([self.build_mask(x, longest) for x in seq])
         return newseq, mask
