@@ -72,7 +72,7 @@ class EncoderRNN(nn.Module):
         # mask.unsqueeze(-1)) * embedded
         # convert mask to mask size
         mask = mask.unsqueeze(2)
-        mask = mask.repeat(1, 1, 300)
+        mask = mask.repeat(1, 1, self.hidden_size)
         # TODO is this the correct place to apply the mask
         embedded = embedded * mask
         # embedded = self.dropout(embedded)
@@ -117,75 +117,37 @@ class AttnDecoderRNN(nn.Module):
         # DLK---I don't think this is required
         # embedded = self.embedding(input).view(1, 1, -1)
         embedded = self.embedding(input)
-        mask = mask.unsqueeze(2)
-        mask = mask.repeat(1, 1, 600)
-        embedded = embedded * mask
+        embedded = embedded.squeeze(1).unsqueeze(0)
+        mask = mask.squeeze(1).unsqueeze(0)
         embedded = self.dropout(embedded)
-
-
-        # embedded = embedded.squeeze(1)
-        # hidden = hidden.squeeze(0)
-        #
-        # attn_weights = F.softmax(
-        #     self.attn(torch.cat((embedded, hidden), -1)))
-        # shaping stuff
-        # todo is this correct
-        # pdb.set_trace()
-        # attn_applied = torch.bmm(attn_weights.unsqueeze(-1),
-        #                          encoder_outputs.unsqueeze(1))
-        """
-        last attempt:
-        (Pdb)
-        torch.cat((embedded.unsqueeze(1), attn_applied), 1).shape
-        torch.Size([10, 51, 600])
-        (Pdb)
-        test = torch.cat((embedded.unsqueeze(1), attn_applied), 1).shape
-        (Pdb)
-        self.attn_combine(test)
-        ** *AttributeError: 'torch.Size'
-        object
-        has
-        no
-        attribute
-        'dim'
-        (Pdb)
-        attn_combine = nn.Linear(600, 300)
-        (Pdb)
-        attn_combine(test)
-        ** *AttributeError: 'torch.Size'
-        object
-        has
-        no
-        attribute
-        'dim'
-        (Pdb)
-        type(test)
-        <
-        
-        class 'torch.Size'>
-        
-        (Pdb)
-        test = torch.cat((embedded.unsqueeze(1), attn_applied), 1)
-        (Pdb)
-        self.attn(test)
-        ** *RuntimeError: size
-        mismatch, m1: [510 x 600], m2: [1200 x 50]
-        at / opt / conda / conda - bld / pytorch - cpu_1532576596369 / work / aten / src / TH / generic / THTensorMath.cpp: 2070
-        (Pdb)
-        """
-        # pdb.set_trace()
-        # output = torch.cat((embedded[0], attn_applied[0]), 1)
-        # pdb.set_trace()
-        # output = self.attn_combine(output).unsqueeze(0)
-        # pdb.set_trace()
+        '''
+        # atth_weights is coming in at 10, 50, 1)
+        # Is this correct?
+        attn_weights = F.softmax(
+                                self.attn(torch.cat(
+                                    (embedded, hidden), -1)
+                                    ), dim=2
+                                )
+        '''
+        mask = mask.unsqueeze(2)
+        mask = mask.repeat(1, 1, self.hidden_size)
+        embedded = embedded * mask
+        '''
+        # torch.bmm = (b, n, m) @ (b, m, p) -> (b, n, p)
+        attn_weights = attn_weights.squeeze(0).unsqueeze(-1)
+        encoder_outputs = encoder_outputs.unsqueeze(1)
+        pdb.set_trace()
+        attn_applied = torch.bmm(attn_weights,
+                                 encoder_outputs)
+        emb = embedded.squeeze(0).unsqueeze(1).repeat(1, 50, 1)
+        output = torch.cat((emb, attn_applied), -1)
+        pdb.set_trace()
+        output = self.attn_combine(output).view(config['batch size'], -1)
         # output = F.relu(output)
+        '''
+        embedded = embedded.squeeze(0).unsqueeze(1)
         output = F.relu(embedded)
         output, hidden = self.gru(output, hidden)
-        # BEGIN SANS ATTN MODEL #
-        # if hidden.size()[2] == 480 or embedded.size()[2] == 480:
-        # output, hidden = self.gru(embedded, hidden)
-
-        # output = F.log_softmax(self.out(output[0]), dim=1)
         output = F.log_softmax(self.out(output), dim=2)
         # return output, hidden, attn_weights
         return output, hidden, hidden
@@ -271,22 +233,24 @@ class MED:
         longest = max([x.size()[0] for x in seq])
         # hack to make padding work for the longest seq
         longest += 1
-        # if use_cuda:
-        pad = lambda x: torch.cat((
-            torch.cuda.LongTensor(
-                [lang.word2index['</S>']] * (longest - x.size()[0])
-            )
-        ))
-        # else:
-        cpupad = lambda x: torch.cat((
-            x.squeeze(-1),
-            torch.LongTensor(
-                [lang.word2index['</S>']] * (longest - x.size()[0])
-            )
-        ))
-        pdb.set_trace()
+        if use_cuda:
+            pad = lambda x: torch.cat((
+                x.squeeze(-1),
+                torch.cuda.LongTensor(
+                    [lang.word2index['</S>']] * (longest - x.size()[0])
+                )
+            ))
+        else:
+            pad = lambda x: torch.cat((
+                x.squeeze(-1),
+                torch.LongTensor(
+                    [lang.word2index['</S>']] * (longest - x.size()[0])
+                )
+            ))
         newseq = torch.stack([pad(s) for s in seq])
         mask = torch.stack([self.build_mask(x, longest) for x in seq])
+        if use_cuda:
+            mask = mask.cuda()
         return newseq, mask
 
     def build_mask(self, seq, longest):
@@ -530,7 +494,7 @@ class MED:
 
         # TODO getting weird dimensionalities.
         # input_variable.t() seems to help, but isn't the whole answer
-        encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden, input_mask)
+        encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden, input_mask.t())
         encoder_outputs = encoder_output
 
         decoder_input = torch.LongTensor([[SOS_token]])  # SOS
@@ -549,8 +513,13 @@ class MED:
             target_mask = target_mask.cuda() if use_cuda else target_mask
             # TODO delete this once loss is figured out
             # decoder_output, decoder_hidden, decoder_attention = decoder(
-            decoder_output, decoder_hidden = decoder(
-                    decoder_input, decoder_hidden, encoder_outputs[di], target_mask)
+            try:
+                # TODO encoder_outputs[0][di] mucking things up
+                decoder_output, decoder_hidden, fake_attn = decoder(
+                    decoder_input, decoder_hidden, encoder_outputs[0][0], target_mask)
+                    # decoder_input, decoder_hidden, encoder_outputs[0][di], target_mask)
+            except:
+                pdb.set_trace()
             decoder_out.append(decoder_output)
             # TODO here's where beam search and n-best come from
             topv, topi = decoder_output.data.topk(1)
