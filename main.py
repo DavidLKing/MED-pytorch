@@ -295,9 +295,9 @@ class MED:
 
                 place += config['batch size']
 
-                criterion = nn.NLLLoss()
+                # criterion = nn.NLLLoss()
                 # criterion = nn.MSELoss()
-                # criterion = nn.CrossEntropyLoss()
+                criterion = nn.CrossEntropyLoss()
 
                 # TODO MAKE SURE MINITBATCHING IS ACTUALLY MAKING MINIBATCHES
                 # TODO should self.train be 'lang' here?
@@ -451,6 +451,13 @@ class MED:
 
                 decoder_input = ni
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+                
+                # TROUBLESHOOTING
+                # print("ni", ni)
+                # print("di", di)
+                # print("target var", target_variable.t()[di])
+                # print('same?', ni.squeeze(1) == target_variable.t()[di])
+                # pdb.set_trace()
 
                 loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
                 # loss += criterion(decoder_output, target_variable[di])
@@ -535,11 +542,11 @@ class MED:
             else:
                 # ORIGINALLY THIS WAS output_lang
                 # decoded_words.append(output_lang.index2word[ni])
-                # try:
                 try:
-                    decoded_words.append(lang.index2word[ni[0][0]])
+                    decoded_words.append(lang.index2word[int(ni[0][0])])
                 except:
-                    decoded_words.append('<UNK>')
+                    pdb.set_trace()
+
 
             # decoder_input = torch.LongTensor([[ni]]))
             # decoder_input = decoder_input.cuda() if use_cuda else decoder_input
