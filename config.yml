@@ -1,16 +1,16 @@
 train: True
 eval val: True
 eval test: False
-print every: 100
+print every: 1000
 plot every: 1000
-print sample every: 500
+print sample every: 2000
 max length: 50
-batch size: 10
+batch size: 20
 epochs: 50
 encoder embed: 300
 decoder embed: 300
-dropout: 0.5
-learning rate: 0.01
+dropout: 0.0
+learning rate: 1.0
 save name: model.test.german.pkl
 save model: True
 load model: False
