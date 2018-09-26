@@ -106,8 +106,8 @@ class AttnDecoderRNN(nn.Module):
 
         self.embedding = nn.Embedding(self.output_size, self.hidden_size)
         # TODO WHY IS this over the max length? Possibly wrong from tutorial
-        self.attn = nn.Linear(self.hidden_size * 2, self.max_length)
-        # self.attn = nn.Linear(self.hidden_size * 2, self.hidden_size)
+        # self.attn = nn.Linear(self.hidden_size * 2, self.max_length)
+        self.attn = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.attn_combine = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.dropout = nn.Dropout(self.dropout_p)
         self.gru = nn.GRU(self.hidden_size, self.hidden_size, batch_first=True)
