@@ -98,16 +98,20 @@ class AttnDecoderRNN(nn.Module):
         self.attn = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.attn_combine = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.dropout = nn.Dropout(self.dropout_p)
-        self.gru = nn.GRU(self.hidden_size, self.hidden_size, batch_first=True)
+        self.gru = nn.GRU(self.hidden_size * 2, self.hidden_size, batch_first=True)
         self.out = nn.Linear(self.hidden_size, self.output_size)
 
-    def forward(self, input, hidden, encoder_outputs):
+    def forward(self, input, hidden, encoder_inputs):
         # DLK---I don't think this is required
         # embedded = self.embedding(input).view(1, 1, -1)
         embedded = self.embedding(input)
+        faruq_emb = self.embedding(encoder_inputs.unsqueeze(-1))
         # embedded = embedded.squeeze(1).unsqueeze(0)
         # mask = mask.squeeze(1).unsqueeze(0)
         embedded = self.dropout(embedded)
+        embedded = torch.cat((embedded, faruq_emb), -1)
+        # TODO currently forcing faruq attn, make this an option
+        # faruq, badh, or both
         output, hidden = self.gru(embedded, hidden)
         output = F.log_softmax(self.out(output), dim=2)
         return output, hidden
@@ -332,6 +336,39 @@ class MED:
         # p = Plot()
         # p.showPlot(plot_losses)
 
+    def faruq_filter(self, str_array, length, lang):
+        return_array = []
+        for string in str_array:
+            if len(string) == 1:
+                return_array.append(string)
+        # return_array.append(EOS_token)
+        return_array.append('</S>')
+        while len(return_array) < length:
+            return_array.append('<EPS>')
+        assert(len(return_array) == length)
+        return return_array
+                
+
+
+    def faruqui(self, input_variable, input_lens, lang):
+        # FARUQUI Attention vector: [self.train.index2word[int(x)] for x in input_variable.t()[di+3]]
+        collected = []
+        # convert back to text
+        for di in range(input_variable.shape[0]):
+            time_step = [self.train.index2word[int(x)] for x in input_variable[di]]
+            # remove grammatical features
+            time_step = self.faruq_filter(time_step, int(input_variable.shape[1]), lang)
+            #convert back to numpy array
+            # time_step = np.asarray([lang.word2index[x] for x in time_step])
+            time_step = ([lang.word2index[x] for x in time_step])
+            collected.append(time_step)
+        # collected = np.asarray(collected)
+        if use_cuda:
+            collected = torch.LongTensor.cuda(collected)
+        else:
+            collected = torch.LongTensor(collected)
+        return collected
+
     def train_step(self, input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer,
                    criterion,
                    max_length=config['max length'], teacher_forcing_ratio=0.5):
@@ -383,7 +420,8 @@ class MED:
         # use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
         use_teacher_forcing = False
 
-        decoder_out = []
+
+        faruqui_attn = self.faruqui(input_variable, input_len, self.train)
 
         if use_teacher_forcing:
             # TODO be ready to fix this
@@ -396,16 +434,19 @@ class MED:
             # Without teacher forcing: use its own predictions as the next input
             decoder_out = []
             # TODO what to do about training data that is too small for a batch
+
             decoder_hidden = decoder_hidden.view(1, config['batch size'], -1)
             for di in range(target_variable.size()[1]):
 
-                if di in range(len(encoder_output)):
-                    orig_input = encoder_output[di]
+                if di in range(len(input_variable)):
+                    orig_input = faruqui_attn.t()[di]
                 else:
                     orig_input = self.train.word2index['<EPS>']
+                    orig_input = orig_input.repeat(config['batch size'], 1)
                 decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, orig_input)
                 # TODO here's where beam search and n-best come from
                 topv, topi = decoder_output.data.topk(1)
+                # pdb.set_trace()
                 ni = topi.squeeze(-1)
                 decoder_out.append(ni)
                 if len(decoder_out) > 1:
