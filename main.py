@@ -438,10 +438,12 @@ class MED:
             decoder_hidden = decoder_hidden.view(1, config['batch size'], -1)
             for di in range(target_variable.size()[1]):
 
-                if di in range(len(input_variable)):
+                if di in range(len(input_variable.t())):
                     orig_input = faruqui_attn.t()[di]
                 else:
-                    orig_input = self.train.word2index['<EPS>']
+                    orig_input = torch.LongTensor([self.train.word2index['<EPS>']])
+                    if use_cuda:
+                        orig_input = orig_input.cuda()
                     orig_input = orig_input.repeat(config['batch size'], 1)
                 decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, orig_input)
                 # TODO here's where beam search and n-best come from
@@ -482,7 +484,8 @@ class MED:
     def evaluate(self, encoder, decoder, lang, sentence, max_length=config['max length']):
         # ORIGINALLY THIS WAS input_lang
         input_variable = self.variableFromSentence(lang, sentence)
-        input_length = input_variable.size()[0]
+        input_len = input_variable.size()[0]
+        faruqui_attn = self.faruqui(input_variable.t(), input_len, self.train)
         # input_mask = torch.ones(input_length).unsqueeze(-1)
         # input_mask = input_mask.cuda() if use_cuda else input_mask
 
@@ -493,7 +496,7 @@ class MED:
 
         # TODO getting weird dimensionalities.
         # input_variable.t() seems to help, but isn't the whole answer
-        encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden, [input_length])
+        encoder_output, encoder_hidden = encoder(input_variable.t(), encoder_hidden, [input_len])
         # encoder_output, encoder_hidden = encoder(input_variable, encoder_hidden)
         encoder_outputs = encoder_output
 
@@ -508,11 +511,15 @@ class MED:
         decoder_out = []
         decoder_attentions = torch.zeros(max_length, max_length)
 
-        for di in range(max_length):
-            if di in range(len(encoder_output)):
-                orig_input = encoder_output[di]
+        for di in range(len(input_variable.t())):
+
+            # TODO is this necessary for eval?
+            if di in range(len(input_variable.t())):
+                orig_input = faruqui_attn.t()[di]
             else:
-                orig_input = self.train.word2index['<EPS>']
+                orig_input = torch.LongTensor([self.train.word2index['<EPS>']])
+                if use_cuda:
+                    orig_input = orig_input.cuda()
 
             # TODO encoder_outputs[0][di] mucking things up
             decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, orig_input)
