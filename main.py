@@ -363,10 +363,9 @@ class MED:
             time_step = ([lang.word2index[x] for x in time_step])
             collected.append(time_step)
         # collected = np.asarray(collected)
+        collected = torch.LongTensor(collected)
         if use_cuda:
-            collected = torch.LongTensor.cuda(collected)
-        else:
-            collected = torch.LongTensor(collected)
+            collected = collected.cuda()
         return collected
 
     def train_step(self, input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer,
@@ -511,7 +510,7 @@ class MED:
         decoder_out = []
         decoder_attentions = torch.zeros(max_length, max_length)
 
-        for di in range(len(input_variable.t())):
+        for di in range(len(input_variable)):
 
             # TODO is this necessary for eval?
             if di in range(len(input_variable.t())):
@@ -524,26 +523,24 @@ class MED:
             # TODO encoder_outputs[0][di] mucking things up
             decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, orig_input)
             # decoder_input, decoder_hidden, encoder_outputs[0][di], target_mask)
-            decoder_out.append(decoder_output)
+            # decoder_out.append(decoder_output)
             # TODO here's where beam search and n-best come from
             topv, topi = decoder_output.data.topk(1)
             ni = topi.squeeze(-1)
 
-            decoder_out.append(ni)
+            # decoder_out.append(ni)
             
             decoder_input = ni
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-            if ni[0][0] == EOS_token:
-                decoded_words.append('<EOS>')
+            if int(ni) in [EOS_token, SOS_token, EPS_token, PAD_token]:
+                decoded_words.append(lang.index2word[int(ni)])
                 break
             else:
                 # ORIGINALLY THIS WAS output_lang
                 # decoded_words.append(output_lang.index2word[ni])
-                decoded_words.append(lang.index2word[int(ni[0][0])])
-
-
-            # decoder_input = torch.LongTensor([[ni]]))
-            # decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+                decoded_words.append(lang.index2word[int(ni)])
+            # print("decoder words", decoded_words)
+            # pdb.set_trace()
 
         return decoded_words, decoder_attentions[:di + 1]
 
