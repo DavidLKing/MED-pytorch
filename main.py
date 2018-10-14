@@ -67,13 +67,10 @@ class EncoderRNN(nn.Module):
         - **output** (batch, seq_len, hidden_size): variable containing the encoded features of the input sequence
         - **hidden** (num_layers * num_directions, batch, hidden_size): variable containing the features in the hidden state h
         """
-        try:
-            embedded = self.embedding(input_var)
-            embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
-            output, hidden = self.rnn(embedded, hidden)
-            output, _ = torch.nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
-        except:
-            pdb.set_trace()
+        embedded = self.embedding(input_var)
+        embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
+        output, hidden = self.rnn(embedded, hidden)
+        output, _ = torch.nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
         return output, hidden
 
     def initHidden(self, size):
@@ -106,10 +103,27 @@ class AttnDecoderRNN(nn.Module):
         # embedded = self.embedding(input).view(1, 1, -1)
         embedded = self.embedding(input)
         faruq_emb = self.embedding(encoder_inputs.unsqueeze(-1))
+        print("input shape", input.shape)
+        print("encoder_input shape", encoder_inputs.shape)
+        print("embedded shape", embedded.shape)
+        print("faruq_emb.shape", faruq_emb.shape)
         # embedded = embedded.squeeze(1).unsqueeze(0)
         # mask = mask.squeeze(1).unsqueeze(0)
         embedded = self.dropout(embedded)
-        embedded = torch.cat((embedded, faruq_emb), -1)
+        try:
+            embedded = torch.cat((embedded, faruq_emb), -1)
+        except:
+            pdb.set_trace()
+        """
+        Weirdness:
+        input shape torch.Size([1, 1])
+        encoder_input shape torch.Size([])
+        embedded shape torch.Size([1, 1, 600])
+        faruq_emb.shape torch.Size([1, 600])
+        > d:\dk\bin\git\med-pytorch\main.py(119)forward()
+        -> output, hidden = self.gru(embedded, hidden)
+        (Pdb)
+        """
         # TODO currently forcing faruq attn, make this an option
         # faruq, badh, or both
         output, hidden = self.gru(embedded, hidden)
@@ -346,6 +360,7 @@ class MED:
         while len(return_array) < length:
             return_array.append('<EPS>')
         assert(len(return_array) == length)
+        # pdb.set_trace()
         return return_array
                 
 
@@ -443,7 +458,7 @@ class MED:
                     orig_input = torch.LongTensor([self.train.word2index['<EPS>']])
                     if use_cuda:
                         orig_input = orig_input.cuda()
-                    orig_input = orig_input.repeat(config['batch size'], 1)
+                    orig_input = orig_input.repeat(config['batch size'], 1).squeeze(-1)
                 decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, orig_input)
                 # TODO here's where beam search and n-best come from
                 topv, topi = decoder_output.data.topk(1)
@@ -484,7 +499,13 @@ class MED:
         # ORIGINALLY THIS WAS input_lang
         input_variable = self.variableFromSentence(lang, sentence)
         input_len = input_variable.size()[0]
-        faruqui_attn = self.faruqui(input_variable.t(), input_len, self.train)
+        try:
+            # TODO the .t() is currently a hack. We should make this more elegant/robust/stable
+            # the faruqui function input and this input don't exactly match
+            # we should make them match...
+            faruqui_attn = self.faruqui(input_variable.t(), input_len, self.train)
+        except:
+            pdb.set_trace()
         # input_mask = torch.ones(input_length).unsqueeze(-1)
         # input_mask = input_mask.cuda() if use_cuda else input_mask
 
@@ -516,7 +537,7 @@ class MED:
             if di in range(len(input_variable.t())):
                 orig_input = faruqui_attn.t()[di]
             else:
-                orig_input = torch.LongTensor([self.train.word2index['<EPS>']])
+                orig_input = torch.LongTensor([self.train.word2index['<EPS>']]).squeeze(-1)
                 if use_cuda:
                     orig_input = orig_input.cuda()
 
