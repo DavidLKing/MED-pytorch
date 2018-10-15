@@ -115,7 +115,7 @@ class AttnDecoderRNN(nn.Module):
         except:
             pdb.set_trace()
         """
-        Weirdness:
+        Weirdness (happens with multiple batch sizes):
         input shape torch.Size([1, 1])
         encoder_input shape torch.Size([])
         embedded shape torch.Size([1, 1, 600])
