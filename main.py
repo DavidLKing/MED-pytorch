@@ -110,10 +110,10 @@ class AttnDecoderRNN(nn.Module):
         # embedded = embedded.squeeze(1).unsqueeze(0)
         # mask = mask.squeeze(1).unsqueeze(0)
         embedded = self.dropout(embedded)
-        try:
-            embedded = torch.cat((embedded, faruq_emb), -1)
-        except:
-            pdb.set_trace()
+        # try:
+        embedded = torch.cat((embedded, faruq_emb), -1)
+        # except:
+        #     pdb.set_trace()
         """
         Weirdness (happens with multiple batch sizes):
         input shape torch.Size([1, 1])
@@ -499,13 +499,10 @@ class MED:
         # ORIGINALLY THIS WAS input_lang
         input_variable = self.variableFromSentence(lang, sentence)
         input_len = input_variable.size()[0]
-        try:
-            # TODO the .t() is currently a hack. We should make this more elegant/robust/stable
-            # the faruqui function input and this input don't exactly match
-            # we should make them match...
-            faruqui_attn = self.faruqui(input_variable.t(), input_len, self.train)
-        except:
-            pdb.set_trace()
+        # TODO the .t() is currently a hack. We should make this more elegant/robust/stable
+        # the faruqui function input and this input don't exactly match
+        # we should make them match...
+        faruqui_attn = self.faruqui(input_variable.t(), input_len, self.train)
         # input_mask = torch.ones(input_length).unsqueeze(-1)
         # input_mask = input_mask.cuda() if use_cuda else input_mask
 
@@ -537,12 +534,19 @@ class MED:
             if di in range(len(input_variable.t())):
                 orig_input = faruqui_attn.t()[di]
             else:
-                orig_input = torch.LongTensor([self.train.word2index['<EPS>']]).squeeze(-1)
+                orig_input = torch.LongTensor([self.train.word2index['<EPS>']])
                 if use_cuda:
                     orig_input = orig_input.cuda()
 
             # TODO encoder_outputs[0][di] mucking things up
+            print("orig_input", orig_input)
+            print("orig shape", orig_input.shape)
+            if len(orig_input.shape) != 1:
+                pdb.set_trace()
+            # try:
             decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, orig_input)
+            # except:
+            #     pdb.set_trace()
             # decoder_input, decoder_hidden, encoder_outputs[0][di], target_mask)
             # decoder_out.append(decoder_output)
             # TODO here's where beam search and n-best come from
