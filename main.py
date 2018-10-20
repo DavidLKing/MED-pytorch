@@ -103,10 +103,10 @@ class AttnDecoderRNN(nn.Module):
         # embedded = self.embedding(input).view(1, 1, -1)
         embedded = self.embedding(input)
         faruq_emb = self.embedding(encoder_inputs.unsqueeze(-1))
-        print("input shape", input.shape)
-        print("encoder_input shape", encoder_inputs.shape)
-        print("embedded shape", embedded.shape)
-        print("faruq_emb.shape", faruq_emb.shape)
+        # print("input shape", input.shape)
+        # print("encoder_input shape", encoder_inputs.shape)
+        # print("embedded shape", embedded.shape)
+        # print("faruq_emb.shape", faruq_emb.shape)
         # embedded = embedded.squeeze(1).unsqueeze(0)
         # mask = mask.squeeze(1).unsqueeze(0)
         embedded = self.dropout(embedded)
@@ -222,7 +222,7 @@ class MED:
             pad = lambda x: torch.cat((
                 x.squeeze(-1),
                 torch.cuda.LongTensor(
-                    [lang.word2index['<PAD>']] * (longest - x.size()[0])
+                    [lang.word2index['<PAD>']] * (longest - (x.size()[0] + 1))
                 )
             ))
         else:
@@ -230,13 +230,15 @@ class MED:
             pad = lambda x: torch.cat((
                 x.squeeze(-1),
                 torch.LongTensor(
-                    [lang.word2index['<PAD>']] * (longest - x.size()[0])
+                    [lang.word2index['<PAD>']] * (longest - (x.size()[0] - 1))
                 )
             ))
+
         input_idx = np.argsort(input_lens)[::-1]
         new_lens = [input_lens[x] for x in input_idx]
         newseq = [seq[x] for x in input_idx]
         newseq = torch.stack([pad(s) for s in newseq])
+        # pdb.set_trace()
         # mask = torch.stack([self.build_mask(x, longest) for x in seq])
         # if use_cuda:
         #     mask = mask.cuda()
@@ -436,6 +438,7 @@ class MED:
 
 
         faruqui_attn = self.faruqui(input_variable, input_len, self.train)
+        # pdb.set_trace()
 
         if use_teacher_forcing:
             # TODO be ready to fix this
@@ -539,8 +542,8 @@ class MED:
                     orig_input = orig_input.cuda()
 
             # TODO encoder_outputs[0][di] mucking things up
-            print("orig_input", orig_input)
-            print("orig shape", orig_input.shape)
+            # print("orig_input", orig_input)
+            # print("orig shape", orig_input.shape)
             if len(orig_input.shape) != 1:
                 pdb.set_trace()
             # try:
