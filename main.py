@@ -317,7 +317,8 @@ class MED:
                                                      place, place / n_iters * 100, print_loss_avg))
 
                     # SAMPLING for stdout monitoring
-                    if place % config['print sample every'] == 0 and place > 500:
+                    # if place % config['print sample every'] == 0 and place > 500:
+                    if place % config['print sample every'] == 0:
                         # if True:
                         """
                         TODO the iter > 500 thing is a hack. Do we need to be concerned that
@@ -476,6 +477,9 @@ class MED:
                 decoder_input = ni
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
+                print("decoder_output.squeeze(1)", decoder_output.squeeze(1))
+                print("target_variable.t()[di])", target_variable.t()[di])
+                pdb.set_trace()
                 loss += criterion(decoder_output.squeeze(1), target_variable.t()[di]) / config['batch size']
 
             if very_verbose:
