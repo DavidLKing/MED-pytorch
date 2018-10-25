@@ -69,6 +69,8 @@ class EncoderRNN(nn.Module):
         """
         embedded = self.embedding(input_var)
         embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
+        #testing with second layer
+        output, hidden = self.rnn(embedded, hidden)
         output, hidden = self.rnn(embedded, hidden)
         output, _ = torch.nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
         return output, hidden
@@ -126,6 +128,8 @@ class AttnDecoderRNN(nn.Module):
         """
         # TODO currently forcing faruq attn, make this an option
         # faruq, badh, or both
+        # testing with second layer
+        output, hidden = self.gru(embedded, hidden)
         output, hidden = self.gru(embedded, hidden)
         output = F.log_softmax(self.out(output), dim=2)
         return output, hidden
@@ -239,10 +243,10 @@ class MED:
         newseq = [seq[x] for x in input_idx]
         newseq = torch.stack([pad(s) for s in newseq])
         # pdb.set_trace()
-        # mask = torch.stack([self.build_mask(x, longest) for x in seq])
-        # if use_cuda:
-        #     mask = mask.cuda()
-        return newseq, new_lens #, mask
+        mask = torch.stack([self.build_mask(x, longest) for x in seq])
+        if use_cuda:
+            mask = mask.cuda()
+        return newseq, new_lens, mask
 
     def build_mask(self, seq, longest):
         ones = torch.ones(len(seq))
@@ -395,10 +399,10 @@ class MED:
         decoder_optimizer.zero_grad()
 
         # input_variable, input_mask = self.pad(input_variable, self.train)
-        input_variable, input_len = self.pad(input_variable, self.train)
+        input_variable, input_len, input_mask = self.pad(input_variable, self.train)
         # input_variable = torch.stack(input_variable).squeeze(-1)
         # input_mask = input_mask.unsqueeze(-1)
-        target_variable, target_len = self.pad(target_variable, self.train)
+        target_variable, target_len, target_mask = self.pad(target_variable, self.train)
         # target_variable, target_mask = self.pad(target_variable, self.train)
         # target_variable = torch.stack(target_variable).squeeze(-1)
         # target_mask = target_mask.unsqueeze(-1)
@@ -477,10 +481,18 @@ class MED:
                 decoder_input = ni
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
-                print("decoder_output.squeeze(1)", decoder_output.squeeze(1))
-                print("target_variable.t()[di])", target_variable.t()[di])
-                pdb.set_trace()
-                loss += criterion(decoder_output.squeeze(1), target_variable.t()[di]) / config['batch size']
+                # print("decoder_output.squeeze(1)", decoder_output.squeeze(1))
+                # print("target_variable.t()[di])", target_variable.t()[di])
+                # TODO I'm not sure this is the best way to do it
+                # if 0 in target_variable.t()[di]:
+                #     pdb.set_trace()
+                for idx in range(config['batch size']):
+                        if not 0 in target_variable.t()[di]:
+                            loss += criterion(decoder_output.squeeze(1), target_variable.t()[di] / config['batch size']
+                            # loss += criterion(decoder_output[idx].squeeze(1), target_variable.t()[di][idx]) / config['batch size']
+                            # loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
+                        else:
+                            pdb.set_trace()
 
             if very_verbose:
                 for form in self.train.indices2sent(decoder_out):
@@ -564,7 +576,7 @@ class MED:
             
             decoder_input = ni
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-            if int(ni) in [EOS_token, SOS_token, EPS_token, PAD_token]:
+            if int(ni) in [EOS_token]: #, SOS_token, EPS_token, PAD_token]:
                 decoded_words.append(lang.index2word[int(ni)])
                 break
             else:
