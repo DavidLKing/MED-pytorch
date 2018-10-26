@@ -487,11 +487,23 @@ class MED:
                 # if 0 in target_variable.t()[di]:
                 #     pdb.set_trace()
                 for idx in range(config['batch size']):
-                        if not 0 in target_variable.t()[di]:
-                            loss += criterion(decoder_output.squeeze(1), target_variable.t()[di] / config['batch size']
+                        # if not 0 in target_variable.t()[di]:
+                        # TODO jUST FOR DEBUGGING
+                        # out = decoder_output.squeeze(1)
+                        # tar = target_variable.t()[di]
+                        # print("tgt var:", target_variable.t()[di])
+                        # print("idx var:", target_variable.t()[di][idx])
+                        # print('idx loss', idx_loss)
+                        if not int(target_variable.t()[di][idx]) == PAD_token:
+                            idx_loss = criterion(decoder_output.squeeze(1)[idx].unsqueeze(0),
+                                                 target_variable.t()[di][idx].unsqueeze(0) / config['batch size'])
+                            loss += idx_loss
                             # loss += criterion(decoder_output[idx].squeeze(1), target_variable.t()[di][idx]) / config['batch size']
                             # loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
+                            print("is not a pad token")
+                        #     pdb.set_trace()
                         else:
+                            print("is a pad token")
                             pdb.set_trace()
 
             if very_verbose:
