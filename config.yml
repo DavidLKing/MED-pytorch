@@ -6,12 +6,12 @@ plot every: 1000
 print sample every: 100
 max length: 50
 num layers: 2
-batch size: 10
+batch size: 1
 epochs: 50
 encoder embed: 300
 decoder embed: 300
 dropout: 0.0
-learning rate: 1.0
+learning rate: 0.1
 save name: model.test.german.pkl
 save model: False
 load model: False

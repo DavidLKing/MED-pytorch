@@ -278,14 +278,14 @@ class MED:
         print_loss_total = 0  # Reset every print_every
         plot_loss_total = 0  # Reset every plot_every
 
-        # encoder_optimizer = optim.Adadelta(encoder.parameters(), lr=learning_rate)
-        encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
-        # decoder_optimizer = optim.Adadelta(decoder.parameters(), lr=learning_rate)
-        decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+        encoder_optimizer = optim.Adadelta(encoder.parameters(), lr=learning_rate)
+        # encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
+        decoder_optimizer = optim.Adadelta(decoder.parameters(), lr=learning_rate)
+        # decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
 
-        # criterion = nn.NLLLoss()
+        criterion = nn.NLLLoss()
         # criterion = nn.MSELoss()
-        criterion = nn.CrossEntropyLoss()
+        # criterion = nn.CrossEntropyLoss()
 
         losses = []
 
@@ -429,8 +429,8 @@ class MED:
         # pack = torch.nn.utils.rnn.pack_padded_sequence(self.pad(input_variable, self.train), seq_len, batch_first=True)
 
         # added *2 for bidirectional input
-        encoder_outputs = torch.zeros(max_length, encoder.hidden_size * 2)
-        encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
+        # encoder_outputs = torch.zeros(max_length, encoder.hidden_size * 2)
+        # encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         encoder_output, encoder_hidden = encoder(input_variable, encoder_hidden, input_len)
 
@@ -438,7 +438,7 @@ class MED:
         # decoder needs time step x dim iteratively over the length
 
         encoder_outputs = encoder_output.permute(1, 0, 2)
-        encoder_outputs = encoder_output
+        # encoder_outputs = encoder_output
         # pdb.set_trace()
 
         decoder_input = torch.LongTensor([[SOS_token]])
