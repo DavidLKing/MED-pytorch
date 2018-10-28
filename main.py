@@ -55,7 +55,7 @@ class EncoderRNN(nn.Module):
         self.dropout_p = dropout_p
         self.dropout = nn.Dropout(self.dropout_p)
         # self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=True)
-        self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True, batch_first=True, num_layers=config['num layers'])
+        self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True, batch_first=False, num_layers=config['num layers'])
         self.hack_counter = 0
 
     def forward(self, input_var, hidden, input_lengths):
@@ -365,7 +365,7 @@ class MED:
                 self.manualEval(test, self.train, encoder, decoder)
             # if epoch > 20:
             #     print("Hit 'c' to continue, and 'q' to quit")
-            pdb.set_trace()
+            # pdb.set_trace()
 
         # TODO make plotting into a switch
         # p = Plot()
@@ -439,7 +439,7 @@ class MED:
         
         # I'm pretty sure here's where my data is getting mangled somehow
         # encoder_outputs = encoder_output.permute(1, 0, 2)
-        encoder_outputs = encoder_output
+        encoder_outputs = encoder_output[-1]
         # pdb.set_trace()
 
         decoder_input = torch.LongTensor([[SOS_token]])
@@ -597,8 +597,8 @@ class MED:
             # TODO encoder_outputs[0][di] mucking things up
             # print("orig_input", orig_input)
             # print("orig shape", orig_input.shape)
-            if len(orig_input.shape) != 1:
-                pdb.set_trace()
+            # if len(orig_input.shape) != 1:
+            #     pdb.set_trace()
             # try:
             decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, orig_input)
             # except:
