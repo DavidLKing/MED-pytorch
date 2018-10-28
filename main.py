@@ -44,6 +44,7 @@ EOS_token = 2
 UNK_token = 3
 EPS_token = 4
 
+
 class EncoderRNN(nn.Module):
     def __init__(self, input_size, hidden_size, dropout_p, variable_lengths=False):
         super(EncoderRNN, self).__init__()
@@ -54,7 +55,8 @@ class EncoderRNN(nn.Module):
         self.dropout_p = dropout_p
         self.dropout = nn.Dropout(self.dropout_p)
         # self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=True)
-        self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True, batch_first=True)
+        self.rnn = nn.GRU(hidden_size, hidden_size, bidirectional=True, batch_first=True, num_layers=config['num layers'])
+        self.hack_counter = 0
 
     def forward(self, input_var, hidden, input_lengths):
         """
@@ -67,16 +69,19 @@ class EncoderRNN(nn.Module):
         - **output** (batch, seq_len, hidden_size): variable containing the encoded features of the input sequence
         - **hidden** (num_layers * num_directions, batch, hidden_size): variable containing the features in the hidden state h
         """
+        self.hack_counter += 1
+        # if self.hack_counter > 500:
+        # pdb.set_trace()
         embedded = self.embedding(input_var)
         embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
         #testing with second layer
-        output, hidden = self.rnn(embedded, hidden)
+        # embedded, hidden = self.rnn(embedded, hidden)
         output, hidden = self.rnn(embedded, hidden)
         output, _ = torch.nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
         return output, hidden
 
     def initHidden(self, size):
-        result = torch.zeros(2, size, self.hidden_size)
+        result = torch.zeros(2 * config['num layers'], size, self.hidden_size)
         if use_cuda:
             return result.cuda()
         else:
@@ -86,6 +91,7 @@ class EncoderRNN(nn.Module):
 class AttnDecoderRNN(nn.Module):
     def __init__(self, output_size, hidden_size, dropout_p=config['dropout'], max_length=config['max length']):
         super(AttnDecoderRNN, self).__init__()
+        self.hack_counter = 0
         self.hidden_size = hidden_size * 2
         self.output_size = output_size
         self.dropout_p = dropout_p
@@ -97,14 +103,16 @@ class AttnDecoderRNN(nn.Module):
         self.attn = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.attn_combine = nn.Linear(self.hidden_size * 2, self.hidden_size)
         self.dropout = nn.Dropout(self.dropout_p)
-        self.gru = nn.GRU(self.hidden_size * 2, self.hidden_size, batch_first=True)
+        # self.gru = nn.GRU(self.hidden_size * 2, self.hidden_size, batch_first=True, num_layers=config['num layers'])
+        self.gru = nn.GRU(self.hidden_size, self.hidden_size, batch_first=True, num_layers=config['num layers'])
         self.out = nn.Linear(self.hidden_size, self.output_size)
 
-    def forward(self, input, hidden, encoder_inputs):
+    def forward(self, inputs, hidden, encoder_inputs):
         # DLK---I don't think this is required
         # embedded = self.embedding(input).view(1, 1, -1)
-        embedded = self.embedding(input)
+        embedded = self.embedding(inputs)
         faruq_emb = self.embedding(encoder_inputs.unsqueeze(-1))
+        # pdb.set_trace()
         # print("input shape", input.shape)
         # print("encoder_input shape", encoder_inputs.shape)
         # print("embedded shape", embedded.shape)
@@ -113,9 +121,8 @@ class AttnDecoderRNN(nn.Module):
         # mask = mask.squeeze(1).unsqueeze(0)
         embedded = self.dropout(embedded)
         # try:
-        embedded = torch.cat((embedded, faruq_emb), -1)
+        # embedded = torch.cat((embedded, faruq_emb), -1)
         # except:
-        #     pdb.set_trace()
         """
         Weirdness (happens with multiple batch sizes):
         input shape torch.Size([1, 1])
@@ -128,10 +135,9 @@ class AttnDecoderRNN(nn.Module):
         """
         # TODO currently forcing faruq attn, make this an option
         # faruq, badh, or both
-        # testing with second layer
         output, hidden = self.gru(embedded, hidden)
-        output, hidden = self.gru(embedded, hidden)
-        output = F.log_softmax(self.out(output), dim=2)
+        output = self.out(output)
+        output = F.softmax(output, dim=2)
         return output, hidden
 
     def initHidden(self):
@@ -272,10 +278,20 @@ class MED:
         print_loss_total = 0  # Reset every print_every
         plot_loss_total = 0  # Reset every plot_every
 
-        encoder_optimizer = optim.Adadelta(encoder.parameters(), lr=learning_rate)
-        # encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
-        decoder_optimizer = optim.Adadelta(decoder.parameters(), lr=learning_rate)
-        # decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+        # encoder_optimizer = optim.Adadelta(encoder.parameters(), lr=learning_rate)
+        encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
+        # decoder_optimizer = optim.Adadelta(decoder.parameters(), lr=learning_rate)
+        decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+
+        # criterion = nn.NLLLoss()
+        # criterion = nn.MSELoss()
+        criterion = nn.CrossEntropyLoss()
+
+        losses = []
+
+        # weird initialization
+        # loss = 0
+        # loss.backward(retain_graph=True)
 
         for num in range(epochs):
             epoch = num
@@ -289,10 +305,6 @@ class MED:
                 # for i in range(n_iters)]/
 
                 place += config['batch size']
-
-                # criterion = nn.NLLLoss()
-                # criterion = nn.MSELoss()
-                criterion = nn.CrossEntropyLoss()
 
                 # TODO MAKE SURE MINITBATCHING IS ACTUALLY MAKING MINIBATCHES
                 # TODO should self.train be 'lang' here?
@@ -312,6 +324,7 @@ class MED:
                                            decoder, encoder_optimizer, decoder_optimizer, criterion)
                     print_loss_total += loss
                     plot_loss_total += loss
+                    losses.append(loss)
 
                     if place % print_every == 0:
                         # if True:
@@ -352,6 +365,7 @@ class MED:
                 self.manualEval(test, self.train, encoder, decoder)
             # if epoch > 20:
             #     print("Hit 'c' to continue, and 'q' to quit")
+            pdb.set_trace()
 
         # TODO make plotting into a switch
         # p = Plot()
@@ -398,14 +412,9 @@ class MED:
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
 
-        # input_variable, input_mask = self.pad(input_variable, self.train)
         input_variable, input_len, input_mask = self.pad(input_variable, self.train)
-        # input_variable = torch.stack(input_variable).squeeze(-1)
-        # input_mask = input_mask.unsqueeze(-1)
         target_variable, target_len, target_mask = self.pad(target_variable, self.train)
-        # target_variable, target_mask = self.pad(target_variable, self.train)
-        # target_variable = torch.stack(target_variable).squeeze(-1)
-        # target_mask = target_mask.unsqueeze(-1)
+
         # TODO I believe Transposing is the correct things to do
         # input_variable = input_variable.t()
         # target_variable = target_variable.t()
@@ -423,13 +432,14 @@ class MED:
         encoder_outputs = torch.zeros(max_length, encoder.hidden_size * 2)
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
-        loss = 0
-
         encoder_output, encoder_hidden = encoder(input_variable, encoder_hidden, input_len)
 
         # TODO I'm pretty sure this is correct. Enocoder output is batch x length x dim
         # decoder needs time step x dim iteratively over the length
+
         encoder_outputs = encoder_output.permute(1, 0, 2)
+        encoder_outputs = encoder_output
+        # pdb.set_trace()
 
         decoder_input = torch.LongTensor([[SOS_token]])
         # DLK lengthening for batch
@@ -457,25 +467,31 @@ class MED:
             decoder_out = []
             # TODO what to do about training data that is too small for a batch
 
-            decoder_hidden = decoder_hidden.view(1, config['batch size'], -1)
+            decoder_hidden = decoder_hidden.view(config['num layers'], config['batch size'], -1)
+            loss = 0
             for di in range(target_variable.size()[1]):
+
+                # print("on the", di, "th index")
 
                 if di in range(len(input_variable.t())):
                     orig_input = faruqui_attn.t()[di]
                 else:
                     orig_input = torch.LongTensor([self.train.word2index['<EPS>']])
-                    if use_cuda:
-                        orig_input = orig_input.cuda()
                     orig_input = orig_input.repeat(config['batch size'], 1).squeeze(-1)
+                if use_cuda:
+                    orig_input = orig_input.cuda()
                 decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden, orig_input)
                 # TODO here's where beam search and n-best come from
                 topv, topi = decoder_output.data.topk(1)
                 # pdb.set_trace()
-                ni = topi.squeeze(-1)
+                # ni = topi.squeeze(-1)
+                ni = topi.squeeze(1)
                 decoder_out.append(ni)
                 if len(decoder_out) > 1:
                     decoder_out = [torch.cat((decoder_out[0], decoder_out[1]), 1)]
-                assert(len(decoder_out) == 1)
+                assert (len(decoder_out) == 1)
+                # print(decoder_out)
+
 
 
                 decoder_input = ni
@@ -485,26 +501,38 @@ class MED:
                 # print("target_variable.t()[di])", target_variable.t()[di])
                 # TODO I'm not sure this is the best way to do it
                 # if 0 in target_variable.t()[di]:
-                #     pdb.set_trace()
-                for idx in range(config['batch size']):
-                        # if not 0 in target_variable.t()[di]:
-                        # TODO jUST FOR DEBUGGING
-                        # out = decoder_output.squeeze(1)
-                        # tar = target_variable.t()[di]
-                        # print("tgt var:", target_variable.t()[di])
-                        # print("idx var:", target_variable.t()[di][idx])
-                        # print('idx loss', idx_loss)
-                        if not int(target_variable.t()[di][idx]) == PAD_token:
-                            idx_loss = criterion(decoder_output.squeeze(1)[idx].unsqueeze(0),
-                                                 target_variable.t()[di][idx].unsqueeze(0) / config['batch size'])
-                            loss += idx_loss
-                            # loss += criterion(decoder_output[idx].squeeze(1), target_variable.t()[di][idx]) / config['batch size']
-                            # loss += criterion(decoder_output.squeeze(1), target_variable.t()[di])
-                            print("is not a pad token")
-                        #     pdb.set_trace()
-                        else:
-                            print("is a pad token")
-                            pdb.set_trace()
+
+                flattened = decoder_output.view(config['batch size'], -1)
+
+                loss_tgt = []
+                loss_out = []
+                for batch_num in range(config['batch size']):
+                    if int(target_variable.t()[di][batch_num]) != PAD_token:
+                        loss_tgt.append(target_variable.t()[di][batch_num])
+                        loss_out.append(flattened[batch_num])
+                assert(len(loss_tgt) == len(loss_out))
+                if len(loss_out) > 0:
+                    loss_tgt = torch.stack(loss_tgt)
+                    loss_out = torch.stack(loss_out)
+                    loss += criterion(loss_out, loss_tgt) # / * batch_num
+                    # print('loss_out', loss_out)
+                    # print('loss_tgt', loss_tgt)
+                    # print('loss', loss)
+
+            loss.backward(retain_graph=True)
+
+            encoder_optimizer.step()
+            decoder_optimizer.step()
+
+            # print('after optimizer call', encoder_optimizer)
+            # print(encoder_optimizer)
+            # for guess, gold in zip(decoder_out[0], target_variable):
+            #     guess_form = ''.join([self.train.index2word[int(x)] for x in guess])
+            #     gold_form = ''.join([self.train.index2word[int(x)] for x in gold])
+            #     print("guess", guess_form, "\ngold:", gold_form)
+            # pdb.set_trace()
+
+
 
             if very_verbose:
                 for form in self.train.indices2sent(decoder_out):
@@ -514,10 +542,6 @@ class MED:
             # if ni == EOS_token:
                 # break
 
-        loss.backward()
-
-        encoder_optimizer.step()
-        decoder_optimizer.step()
 
 
         # pdb.set_trace()
@@ -553,7 +577,7 @@ class MED:
 
         decoder_hidden = encoder_hidden
         # decoder_hidden = decoder_hidden.view(1,config['batch size'], -1)
-        decoder_hidden = decoder_hidden.view(1, 1, -1)
+        decoder_hidden = decoder_hidden.view(config['num layers'], 1, -1)
        
         decoded_words = []
         decoder_out = []
