@@ -436,9 +436,10 @@ class MED:
 
         # TODO I'm pretty sure this is correct. Enocoder output is batch x length x dim
         # decoder needs time step x dim iteratively over the length
-
-        encoder_outputs = encoder_output.permute(1, 0, 2)
-        # encoder_outputs = encoder_output
+        
+        # I'm pretty sure here's where my data is getting mangled somehow
+        # encoder_outputs = encoder_output.permute(1, 0, 2)
+        encoder_outputs = encoder_output
         # pdb.set_trace()
 
         decoder_input = torch.LongTensor([[SOS_token]])
