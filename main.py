@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
+
 import os
 import argparse
 import logging
+import yaml
 
 import torch
 from torch.optim.lr_scheduler import StepLR
@@ -17,8 +20,10 @@ from seq2seq.dataset import SourceField, TargetField
 from seq2seq.evaluator import Predictor
 from seq2seq.util.checkpoint import Checkpoint
 
-# USE_CUDA = torch.cuda.is_available()
-torch.device('cuda')
+if torch.cuda.is_available():
+    torch.device('cuda')
+else:
+    torch.device('cpu')
 
 try:
     raw_input          # Python 2
@@ -33,14 +38,24 @@ except NameError:
 #      # resuming from a specific checkpoint
 #      python examples/sample.py --train_path $TRAIN_PATH --dev_path $DEV_PATH --expt_dir $EXPT_PATH --load_checkpoint $CHECKPOINT_DIR
 
+with open('config.yml') as f:
+    config = yaml.safe_load(f)
+
+# TODO make sure these entirely match up with config.yml file
 parser = argparse.ArgumentParser()
+parser.add_argument('--config', action='store', dest='config',
+                    default=None,
+                    help='Path to config file')
 parser.add_argument('--train_path', action='store', dest='train_path',
+                    default=config['train_path'],
                     help='Path to train data')
 parser.add_argument('--dev_path', action='store', dest='dev_path',
+                    default=config['valid_path'],
                     help='Path to dev data')
 parser.add_argument('--expt_dir', action='store', dest='expt_dir', default='./experiment',
                     help='Path to experiment directory. If load_checkpoint is True, then path to checkpoint directory has to be provided')
 parser.add_argument('--load_checkpoint', action='store', dest='load_checkpoint',
+                    default=config['load_model'],
                     help='The name of the checkpoint to load, usually an encoded time string')
 parser.add_argument('--resume', action='store_true', dest='resume',
                     default=False,
@@ -55,6 +70,11 @@ LOG_FORMAT = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
 logging.basicConfig(format=LOG_FORMAT, level=getattr(logging, opt.log_level.upper()))
 logging.info(opt)
 
+# For building the datasets:
+max_len = config['max_length']
+def len_filter(example):
+    return len(example.src) <= max_len and len(example.tgt) <= max_len
+
 if opt.load_checkpoint is not None:
     logging.info("loading checkpoint from {}".format(os.path.join(opt.expt_dir, Checkpoint.CHECKPOINT_DIR_NAME, opt.load_checkpoint)))
     checkpoint_path = os.path.join(opt.expt_dir, Checkpoint.CHECKPOINT_DIR_NAME, opt.load_checkpoint)
@@ -66,9 +86,6 @@ else:
     # Prepare dataset
     src = SourceField()
     tgt = TargetField()
-    max_len = 50
-    def len_filter(example):
-        return len(example.src) <= max_len and len(example.tgt) <= max_len
     train = torchtext.data.TabularDataset(
         path=opt.train_path, format='tsv',
         fields=[('src', src), ('tgt', tgt)],
@@ -101,11 +118,11 @@ else:
     optimizer = None
     if not opt.resume:
         # Initialize model
-        hidden_size = 300
+        hidden_size = config['encoder embed']
         bidirectional = True
         encoder = EncoderRNN(len(src.vocab), max_len, hidden_size, bidirectional=bidirectional, rnn_cell='LSTM', variable_lengths=True)
         decoder = DecoderRNN(len(tgt.vocab), max_len, hidden_size * 2 if bidirectional else hidden_size,
-                             dropout_p=0.2, use_attention=True, bidirectional=bidirectional, rnn_cell='LSTM',
+                             dropout_p=config['dropout'], use_attention=True, bidirectional=bidirectional, rnn_cell='LSTM',
                              eos_id=tgt.eos_id, sos_id=tgt.sos_id)
         # if torch.cuda.is_available():
         #     encoder.cuda()
@@ -125,19 +142,45 @@ else:
         # optimizer.set_scheduler(scheduler)
 
     # train
-    t = SupervisedTrainer(loss=loss, batch_size=20,
-                          checkpoint_every=50,
-                          print_every=10, expt_dir=opt.expt_dir)
+    t = SupervisedTrainer(loss=loss,
+                          batch_size=config['batch size'],
+                          checkpoint_every=config['checkpoint_every'],
+                          print_every=config['print every'],
+                          expt_dir=config['expt_dir'])
+                          # expt_dir=opt.expt_dir)
 
-    seq2seq = t.train(seq2seq, train,
-                      num_epochs=30, dev_data=dev,
-                      optimizer=optimizer,
-                      teacher_forcing_ratio=0.5,
-                      resume=opt.resume)
+    if config['train']:
+        seq2seq = t.train(seq2seq, train,
+                          num_epochs=config['epochs'],
+                          dev_data=dev,
+                          optimizer=optimizer,
+                          teacher_forcing_ratio=0.5,
+                          resume=opt.resume)
 
 predictor = Predictor(seq2seq, input_vocab, output_vocab)
 
-while True:
-    seq_str = raw_input("Type in a source sequence:")
-    seq = seq_str.strip().split()
-    print(predictor.predict(seq))
+if config['eval val']:
+    # TODO add option to save output
+    correct = 0
+    total = 0
+    src = SourceField()
+    tgt = TargetField()
+    dev = torchtext.data.TabularDataset(
+        path=opt.dev_path, format='tsv',
+        fields=[('src', src), ('tgt', tgt)],
+        filter_pred=len_filter
+    )
+    for ex in dev.examples:
+        guess = predictor.predict(ex.src)
+        # [1:] tgt starts with <bos> but model output doesn't
+        if guess == ex.tgt[1:]:
+            correct += 1
+        total += 1
+    print("Val accuracy:", correct, "out of", total, correct / total)
+
+
+# old interactive testing env
+# while True:
+#     seq_str = raw_input("Type in a source sequence:")
+#     seq = seq_str.strip().split()
+#     print(predictor.predict(seq))

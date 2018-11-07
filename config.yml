@@ -1,23 +1,21 @@
-train model: True
-eval val: False
+train model: False
+eval val: True
 eval test: False
+checkpoint_every: 500
 print every: 100
 plot every: 1000
 print sample every: 100
-max length: 50
+expt_dir: experiment
+max_length: 50
 num layers: 2
-batch size: 1
+batch size: 20
 epochs: 50
 encoder embed: 300
 decoder embed: 300
-dropout: 0.0
+dropout: 0.3
 learning rate: 1.0
 save name: model.test.german.pkl
-save model: False
-load model: False
-train: data/testing/train.txt
-valid: data/testing/valid.txt
-test: data/testing/test.txt
-#train: data/german/german-task1-train
-#valid: data/german/german-task1-dev
-#test: data/german/german-task1-test
+load_model: 2018_11_06_21_33_33/
+train_path: data/german/train/data.txt
+valid_path: data/german/dev/data.txt
+test_path: data/german/test/data.txt
