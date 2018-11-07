@@ -15,7 +15,10 @@ decoder embed: 300
 dropout: 0.3
 learning rate: 1.0
 save name: model.test.german.pkl
-load_model: 2018_11_06_21_33_33/
+# load_model: 2018_11_06_21_33_33/
+load_model: 2018_11_07_12_08_14/
+# load_model: None
 train_path: data/german/train/data.txt
 valid_path: data/german/dev/data.txt
 test_path: data/german/test/data.txt
+output: output.tsv

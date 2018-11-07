@@ -10,6 +10,7 @@ Big todos:
 - [ ] Add Faruqui attention
 - [ ] Make sure config file and command line options are in sync
 - [ ] Allow saving of model outputs (predictions)
+- [ ] Clean out `results` folder upon final release
 
 `preprocess.py SIGMORPHON_FILE` generates `data.txt`, `vocab.source`, and `vocab.target`.
 
@@ -21,3 +22,7 @@ Big todos:
 Current sigmorphon2016 German dev score: 
 
 `Val accuracy: 1524 out of 1597 0.9542892924232936`
+
+acc on sig set sans adjectives:
+
+`Val accuracy: 609 out of 673 0.9049034175334324`

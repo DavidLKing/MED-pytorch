@@ -75,6 +75,10 @@ max_len = config['max_length']
 def len_filter(example):
     return len(example.src) <= max_len and len(example.tgt) <= max_len
 
+# HACKY CHECK
+if opt.load_checkpoint == 'None':
+    opt.load_checkpoint = None
+
 if opt.load_checkpoint is not None:
     logging.info("loading checkpoint from {}".format(os.path.join(opt.expt_dir, Checkpoint.CHECKPOINT_DIR_NAME, opt.load_checkpoint)))
     checkpoint_path = os.path.join(opt.expt_dir, Checkpoint.CHECKPOINT_DIR_NAME, opt.load_checkpoint)
@@ -149,7 +153,7 @@ else:
                           expt_dir=config['expt_dir'])
                           # expt_dir=opt.expt_dir)
 
-    if config['train']:
+    if config['train model']:
         seq2seq = t.train(seq2seq, train,
                           num_epochs=config['epochs'],
                           dev_data=dev,
@@ -160,6 +164,7 @@ else:
 predictor = Predictor(seq2seq, input_vocab, output_vocab)
 
 if config['eval val']:
+    of = open(config['output'], 'w')
     # TODO add option to save output
     correct = 0
     total = 0
@@ -176,6 +181,7 @@ if config['eval val']:
         if guess == ex.tgt[1:]:
             correct += 1
         total += 1
+        of.write('\t'.join([' '.join(ex.src), ' '.join(ex.tgt[1:-1]), ' '.join(guess[0:-1])]) + '\n')
     print("Val accuracy:", correct, "out of", total, correct / total)
 
 

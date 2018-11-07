@@ -1,0 +1,673 @@
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=SG A a k	A a k	A a k
+OUT=pos=V OUT=tense=PST a a l e n	g e a a l t	g e a l t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG a a s e n	a a s t e	a a s t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL a b a n d o n n i e r e n	a b a n d o n n i e r e n	a b a n d o n n i e r e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 A b s c h w u n g	A b s c h w u n g s	A b s c h w u n g s
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=SG A b s t i m m u n g	A b s t i m m u n g	A b s t i m m u n g
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG A b w e h r s t o f f	A b w e h r s t o f f	A b w e h r s t o f f
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG a d d i e r e n	a d d i e r e	a d d i e r e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG a d o p t i e r e n	a d o p t i e r t e	a d o p t i e r t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG a d s o r b i e r e n	a d s o r b i e r e s t	a d s o r b i e r e s t
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL A g o n i e	A g o n i e n	A g o n i e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG a k k r e d i t i e r e n	a k k r e d i t i e r e	a k k r e d i t i e r e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL a k t u a l i s i e r e n	a k t u a l i s i e r e n	a k t u a l i s i e r e n
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=SG A m e r i k a n e r i n	A m e r i k a n e r i n	A m e r i k a n e r i n
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=SG A m n e s t i e	A m n e s t i e	A m n e s t i e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL a m p u t i e r e n	a m p u t i e r t e n	a m p u t i e r t e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL A n h a l t s p u n k t	A n h a l t s p u n k t e	A n h a l t s p u n k t e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL A n t e i l	A n t e i l e	A n t e i l e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL A p f e l s i n e n b a u m	A p f e l s i n e n b ä u m e	A p f e l s i n e n b ä u m e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL a r r e t i e r e n	a r r e t i e r t e t	a r r e t i e r t e t
+OUT=pos=N OUT=case=ACC OUT=gen=NEUT OUT=num=PL A r s c h g e s i c h t	A r s c h g e s i c h t e r	A r s c h g e s i c h t e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL A s t	Ä s t e	Ä s t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL a t o m i s i e r e n	a t o m i s i e r t e n	a t o m i s i e r t e n
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL A t o m m a s s e	A t o m m a s s e n	A t o m m a s s e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG A u f w a n d	A u f w a n d e s	A u f w a n d e s
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL A u g e n i n n e n d r u c k	A u g e n i n n e n d r u c k e	A u g e n i n n e n d r ü c k e
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL A u s g r a b u n g	A u s g r a b u n g e n	A u s g r a b u n g e n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG A w a r i n	A w a r i n	A w a r i n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL b a l a n c i e r e n	b a l a n c i e r t e n	b a l a n c i e r t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL b a l k a n i s i e r e n	b a l k a n i s i e r t e n	b a l k a n i s i e r t e n
+OUT=pos=V OUT=tense=PST b a p p e n	g e b a p p t	g e b a p p t
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG B a r g e l d	B a r g e l d e s	B a r g e l d e s
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL b a s i e r e n	b a s i e r e n	b a s i e r e n
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG B a u f a l l	B a u f a l l	B a u f a l l
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 B a u m	B a u m s	B a u m s
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG B a u m	B a u m e s	B a u m e s
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL B a u	B a u t e n	B ä u e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 B a u s t o f f	B a u s t o f f s	B a u s t o f f s
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL b e a u f t r a g e n	b e a u f t r a g e n	b e a u f t r a g e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG b e ä u g e n	b e ä u g e s t	b e ä u g e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL b e b e n	b e b e n	b e b e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL b e d ü r f e n	b e d ü r f e n	b e d ü r f e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG b e e i n f l u s s e n	b e e i n f l u s s e	b e e i n f l u s s e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL b e f a l l e n	b e f i e l e n	b e f i e l e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG b e f a s s e n	b e f a s s e	b e f a s s e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL b e g e g n e n	b e g e g n e t e t	b e g e g n e t e t
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL B e g l e i t u n g	B e g l e i t u n g e n	B e g l e i t u n g e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG b e g r e i f e n	b e g r e i f e	b e g r e i f e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL B e g r i f f	B e g r i f f e	B e g r i f f e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL b e h ü t e n	b e h ü t e n	b e h ü t e n
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=SG B e i g a b e	B e i g a b e	B e i g a b e
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL B e i m i s c h u n g	B e i m i s c h u n g e n	B e i m i s c h u n g e n
+OUT=pos=N OUT=case=ACC OUT=gen=NEUT OUT=num=SG B e i n	B e i n	B e i n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL B e k a n n t e	B e k a n n t e n	B e k a n n t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG b e k o m m e n	b e k o m m e	b e k o m m e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG b e l e i d i g e n	b e l e i d i g s t	b e l e i d i g s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL b e l l e n	b e l l t e n	b e l l t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL b e n ö t i g e n	b e n ö t i g t e n	b e n ö t i g t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG b e p f l a n z e n	b e p f l a n z t e s t	b e p f l a n z t e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG b e r e u e n	b e r e u t e s t	b e r e u t e s t
+OUT=pos=V OUT=tense=PST b e r g e n	g e b o r g e n	g e b a r g t
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL B e r n s t e i n	B e r n s t e i n e	B e r n s t e i n e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG b e r u h e n	b e r u h t e	b e r u h t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL b e r u h i g e n	b e r u h i g e n	b e r u h i g e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG b e s ä n f t i g e n	b e s ä n f t i g t	b e s ä n f t i g t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL b e s ä n f t i g e n	b e s ä n f t i g t e t	b e s ä n f t i g t e t
+OUT=pos=V OUT=tense=PST b e s c h a t t e n	b e s c h a t t e t	b e s c h a t t e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL b e s c h i c h t e n	b e s c h i c h t e t e t	b e s c h i c h t e t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL b e s c h l a g n a h m e n	b e s c h l a g n a h m e n	b e s c h l a g n a h m e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL b e s c h ü t z e n	b e s c h ü t z t e t	b e s c h ü t z t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL b e s e t z e n	b e s e t z e n	b e s e t z e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG b e s i e g e n	b e s i e g t	b e s i e g t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL b e s t r a f e n	b e s t r a f t e n	b e s t r a f e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG b e s t r e i t e n	b e s t r i t t e s t	b e s t r i t t e s t
+OUT=pos=V OUT=finite=NFIN b e s u c h e n	b e s u c h e n	b e s u c h e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG b e t a n k e n	b e t a n k e	b e t a n k e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL b e t ä t i g e n	b e t ä t i g e n	b e t ä t i g e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL b e t e i l i g e n	b e t e i l i g e n	b e t e i l i g e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG b e t e n	b e t e t e s t	b e t e t e s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL b e t e n	b e t e n	b e t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG b e t o n e n	b e t o n t e	b e t o n t e
+OUT=pos=V OUT=finite=NFIN b e t r e t e n	b e t r e t e n	b e t r e t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG b e t r e t e n	b e t r ä t e	b e t r e t e
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL B e t r o f f e n h e i t	B e t r o f f e n h e i t e n	B e t r o f f e n h e i t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG b e u g e n	b e u g t	b e u g t
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL B e u t e l w o l f	B e u t e l w ö l f e	B e u t e l w o l f e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL b e w a c h e n	b e w a c h t e n	b e w a c h t e n
+OUT=pos=V OUT=tense=PST b e w a f f n e n	b e w a f f n e t	b e w a f f n e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG b e w a h r h e i t e n	b e w a h r h e i t e t e	b e w a h r h e i t e t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL b e z e i c h n e n	b e z e i c h n e t e t	b e z e i c h n e t e t
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=SG B e z e u g u n g	B e z e u g u n g	B e z e u g u n g
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL b e z w i n g e n	b e z w i n g e n	b e z w i n g e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL b e z w i n g e n	b e z w ä n g e t	b e z w ä n g e t
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL B i b e l	B i b e l n	B i b e l n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG b i e r e n	b i e r t e s t	b i e r t e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG b i n d e n	b i n d e t	b i n d e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG b l a f f e n	b l a f f t e	b l a f f t e
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=SG B l a s e n e n t z ü n d u n g	B l a s e n e n t z ü n d u n g	B l a s e n e n t z ü n d u n g
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL B l e c h b ü c h s e	B l e c h b ü c h s e n	B l e c h b ü c h s e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL B l e i c h s t o f f	B l e i c h s t o f f e	B l e i c h s t o f f e
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL B l i n d d a r m e n t z ü n d u n g	B l i n d d a r m e n t z ü n d u n g e n	B l i n d d a r m e n t z ü n g e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG B l i t z k r i e g	B l i t z k r i e g	B l i t z k r i e g
+OUT=pos=V OUT=tense=PRS b o h r e n	b o h r e n d	b o h r e n d
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG b o x e n	b o x e	b o x e
+OUT=pos=V OUT=tense=PST b o x e n	g e b o x t	g e b o x t
+OUT=pos=V OUT=tense=PST b r a u c h e n	g e b r a u c h t	b r a u c h t
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL B r a u c h	B r ä u c h e	B r a u c h e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG b r e c h e n	b r e c h e	b r e c h e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 B r e n n s t o f f	B r e n n s t o f f s	B r e n n s t o f f s
+OUT=pos=V OUT=tense=PRS b r o w s e n	b r o w s e n d	b r o w s e n d
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG b r ü h e n	b r ü h e	b r ü h e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL b r ü l l e n	b r ü l l e n	b r ü l l e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL b r ü n i e r e n	b r ü n i e r t	b r ü n i e r t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL b ü c k e n	b ü c k t	b ü c k t
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG B u g	B u g e s	B u g e s
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL B u n t s t i f t	B u n t s t i f t e	B u n t s t i f t e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG B u t t	B u t t	B u t t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG b ü t z e n	b ü t z e	b ü t z e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG c h a u f f i e r e n	c h a u f f i e r t e s t	c h a u f f i e r t e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL c h i l l e n	c h i l l t e n	c h i l l t e n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL C r e v e t t e	C r e v e t t e n	C r e v e t t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL d ä m m e n	d ä m m e n	d ä m m e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL d ä m o n i s i e r e n	d ä m o n i s i e r e n	d ä m o n i s i e r e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL d ä m p f e n	d ä m p f e n	d ä m p f e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG D a m p f	D a m p f	D a m p f
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL D a t e i	D a t e i e n	D a t e i e n
+OUT=pos=N OUT=case=DAT OUT=gen=NEUT OUT=num=PL D a t e n b l a t t	D a t e n b l ä t t e r n	D a t e n b l ä t t e r n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG d e b ü t i e r e n	d e b ü t i e r t e	d e b ü t i e r t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG d e f i l i e r e n	d e f i l i e r e	d e f i l i e r e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG D e i c h	D e i c h e s	D e i c h e s
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG d e k l a r i e r e n	d e k l a r i e r t e s t	d e k l a r i e r t e s t
+OUT=pos=V OUT=tense=PRS d e k l i n i e r e n	d e k l i n i e r e n d	d e k l i n i e r e n d
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG d e m o r a l i s i e r e n	d e m o r a l i s i e r t e	d e m o r a l i s i e r t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL d e m o t i v i e r e n	d e m o t i v i e r t e n	d e m o t i v i e r t e n
+OUT=pos=V OUT=tense=PRS d e p o n i e r e n	d e p o n i e r e n d	d e p o n i e r e n d
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG d i e n e n	d i e n t e	d i e n t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL d i f f a m i e r e n	d i f f a m i e r t e n	d i f f a m i e r t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG d i f f e r e n z i e r e n	d i f f e r e n z i e r t e	d i f f e r e n z i e r t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL d i n i e r e n	d i n i e r t e t	d i n i e r t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL d i s k r i m i n i e r e n	d i s k r i m i n i e r e n	d i s k r i m i n i e r e n
+OUT=pos=V OUT=finite=NFIN d i s s o z i i e r e n	d i s s o z i i e r e n	d i s s o z i i e r e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL d i v e r s i f i z i e r e n	d i v e r s i f i z i e r t	d i v e r s i f i z i e r t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL d o p e n	d o p e n	d o p e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL d o p e n	d o p t e n	d o p t e n
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG D o r f	D o r f e s	D o r f e s
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=SG D r e i f a c h b l i n d s t u d i e	D r e i f a c h b l i n d s t u d i e	D r e i f a c h b l i n d s t u d i e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG d r i n g e n	d r i n g s t	d r i n g s t
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL D r o h n e	D r o h n e n	D r o h n e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG D r u c k t a n k	D r u c k t a n k e s	D r u c k t a n k e s
+OUT=pos=V OUT=finite=NFIN d u e l l i e r e n	d u e l l i e r e n	d u e l l i e r e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL d u l d e n	d u l d e t e n	d u l d e t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL d ü n g e n	d ü n g t e t	d ü n g t e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL d ü n s t e n	d ü n s t e t	d ü n s t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL d u r c h s u c h e n	d u r c h s u c h t e t	d u r c h s u c h t e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG d u r c h w ü h l e n	d u r c h w ü h l t e	d u r c h w ü h l t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG d u s c h e n	d u s c h s t	d u s c h s t
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=SG D y s l a l i e	D y s l a l i e	D y s l a l i e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL e h r e n	e h r t e n	e h r t e n
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL E i c h e	E i c h e n	E i c h e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL E i c h s t r i c h	E i c h s t r i c h e	E i c h s t r i c h e
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=SG E i g e n a r t i g k e i t	E i g e n a r t i g k e i t	E i g e n a r t i g k e i t
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=SG E i n k a u f s l i s t e	E i n k a u f s l i s t e	E i n k a u f s l i s t e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 E i n t r a g	E i n t r a g s	E i n t r a g s
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG e m e n d i e r e n	e m e n d i e r e	e m e n d i e r e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL e m p f e h l e n	e m p f a h l t	e m p f e h l t e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL e m p ö r e n	e m p ö r t e n	e m p ö r t e n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL E n d o k r i n o l o g i n	E n d o k r i n o l o g i n n e n	E n d o k r i n o l o g i n n e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL e n t b l ö ß e n	e n t b l ö ß t e n	e n t b l ö ß t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL e n t h a u p t e n	e n t h a u p t e t e n	e n t h a u p t e t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL e n t h e i l i g e n	e n t h e i l i g e n	e n t h e i l i g e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL e n t k e i m e n	e n t k e i m t e t	e n t k e i m t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG e n t k o k a i n i s i e r e n	e n t k o k a i n i s i e r t	e n t k o k a i n i s i e r t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG e n t k o m m e n	e n t k a m	e n t k o m m t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL e n t k ö r p e r l i c h e n	e n t k ö r p e r l i c h t e n	e n t k ö r p e r l i c h t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG e n t k r i m i n a l i s i e r e n	e n t k r i m i n a l i s i e r t e	e n t k r i m i n a l i s i e r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG e n t m i n e r a l i s i e r e n	e n t m i n e r a l i s i e r t e s t	e n t m i n e r a l i s i e r t e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL e n t m u t i g e n	e n t m u t i g t e t	e n t m u t i g t e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG e n t r i c h t e n	e n t r i c h t e	e n t r i c h t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL e n t s a f t e n	e n t s a f t e t e n	e n t s a f t e t e n
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL E n t s c h ä r f u n g	E n t s c h ä r f u n g e n	E n t s c h ä r f u n g e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL e n t s o r g e n	e n t s o r g t	e n t s o r g t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG e n t t h r o n e n	e n t t h r o n t e	e n t t h r o n t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG e n t w a f f n e n	e n t w a f f n e	e n t w a f f n e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL e n t w e i c h e n	e n t w e i c h e t	e n t w e i c h e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG e n t w e i c h e n	e n t w i c h e	e n t w e i c h t e
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG E n t w u r z e l u n g	E n t w u r z e l u n g	E n t w u r z e l u n g
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG E r e i g n i s h o r i z o n t	E r e i g n i s h o r i z o n t e s	E r e i g n i s h o r i z o n t e s
+OUT=pos=V OUT=finite=NFIN e r f ü l l e n	e r f ü l l e n	e r f ü l l e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG e r g r a u e n	e r g r a u t e s t	e r g r a u t e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL e r h o l e n	e r h o l t	e r h o l t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL e r l a n g e n	e r l a n g t e t	e r l i n g t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL e r l a u b e n	e r l a u b e n	e r l a u b e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG e r l e i d e n	e r l i t t e s t	e r l e i d e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL e r m o r d e n	e r m o r d e n	e r m o r d e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL e r m o r d e n	e r m o r d e n	e r m o r d e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG e r n e n n e n	e r n e n n t e s t	e r n e n n t e s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG e r r ö t e n	e r r ö t e s t	e r r ö t e s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG e r s c h e i n e n	e r s c h e i n e s t	e r s c h e i n e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG e r s t e l l e n	e r s t e l l t e	e r s t e l l t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL e r t e i l e n	e r t e i l t e n	e r t e i l t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL e r ü b r i g e n	e r ü b r i g e n	e r ü b r i g e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL E r w a c h s e n e r	E r w a c h s e n e n	E r w a c h s e n e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL e r w ä g e n	e r w ö g e t	e r w o g e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG e r w ä r m e n	e r w ä r m e	e r w ä r m e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL e r w e r b e n	e r w ü r b e n	e r w ü r b e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL e r z i e h e n	e r z i e h e t	e r z i e h e t
+OUT=pos=V OUT=finite=NFIN e s k o r t i e r e n	e s k o r t i e r e n	e s k o r t i e r e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG e v a l u i e r e n	e v a l u i e r t e	e v a l u i e r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG e x p a n d i e r e n	e x p a n d i e r t	e x p a n d i e r t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL e x p a n d i e r e n	e x p a n d i e r e t	e x p a n d i e r e t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL e x t e m p o r i e r e n	e x t e m p o r i e r t e n	e x t e m p o r i e r t e n
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL F a h n e n s t a n g e	F a h n e n s t a n g e n	F a h n e n s t a n g e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL f a h r e n	f a h r t	f a h r t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG f a n a t i s i e r e n	f a n a t i s i e r e s t	f a n a t i s i e r e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL f a u l e n z e n	f a u l e n z t e t	f a u l e n z t e t
+OUT=pos=V OUT=finite=NFIN f e c h t e n	f e c h t e n	f e c h t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG f e h l e n	f e h l e	f e h l e
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG F e s t s t o f f	F e s t s t o f f	F e s t s t o f f
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL F e u e r t a u f e	F e u e r t a u f e n	F e u e r t a u f e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL f i l t r i e r e n	f i l t r i e r e n	f i l t r i e r e n
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG OUT=alt=LGSPEC1 F i n a n z a m t	F i n a n z a m t s	F i n a n z a m t s
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG F i s c h	F i s c h e s	F i s c h e s
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL F l a u s e	F l a u s e n	F l a u s e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG f l i e ß e n	f l i e ß e s t	f l i e ß e s t
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG F l u o r e s z e n z f a r b s t o f f	F l u o r e s z e n z f a r b s t o f f	F l u o r e s z e n z f o f f s t o f f
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL f l u o r i e r e n	f l u o r i e r t e n	f l u o r i e r t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG f l u o r i e r e n	f l u o r i e r t e	f l u o r i e r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG f l u p p e n	f l u p p t e	f l u p p t e
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL F o l g e	F o l g e n	F o l g e n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG F o l g e	F o l g e	F o l g e
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=PL F ö r d e r l a n d	F ö r d e r l ä n d e r	F ö r d e r l ä n d e r
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG f o r m e n	f o r m t e	f o r m t e
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL F o r s c h u n g	F o r s c h u n g e n	F o r s c h u n g e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG f o t o g r a f i e r e n	f o t o g r a f i e r e	f o t o g r a f i e r e
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG F r a g e	F r a g e	F r a g e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL f r ä s e n	f r ä s t e n	f r ä s t e n
+OUT=pos=V OUT=tense=PST f r i t t i e r e n	f r i t t i e r t	f r i t t t i e r t
+OUT=pos=V OUT=tense=PRS f ü l l e n	f ü l l e n d	f ü l l e n d
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL f u n g i e r e n	f u n g i e r t e n	f u n g i e r t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG f u n k t i o n a l i s i e r e n	f u n k t i o n a l i s i e r t e	f u n k t i o n a l i s i e r t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL f u n k t i o n i e r e n	f u n k t i o n i e r t e t	f u n k t i o n i e r t e t
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=SG F u n k t i o n	F u n k t i o n	F u n k t i o n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG f u n z e n	f u n z t e s t	f u n z t e s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG f u n z e n	f u n z e	f u n z e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL f u r z e n	f u r z e n	f u r z e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL f u s i o n i e r e n	f u s i o n i e r e n	f u s i o n i e r e n
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL F u ß v e r l e t z u n g	F u ß v e r l e t z u n g e n	F u ß v e r l e t z u n g e n
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=SG F u ß v e r l e t z u n g	F u ß v e r l e t z u n g	F u ß v e r l e t z u n g
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG g a f f e n	g a f f e	g a f f e
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL G a n g	G ä n g e	G ä n g e
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG G a s g e m i s c h	G a s g e m i s c h e s	G a s g e m i s c h e s
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG G e b r a u c h	G e b r a u c h	G e b r a u c h
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG G e d ä r m	G e d ä r m e s	G e d ä r m e s
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL G e f a n g e n e r	G e f a n g e n e n	G e f a n g e n e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL g e f r i e r e n	g e f r i e r e n	g e f r i e r e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG g e f r i e r e n	g e f r ö r e	g e f r i e r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG g e g e n b e s c h u l d i g e n	g e g e n b e s c h u l d i g t	g e g e n g e b c h u l d i g t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL g e g e n b e s c h u l d i g e n	g e g e n b e s c h u l d i g t e n	g e g e l d i g t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG g e l i e r e n	g e l i e r t e s t	g e l i e r t e s t
+OUT=pos=V OUT=tense=PST g e n e s e n	g e n e s e n	g e n o s e n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL G e r b e r e i	G e r b e r e i e n	G e r b e r e i e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL G e r u c h s s i n n	G e r u c h s s i n n e	G e r u c h s s i n n e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG g e w i n n e n	g e w i n n s t	g e w i n n s t
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=PL G l e i c h g e w i c h t	G l e i c h g e w i c h t e	G l e i c h g e w i c h t e
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=SG G l y c o l i p i d	G l y c o l i p i d	G l y c o l i p i d
+OUT=pos=N OUT=case=DAT OUT=gen=MASC OUT=num=PL G r a d	G r a d e n	G r a d e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 G r a p h i t	G r a p h i t s	G r a p h i t s
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL G r a p h i t	G r a p h i t e	G r a p h i t e
+OUT=pos=V OUT=tense=PST g r a p s c h e n	g e g r a p s c h t	g e g r a p s c h t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG g r a t u l i e r e n	g r a t u l i e r t e	g r a t u l i e r t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG g r a t u l i e r e n	g r a t u l i e r t e	g r a t u l i e r t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG g r a u e n	g r a u e	g r a u e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL g r e i f e n	g r e i f t	g r e i f t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG g r e n z e n	g r e n z t e s t	g r e n z t e s t
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL G r u n d s c h u l e	G r u n d s c h u l e n	G r u n d s c h u l e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL g r ü ß e n	g r ü ß t e t	g r ü ß t e t
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG G u r t	G u r t e s	G u r t e s
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG g u s t i e r e n	g u s t i e r e	g u s t i e r e
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG H a a r	H a a r e s	H a a r e s
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL H a f t b e f e h l	H a f t b e f e h l e	H a f t b e f e h l e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL h a l l e n	h a l l e n	h a l l e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG H a m p e l m a n n	H a m p e l m a n n e s	H a m p e l m a n n e s
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL h a r m o n i e r e n	h a r m o n i e r t	h a r m o n i e r t
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=SG H a u p t	H a u p t	H a u p t
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=SG H a u s t r a u u n g	H a u s t r a u u n g	H a u s t r a u u n g
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG h e m m e n	h e m m e	h e m m e
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=SG H e r r s c h e r p e r s ö n l i c h k e i t	H e r r s c h e r p e r s ö n l i c h k e i t	H e r r s c h e r p e r s ö c h k e i t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL h e t z e n	h e t z t e n	h e t z t e n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG H i n t e r l i s t i g k e i t	H i n t e r l i s t i g k e i t	H i n t e r l i s t i g k e i t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG h i n t e r z i e h e n	h i n t e r z o g s t	h i n t e r z o g s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG h i n t e r z i e h e n	h i n t e r z ö g e	h i n t e r z ö g e
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=PL H i r n g e s p i n s t	H i r n g e s p i n s t e	H i r n g e s p i n s t e
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=SG H o f f n u n g	H o f f n u n g	H o f f n u n g
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG H u f s c h l a g	H u f s c h l a g	H u f s c h l a g
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG h ü p f e n	h ü p f t e	h ü p f t e
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=PL H y d r a t	H y d r a t e	H y d r a t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG h y p e r v e n t i l i e r e n	h y p e r v e n t i l i e r e	h y p e r v e n t i l i e r e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL i m p f e n	i m p f t	i m p f t
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL I m p f s t o f f	I m p f s t o f f e	I m p f s t o f f e
+OUT=pos=V OUT=finite=NFIN i m p l e m e n t i e r e n	i m p l e m e n t i e r e n	i m p l e m e n t i e r e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL i m p l i z i e r e n	i m p l i z i e r t e n	i m p l i z i e r t e n
+OUT=pos=V OUT=tense=PRS i m p o r t i e r e n	i m p o r t i e r e n d	i m p o r t i e r e n d
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL i n a k t i v i e r e n	i n a k t i v i e r t e n	i n a k t i v i e r t e n
+OUT=pos=V OUT=tense=PST i n f o r m i e r e n	i n f o r m i e r t	i n f o r m i e r t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG i n h a l i e r e n	i n h a l i e r t e	i n h a l i e r t e
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG I n h a l t s s t o f f	I n h a l t s s t o f f	I n h a l t s s t o f f
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG i n s t a l l i e r e n	i n s t a l l i e r t e s t	i n s t a l l i e r t e s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL i n s t r u m e n t a l i s i e r e n	i n s t r u m e n t a l i s i e r e n	i n s t r u m e n t a l i s i e r e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL j ä h r e n	j ä h r t e t	j ä h r t e t
+OUT=pos=V OUT=tense=PRS j a u l e n	j a u l e n d	j a u l e n d
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG J u p i t e r m o n d	J u p i t e r m o n d	J u p i t e r m o n d
+OUT=pos=V OUT=tense=PST k a l i b r i e r e n	k a l i b r i e r t	k a l i b r i e r t e r
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG k a r i k i e r e n	k a r i k i e r e	k a r i k i e r e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG k a r i k i e r e n	k a r i k i e r t e	k a r i k i e r t e
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=SG K a r o t t e	K a r o t t e	K a r o t t e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 K e i l	K e i l s	K e i l s
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG K e n n z e i c h n u n g	K e n n z e i c h n u n g	K e n n z e i c h n u n g
+OUT=pos=V OUT=finite=NFIN k l a f f e n	k l a f f e n	k l a f f e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL k l a m m e r n	k l a m m e r t	k l a m m e r t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG k l a s s i f i z i e r e n	k l a s s i f i z i e r t e	k l a s s i f i z i e r t e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL K l a t s c h	K l a t s c h e	K l a t s c h e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG k l e b e n	k l e b t	k l e b t
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=SG K l e i d	K l e i d	K l e i d
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL K l e t t e	K l e t t e n	K l e t t e n
+OUT=pos=V OUT=tense=PRS k l i n g e n	k l i n g e n d	k l i n g e n d
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG k l ö n e n	k l ö n t e s t	k l ö n t e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG k l o p f e n	k l o p f s t	k l o p f s t
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL K n a s t	K n ä s t e	K n a s t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG k n i c k e n	k n i c k e	k n i c k e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG k o k e t t i e r e n	k o k e t t i e r t e s t	k o k e t t i e r t e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG k o m b i n i e r e n	k o m b i n i e r t e	k o m b i n i e r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL k o m m e n	k o m m e n	k o m m e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG k o m p i l i e r e n	k o m p i l i e r s t	k o m p i l i e r s t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG k o m p o s t i e r e n	k o m p o s t i e r s t	k o m p o s t i e r s t
+OUT=pos=V OUT=tense=PRS k o n s t a t i e r e n	k o n s t a t i e r e n d	k o n s t a t i e r e n d
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG k o n t a m i n i e r e n	k o n t a m i n i e r t e s t	k o n t a m i n i e r t e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL k o n t r a s t i e r e n	k o n t r a s t i e r t	k o n t r a s t i e r t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL k o o r d i n i e r e n	k o o r d i n i e r t e t	k o o r d i n i e r t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG k o r r e l i e r e n	k o r r e l i e r s t	k o r r e l i e r s t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL k o r r o d i e r e n	k o r r o d i e r t e n	k o r r o d i e r t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG k r a c h e n	k r a c h e	k r a c h e
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG K r a n k e n s t a n d	K r a n k e n s t a n d	K r a n k e n s t a n d
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL k r e i ß e n	k r e i ß t e n	k r i s s e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG k r e m i e r e n	k r e m i e r t e s t	k r e m i e r t e s t
+OUT=pos=V OUT=tense=PST k r e m i e r e n	k r e m i e r t	k r e m i e r t
+OUT=pos=V OUT=finite=NFIN k r e u z e n	k r e u z e n	k r e u z e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL k r i s t a l l i s i e r e n	k r i s t a l l i s i e r e t	k r i s t a l l i s i e r e t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG k r i t i s i e r e n	k r i t i s i e r t e s t	k r i t i s i e r t e s t
+OUT=pos=N OUT=case=ACC OUT=gen=NEUT OUT=num=PL K r o k o d i l	K r o k o d i l e	K r o k o d i l e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG k u c k e n	k u c k e	k u c k e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL k u l t i v i e r e n	k u l t i v i e r t e n	k u l t i v i e r t e n
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL K u r d i n	K u r d i n n e n	K u r d i n n e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG L a d u n g s a u s g l e i c h	L a d u n g s a u s g l e i c h	L a d u n g s a u s g l e i c h
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL L a i b	L a i b e	L a i b e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL l a n g w e i l e n	l a n g w e i l e n	l a n g w e i l e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL l a s t e n	l a s t e t e t	l a s t e t e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG l a t i n i s i e r e n	l a t i n i s i e r t e	l a t i n i s i e r t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG l a u f e n	l i e f e	l a u f t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG l a u f e n	l i e f e	l a u f t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL l ä u t e n	l ä u t e t	l ä u t e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG l e i s t e n	l e i s t e t e	l e i s t e t e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL L i p p e n s t i f t	L i p p e n s t i f t e	L i p p e n s t i f t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG l o g i e r e n	l o g i e r t e	l o g i e r t e
+OUT=pos=V OUT=tense=PST l o h n e n	g e l o h n t	g e l o h n t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG l ö s e n	l ö s t e	l ö s t e
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=SG L o s u n g	L o s u n g	L o s u n g
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG L o t	L o t e s	L o t e s
+OUT=pos=N OUT=case=DAT OUT=gen=MASC OUT=num=PL L ü c k e n t e x t t e s t	L ü c k e n t e x t t e s t s	L ü c k e n t e x t t e s t s
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL m a c h e n	m a c h e n	m a c h e n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG M a c h t	M a c h t	M a c h t
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL M a g d	M ä g d e	M ä g d e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG m a h l e n	m a h l e	m a h l e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG M a i b a u m	M a i b a u m	M a i b a u m
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG m a s s a k r i e r e n	m a s s a k r i e r e	m a s s a k r i e r e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG m a x i m i e r e n	m a x i m i e r t e	m a x i m i e r t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL m e d i t i e r e n	m e d i t i e r e n	m e d i t i e r e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL M e e r e s s c h w a m m	M e e r e s s c h w ä m m e	M e e r e s s c h w ä m m e
+OUT=pos=V OUT=finite=NFIN m e i d e n	m e i d e n	m e i d e n
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=PL M e t a l l o x i d	M e t a l l o x i d e	M e t a l l o x i d e
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL M e t z g e r e i	M e t z g e r e i e n	M e t z g e r e i e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG m i a u e n	m i a u t e	m i a u t e
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=SG M i t a r b e i t e r i n	M i t a r b e i t e r i n	M i t a r b e i t e r i n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG m o d e l l i e r e n	m o d e l l i e r t e	m o d e l l i e r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG m o d e r n i s i e r e n	m o d e r n i s i e r t e	m o d e r n i s i e r t e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 M o d u l t e s t	M o d u l t e s t s	M o d u l t e s t s
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG m ö g e n	m o c h t e s t	m o c h t e s t
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL M o n d	M o n d e	M ö n d e r
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=SG M o o r l e i c h e	M o o r l e i c h e	M o o r l e i c h e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG M o r d a n s c h l a g	M o r d a n s c h l a g e s	M o r d a n s c h l a g e s
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG M o r g e n d ä m m e r u n g	M o r g e n d ä m m e r u n g	M o r g e n d ä m m e r u n g
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG m o t i v i e r e n	m o t i v i e r t e	m o t i v i e r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG m u l c h e n	m u l c h t e s t	m u l c h t e s t
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL M ü n c h e n e r i n	M ü n c h e n e r i n n e n	M ü n c h e n e r i n n e n
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL M u n d	M ü n d e r	M ü n d e r
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG OUT=alt=LGSPEC1 M ü n z g e l d	M ü n z g e l d s	M ü n z g e l d s
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL N a c h k o m m a s t e l l e	N a c h k o m m a s t e l l e n	N a c h k o m m a s t e l l e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL n a g e n	n a g t e t	n a g t e t
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG N ä h r s t o f f	N ä h r s t o f f e s	N ä h r s t o f f e s
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG N a t u r s t o f f	N a t u r s t o f f	N a t u r s t o f f
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL n e r v e n	n e r v e t	n e r v e t
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL N e u t r o n e n s t e r n	N e u t r o n e n s t e r n e	N e u t r o n e n s t e r n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL n i c k e n	n i c k t e n	n i c k t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL o b s e r v i e r e n	o b s e r v i e r t e t	o b s e r v i e r t e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG o r d n e n	o r d n e s t	o r d e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG o r g a n i s i e r e n	o r g a n i s i e r t e	o r g a n i s i e r t e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL P a k t	P a k t e	P a k t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL p a r a p h r a s i e r e n	p a r a p h r a s i e r t e t	p a r a p h r a s i e r t e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG p a r f ü m i e r e n	p a r f ü m i e r t e	p a r f ü m i e r t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG p a r k e n	p a r k t e	p a r k t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG p a r k e t t i e r e n	p a r k e t t i e r t e	p a r k e t t i e r t e
+OUT=pos=V OUT=tense=PRS p a r l i e r e n	p a r l i e r e n d	p a r l i e r e n d
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG p a s t e u r i s i e r e n	p a s t e u r i s i e r t e	p a s t e u r i s i e r t e
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=SG P a s t o r i n	P a s t o r i n	P a s t o r i n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG p e r s i f l i e r e n	p e r s i f l i e r s t	p e r s i f l i e r s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL p e r s o n i f i z i e r e n	p e r s o n i f i z i e r t e n	p e r s o n i f i z i e r t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL p f e i f e n	p f i f f e n	p f i e f e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 P f i f f	P f i f f s	P f i f f s
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG p f l ü g e n	p f l ü g s t	p f l ü g s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL p f r o p f e n	p f r o p f e n	p f r o p f e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG p l a c i e r e n	p l a c i e r e	p l a c i e r e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG p l a g i i e r e n	p l a g i i e r t	p l a g i i e r t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG p l a n s c h e n	p l a n s c h t e	p l a n s c h t e
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=SG P o d i u m s g e s p r ä c h	P o d i u m s g e s p r ä c h	P o d i u m s g e s p r ä c h
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL p r ä g e n	p r ä g t e n	p r ä g t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL p r ä g e n	p r ä g t e n	p r ä g t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG p r e s s e n	p r e s s e	p r e s s e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG p r o g n o s t i z i e r e n	p r o g n o s t i z i e r t e	p r o g n o s t i z i e r t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL p r o g n o s t i z i e r e n	p r o g n o s t i z i e r e n	p r o g n o s t i z i e r e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG p r o g r a m m i e r e n	p r o g r a m m i e r e	p r o g r a m m i e r e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG p r o m o v i e r e n	p r o m o v i e r t e	p r o m o v i e r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG p r o p h e z e i e n	p r o p h e z e i s t	p r o p h e z e i s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG p r o s t e n	p r o s t e	p r o s t e
+OUT=pos=N OUT=case=DAT OUT=gen=NEUT OUT=num=PL P r o z e n t	P r o z e n t e n	P r o z e n t e n
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=SG P r o z e n t	P r o z e n t	P r o z e n t
+OUT=pos=V OUT=tense=PRS p u l s i e r e n	p u l s i e r e n d	p u l s i e r e n d
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL p u m p e n	p u m p t e n	p u m p t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL q u a n t i s i e r e n	q u a n t i s i e r t e n	q u a n t i s i e r t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG q u e l l e n	q u o l l s t	q u e l l t e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG q u e l l e n	q u ö l l e	q u e l l t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL r a d i e r e n	r a d i e r t e n	r a d i e r t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL r a g e n	r a g e n	r a g e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG r a m m e n	r a m m e	r a m m e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG r a m m e n	r a m m e s t	r a m m e s t
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL R a n d	R ä n d e r	R ä n d e
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL R a n d	R ä n d e r	R ä n d e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG r a t e n	r a t e	r a t e
+OUT=pos=V OUT=tense=PST r ä u m e n	g e r ä u m t	g e r ä u m t
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=PL R e f l e x i o n s g r a d	R e f l e x i o n s g r a d e	R e f l e x i o n s g r a d e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG R e g e l f a l l	R e g e l f a l l e s	R e g e l f a l l e s
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=SG R e g i e r u n g s e r k l ä r u n g	R e g i e r u n g s e r k l ä r u n g	R e g i e r u n g s e r k l ä r u n g
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG r e g u l i e r e n	r e g u l i e r t e	r e g u l i e r t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG r e i c h e n	r e i c h e	r e i c h e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL r e i f i z i e r e n	r e i f i z i e r t e n	r e i f i z i e r t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG r e i n s t i t u t i o n a l i s i e r e n	r e i n s t i t u t i o n a l i s i e r t e s t	r e i n s t i t u t i o n a l i s i e r t e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL r e i ß e n	r i s s e t	r e i ß t e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL r e i z e n	r e i z e n	r e i z e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL r e k a p i t u l i e r e n	r e k a p i t u l i e r t e n	r e k a p i t u l i e r t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL r e n n e n	r e n n e t	r e n n e t
+OUT=pos=V OUT=finite=NFIN r e p a r i e r e n	r e p a r i e r e n	r e p a r i e r e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG r e p a r i e r e n	r e p a r i e r e s t	r e p a r i e r e s t
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG R e p o r t	R e p o r t	R e p o r t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL r e s e r v i e r e n	r e s e r v i e r e n	r e s e r v i e r e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL r e t t e n	r e t t e t e n	r e t t e t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG r e v a n c h i e r e n	r e v a n c h i e r t e	r e v a n c h i e r t e
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL R h y t h m i k	R h y t h m i k e n	R h y t h m i k e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG r i n g e n	r i n g e	r i n g e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG r i s k i e r e n	r i s k i e r e	r i s k i e r e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 R o t s c h o p f	R o t s c h o p f s	R o t s c h o p f s
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL r ü c k e n	r ü c k t e t	r ü c k t e t
+OUT=pos=N OUT=case=DAT OUT=gen=MASC OUT=num=PL R ü c k s p r u n g	R ü c k s p r ü n g e n	R ü c k s p r u n g e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 R ü c k w ä r t s g a n g	R ü c k w ä r t s g a n g s	R ü c k w ä r t s g a n g s
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL r u i n i e r e n	r u i n i e r t e n	r u i n i e r t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG r u t s c h e n	r u t s c h e	r u t s c h e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL s a g e n	s a g t e t	s a g t e t
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG S a l m	S a l m e s	S a l m e s
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG S a n d s t u r m	S a n d s t u r m	S a n d s t u r m
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG s ä t t i g e n	s ä t t i g e s t	s ä t t i g e s t
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 S c h a b r a c k e n s c h a k a l	S c h a b r a c k e n s c h a k a l s	S c h a b r a c k e n s c h a k a l s
+OUT=pos=N OUT=case=ACC OUT=gen=NEUT OUT=num=SG S c h a m h a a r	S c h a m h a a r	S c h a m h a a r
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG OUT=alt=LGSPEC1 S c h a m h a a r	S c h a m h a a r s	S c h a m h a a r s
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG s c h a n g h a i e n	s c h a n g h a i e s t	s c h a n g h a i e s t
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG S c h a t t e n s p i e l	S c h a t t e n s p i e l e s	S c h a t t e n s p i e l e s
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL s c h a u e n	s c h a u e n	s c h a u e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG s c h e i ß e n	s c h i s s t	s c h i s s t e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL s c h i e s s e n	s c h o s s e n	s c h i e s s e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL s c h i e ß e n	s c h i e ß e n	s c h i e ß e n
+OUT=pos=V OUT=tense=PST s c h i k a n i e r e n	s c h i k a n i e r t	s c h i k a n i e r t e t
+OUT=pos=V OUT=tense=PST s c h l a f e n	g e s c h l a f e n	g e s c h l i f f e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL s c h l a g e n	s c h l a g e n	s c h l a g e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL S c h l o t	S c h l ö t e	S c h l ö t e
+OUT=pos=V OUT=finite=NFIN s c h m a u c h e n	s c h m a u c h e n	s c h m a u c h e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG s c h m e l z e n	s c h m ö l z e	s c h m e l z t e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG S c h m e l z p u n k t	S c h m e l z p u n k t	S c h m e l z p u n k t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG s c h m i e d e n	s c h m i e d e t e	s c h m i e d e t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL s c h m i e d e n	s c h m i e d e t e n	s c h m i e d e t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG s c h m i n k e n	s c h m i n k s t	s c h m i n k s t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG s c h n a p p e n	s c h n a p p t e	s c h n a p p t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL s c h n a u f e n	s c h n a u f t e t	s c h n a u f t e t
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL S c h n e e s t u r m	S c h n e e s t ü r m e	S c h n e e s t ü r m e
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL S c h n e l l k o c h t o p f	S c h n e l l k o c h t ö p f e	S c h n e l l k o c h t ö p f e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL s c h n i t z e n	s c h n i t z e t	s c h n i t z e t
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL S c h n u r r b a r t	S c h n u r r b ä r t e	S c h n u r r b ä r t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG s c h ö p f e n	s c h ö p f t	s c h ö p f t
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL S c h o r n s t e i n f e g e r i n	S c h o r n s t e i n f e g e r i n n e n	S c h o r n s t e i n f e g e r i n n e n
+OUT=pos=V OUT=finite=NFIN s c h r a u b e n	s c h r a u b e n	s c h r a u b e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL s c h r e i e n	s c h r i e e t	s c h r i e e t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG s c h ü t t e n	s c h ü t t e t	s c h ü t t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL s c h ü t t e n	s c h ü t t e t e n	s c h ü t t e t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL s c h w ä t z e n	s c h w ä t z e n	s c h w ä t z e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG s c h w e i g e n	s c h w i e g e	s c h w i e g e
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG S c h w e i n e h u n d	S c h w e i n e h u n d	S c h w e i n e h u n d
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL s c h w e i ß e n	s c h w e i ß t e n	s c h w e i ß e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL s e d i m e n t i e r e n	s e d i m e n t i e r t e n	s e d i m e n t i e r t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL s e g m e n t i e r e n	s e g m e n t i e r t e n	s e g m e n t i e r t e n
+OUT=pos=V OUT=finite=NFIN s e h e n	s e h e n	s e h e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL s e h e n	s ä h e n	s e h t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG s e n g e n	s e n g t e	s e n g t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL s e n g e n	s e n g e n	s e n g e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG s e n g e n	s e n g t e	s e n g t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL s e r v i e r e n	s e r v i e r e n	s e r v i e r e n
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG OUT=alt=LGSPEC1 S i c h e r h e i t s d a t e n b l a t t	S i c h e r h e i t s d a t e n b l a t t s	S i c h e r h e i t s d a t e n b l ä t t s
+OUT=pos=N OUT=case=ACC OUT=gen=NEUT OUT=num=PL S i e b	S i e b e	S i e b e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG s i e d e n	s i e d e s t	s i e d e s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG s i n n e n	s i n n e s t	s i n n e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL s k i z z i e r e n	s k i z z i e r t e n	s k i z z i e r t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG s o l l e n	s o l l	s o l l e
+OUT=pos=N OUT=case=GEN OUT=gen=NEUT OUT=num=SG OUT=alt=LGSPEC1 S o z i a l a m t	S o z i a l a m t s	S o z i a l a m t s
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG OUT=alt=LGSPEC1 S p a l t p r o d u k t	S p a l t p r o d u k t s	S p a l t p r o d u k t s
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL s p e k u l i e r e n	s p e k u l i e r e n	s p e k u l i e r e n
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL S p e r r e	S p e r r e n	S p e r r e n
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL S p i t z e n q u a l i t ä t	S p i t z e n q u a l i t ä t e n	S p i t z e n q u a l i t ä t e n
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG S p r a c h t e i l	S p r a c h t e i l	S p r a c h t e i l
+OUT=pos=V OUT=finite=NFIN s p r i n g e n	s p r i n g e n	s p r i n g e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG s p r i t z e n	s p r i t z e	s p r i t z e
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG S p r u n g w u r f	S p r u n g w u r f e s	S p r u n g w u r f e s
+OUT=pos=N OUT=case=ACC OUT=gen=NEUT OUT=num=SG S t a d t p a r l a m e n t	S t a d t p a r l a m e n t	S t a d t p a r l a m e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG S t a d t r a t	S t a d t r a t	S t a d t r a t
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG S t a u b	S t a u b	S t a u b
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL s t a u n e n	s t a u n e t	s t a u n e t
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL S t e c h u h r	S t e c h u h r e n	S t e c h u h r e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL s t e i g e n	s t e i g e n	s t e i g e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG S t e i n b o c k	S t e i n b o c k	S t e i n b o c k
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=SG S t e l l e	S t e l l e	S t e l l e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL s t e r b e n	s t e r b e n	s t e r b e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL s t e r i l i s i e r e n	s t e r i l i s i e r t e n	s t e r i l i s i e r t e n
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL S t i g m a t i s a t i o n	S t i g m a t i s a t i o n e n	S t i g m a t i s a t i o n e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG s t i g m a t i s i e r e n	s t i g m a t i s i e r e s t	s t i g m a t i s i e r e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL s t ö h n e n	s t ö h n t e n	s t ö h n t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL s t o r n i e r e n	s t o r n i e r t e n	s t o r n i e r t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG s t r a p a z i e r e n	s t r a p a z i e r e s t	s t r a p a z i e r e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL s t r e i c h e n	s t r i c h e n	s t r i c h e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG s t r i c k e n	s t r i c k t e	s t r i c k t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL s u b t r a h i e r e n	s u b t r a h i e r e n	s u b t r a h i e r e n
+OUT=pos=V OUT=tense=PST t a g t r ä u m e n	g e t a g t r ä u m t	t a g t r ä u m t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG t a n z e n	t a n z e	t a n z e
+OUT=pos=N OUT=case=DAT OUT=gen=NEUT OUT=num=PL T ä t i g k e i t s w o r t	T ä t i g k e i t s w ö r t e r n	T ä t i g k e i t s w o r t e n
+OUT=pos=V OUT=finite=NFIN t ä t o w i e r e n	t ä t o w i e r e n	t ä t o w i e r e n
+OUT=pos=V OUT=finite=NFIN t a u s c h e n	t a u s c h e n	t a u s c h e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL T h r o n	T h r o n e	T h r o n e
+OUT=pos=N OUT=case=DAT OUT=gen=NEUT OUT=num=PL T i e f l a n d	T i e f l ä n d e r n	T i e f l e f d e r n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL t o u c h i e r e n	t o u c h i e r e n	t o u c h i e r e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG t r ä n k e n	t r ä n k e	t r ä n k e
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG T r a n k	T r a n k	T r a n k
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL t r a n s f e r i e r e n	t r a n s f e r i e r t e n	t r a n s f e r i e r t e n
+OUT=pos=V OUT=tense=PRS t r a n s p o r t i e r e n	t r a n s p o r t i e r e n d	t r a n s p o r t i e r e n d
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG T r a n s p o r t v o r g a n g	T r a n s p o r t v o r g a n g	T r a n s p o r t v o r g
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG t r e f f e n	t r ä f e	t r ä f e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL t r e n n e n	t r e n n t e t	t r e n n t e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL t r e t e n	t r e t e n	t r e t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG t r o p f e n	t r o p f e	t r o p f e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL t r o t t e n	t r o t t e n	t r o t t e n
+OUT=pos=V OUT=tense=PST t r o t z e n	g e t r o t z t	g e t r o t z t
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=PL T u r n i e r	T u r n i e r e	T u r n i e r e
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL Ü b e r e i l u n g	Ü b e r e i l u n g e n	Ü b e r e i l u n g e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL ü b e r f l u t e n	ü b e r f l u t e n	ü b e r f l u t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG ü b e r n e h m e n	ü b e r n ä h m e	ü b e r n ä h m e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL ü b e r p r ü f e n	ü b e r p r ü f e n	ü b e r p r ü f e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL ü b e r q u e r e n	ü b e r q u e r t	ü b e r q u e r t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL ü b e r r a s c h e n	ü b e r r a s c h e n	ü b e r r a s c h e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL ü b e r s c h ä t z e n	ü b e r s c h ä t z t e t	ü b e r s c h ä t z t e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG ü b e r w ä l t i g e n	ü b e r w ä l t i g e s t	ü b e r w ä l t i g e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL ü b e r w e i s e n	ü b e r w i e s e t	ü b e r w e i s t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG u m a r b e i t e n	u m a r b e i t e t e	u m a r b e i t e t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG u m f a s s e n	u m f a s s t e	u m f a s s t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL u m f a s s e n	u m f a s s e t	u m f a s s e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG u m f a s s e n	u m f a s s e	u m f a s s e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG u n t e r d r ü c k e n	u n t e r d r ü c k e	u n t e r d r ü c k e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG u n t e r j o c h e n	u n t e r j o c h t e	u n t e r j o c h t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG u n t e r l e g e n	u n t e r l e g t e	u n t e r l e g t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG u n t e r s c h e i d e n	u n t e r s c h e i d e	u n t e r s c h e i d e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL v e r a b s c h i e d e n	v e r a b s c h i e d e n	v e r a b s c h i e d e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=PL v e r b i e t e n	v e r b i e t e t	v e r b i e t e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL v e r b l e i b e n	v e r b l e i b e t	v e r b l e i b e t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG v e r b r e c h e n	v e r b r a c h	v e r b r a c h
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG V e r d a c h t	V e r d a c h t	V e r d a c h t
+OUT=pos=V OUT=tense=PST v e r d i c h t e n	v e r d i c h t e t	v e r d i c h t e t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG v e r d r e i f a c h e n	v e r d r e i f a c h e	v e r d r e i f a c h e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG v e r d r e i f a c h e n	v e r d r e i f a c h t e	v e r d r e i f a c h t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG v e r e i n b a r e n	v e r e i n b a r t e	v e r e i n b a r t e
+OUT=pos=V OUT=tense=PRS v e r e w i g e n	v e r e w i g e n d	v e r e w i g e n d
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=PL V e r f ü g b a r k e i t	V e r f ü g b a r k e i t e n	V e r f ü g b a r k e i t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL v e r g e h e n	v e r g e h e n	v e r g e h e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG v e r g r a b e n	v e r g r ü b e	v e r g r a b t e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL v e r j a g e n	v e r j a g t e t	v e r j a g t e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG v e r j a g e n	v e r j a g t e s t	v e r j a g t e s t
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL v e r j ü n g e n	v e r j ü n g t e n	v e r j ü n g t e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL V e r k a u f	V e r k ä u f e	V e r k ä u f e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL v e r l i e b e n	v e r l i e b t e n	v e r l i e b t e n
+OUT=pos=V OUT=finite=NFIN v e r m a r k t e n	v e r m a r k t e n	v e r m a r k t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL v e r m a r k t e n	v e r m a r k t e t e n	v e r m a r k t e t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=SG v e r m i s s e n	v e r m i s s t e s t	v e r m i s s t e s t
+OUT=pos=V OUT=tense=PST v e r m ö g e n	v e r m o c h t	v e r m o c h t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG v e r n a c h l ä s s i g e n	v e r n a c h l ä s s i g e	v e r n a c h l ä s s i g e
+OUT=pos=V OUT=tense=PST v e r n e h m e n	v e r n o m m e n	v e r n e h m t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=SG v e r s a l z e n	v e r s a l z e s t	v e r s a l z e s t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL v e r s c h e u c h e n	v e r s c h e u c h t e n	v e r s c h e u c h t e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL v e r s c h o n e n	v e r s c h o n t e n	v e r s c h o n t e n
+OUT=pos=V OUT=finite=NFIN v e r s t a a t l i c h e n	v e r s t a a t l i c h e n	v e r s t a a t l i c h e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG v e r s t e c k e n	v e r s t e c k t e	v e r s t e c k t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG v e r s t e r b e n	v e r s t i r b s t	v e r s t e r b s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL v e r s t o p f e n	v e r s t o p f e n	v e r s t o p f e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL v e r s u c h e n	v e r s u c h e n	v e r s u c h e n
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL v e r s ü ß e n	v e r s ü ß t e n	v e r s ü ß t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL v e r t e i l e n	v e r t e i l e n	v e r t e i l e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG v e r t i e f e n	v e r t i e f t e	v e r t i e f
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL v e r t i e f e n	v e r t i e f e n	v e r t i e f e n
+OUT=pos=V OUT=tense=PRS v e r t r e t e n	v e r t r e t e n d	v e r t r e t e n d
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL v e r u r s a c h e n	v e r u r s a c h e n	v e r u r s a c h e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL v e r w a i s e n	v e r w a i s e n	v e r w a i s e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL v e r w a l t e n	v e r w a l t e n	v e r w a l t e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG v e r w e r f e n	v e r w a r f	v e r w a r f
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=SG v e r z w e i g e n	v e r z w e i g t e	v e r z w e i g t e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG v i r t u a l i s i e r e n	v i r t u a l i s i e r s t	v i r t u a l i s i e r s t
+OUT=pos=N OUT=case=ACC OUT=gen=NEUT OUT=num=SG V i s i e r	V i s i e r	V i s i e r
+OUT=pos=N OUT=case=ACC OUT=gen=FEM OUT=num=SG V o g e l s c h e u c h e	V o g e l s c h e u c h e	V o g e l s c h e u c h e
+OUT=pos=N OUT=case=ACC OUT=gen=NEUT OUT=num=SG V o l l k o r n b r o t	V o l l k o r n b r o t	V o l l k o r n b r o t
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=PL v o l l z i e h e n	v o l l z i e h e n	v o l l z i e h e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG v o l l z i e h e n	v o l l z i e h e	v o l l z i e h e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=PL v u l k a n i s i e r e n	v u l k a n i s i e r e n	v u l k a n i s i e r e n
+OUT=pos=N OUT=case=GEN OUT=gen=FEM OUT=num=PL W a f f e n s t i l l s t a n d s l i n i e	W a f f e n s t i l l s t a n d s l i n i e n	W a f f e n s t i l l s t a n d s l i n i e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=2 OUT=num=PL w ä g e n	w ä g e t	w ä g e t
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL w ä g e n	w ö g e n	w ä g e n
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=SG W a h l s i e g	W a h l s i e g	W a h l s i e g
+OUT=pos=N OUT=case=NOM OUT=gen=MASC OUT=num=PL W a l l a c h	W a l l a c h e	W a l l ä c h e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL w a p p n e n	w a p p n e n	w a p p n e n
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=2 OUT=num=PL w a s c h e n	w u s c h t	w a s c h t e t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG w a t e n	w a t e	w a t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL w e c k e n	w e c k e n	w e c k e n
+OUT=pos=V OUT=tense=PST w e i n e n	g e w e i n t	g e w i e n e n
+OUT=pos=N OUT=case=NOM OUT=gen=FEM OUT=num=PL W e n d e	W e n d e n	W e n d e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=SG W e r t b e g r i f f	W e r t b e g r i f f e s	W e r t b e g r i f f e s
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL W e r t	W e r t e	W e r t e
+OUT=pos=V OUT=tense=PRS w i d e r l e g e n	w i d e r l e g e n d	w i d e r l e g e n d
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=PL w r i n g e n	w r i n g e n	w r i n g e n
+OUT=pos=N OUT=case=DAT OUT=gen=FEM OUT=num=PL W ü r d e	W ü r d e n	W ü r d e n
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=2 OUT=num=SG w ü r d i g e n	w ü r d i g s t	w ü r d i g s t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG w ü r z e n	w ü r z e	w ü r z e
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=3 OUT=num=SG z a c k e n	z a c k t	z a c k t
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG z a n k e n	z a n k e	z a n k e
+OUT=pos=V OUT=finite=NFIN z a p p e n	z a p p e n	z a p p e n
+OUT=pos=N OUT=case=GEN OUT=gen=MASC OUT=num=PL Z e i t p u n k t	Z e i t p u n k t e	Z e i t p u n k t e
+OUT=pos=V OUT=mood=IND OUT=tense=PST OUT=aspect=PFV OUT=per=3 OUT=num=PL z e n s i e r e n	z e n s i e r t e n	z e n s i e r t e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=PL z e n s i e r e n	z e n s i e r e n	z e n s i e r e n
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG z e r f l i e ß e n	z e r f l i e ß e	z e r f l i e ß e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=1 OUT=num=SG z e r k r a t z e n	z e k r a t z e	z e k r a t z e
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=SG z e r s t ä u b e n	z e r s t ä u b t e	z e r s t ä u b t e
+OUT=pos=V OUT=mood={OPT/SBJV} OUT=tense=PRS OUT=per=3 OUT=num=SG z i e l e n	z i e l e	z i e l e
+OUT=pos=V OUT=tense=PRS z i r k u l i e r e n	z i r k u l i e r e n d	z i r k u l i e r e n d
+OUT=pos=V OUT=mood={SBJV/COND} OUT=tense=PST OUT=aspect=PFV OUT=per=1 OUT=num=PL z i r p e n	z i r p t e n	z i r p t e n
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG Z u g r i f f	Z u g r i f f	Z u g r i f f
+OUT=pos=V OUT=mood=IND OUT=tense=PRS OUT=per=1 OUT=num=SG z ü n d e n	z ü n d e	z ü n d e
+OUT=pos=N OUT=case=NOM OUT=gen=NEUT OUT=num=PL Z u n g e n b e i n	Z u n g e n b e i n e	Z u n g e n b e i n e
+OUT=pos=N OUT=case=ACC OUT=gen=MASC OUT=num=SG Z u s t a n d	Z u s t a n d	Z u s t a n d
