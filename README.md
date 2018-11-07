@@ -1,6 +1,8 @@
 # morph-seq2seq
 My reimplementation of LMU's MED system
 
+It requires [pytorch](http://pytorch.org) and [pytorch-seq2seq](https://github.com/IBM/pytorch-seq2seq), so make sure you have those installed. 
+
 Big todos:
 - [ ] Set up eval on the test set
 - [ ] Make it so that we can save models with custom names
