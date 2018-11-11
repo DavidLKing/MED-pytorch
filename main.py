@@ -38,7 +38,11 @@ except NameError:
 #      # resuming from a specific checkpoint
 #      python examples/sample.py --train_path $TRAIN_PATH --dev_path $DEV_PATH --expt_dir $EXPT_PATH --load_checkpoint $CHECKPOINT_DIR
 
-with open('config.yml') as f:
+# TODO I don't think this is best way to load configs
+# Remove default values
+# load arguments from config file
+# set overrides if they're specified in the command line
+with open(sys.argv[2]) as f:
     config = yaml.safe_load(f)
 
 # TODO make sure these entirely match up with config.yml file
