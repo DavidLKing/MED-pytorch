@@ -129,10 +129,21 @@ else:
         # Initialize model
         hidden_size = config['encoder embed']
         bidirectional = True
-        encoder = EncoderRNN(len(src.vocab), max_len, hidden_size, bidirectional=bidirectional, rnn_cell='LSTM', variable_lengths=True)
-        decoder = DecoderRNN(len(tgt.vocab), max_len, hidden_size * 2 if bidirectional else hidden_size,
-                             dropout_p=config['dropout'], use_attention=True, bidirectional=bidirectional, rnn_cell='LSTM',
-                             eos_id=tgt.eos_id, sos_id=tgt.sos_id)
+        encoder = EncoderRNN(len(src.vocab), 
+                             max_len, 
+                             hidden_size, 
+                             bidirectional=bidirectional, 
+                             rnn_cell='LSTM', 
+                             variable_lengths=True)
+        decoder = DecoderRNN(len(tgt.vocab), 
+                             max_len, 
+                             hidden_size * 2 if bidirectional else hidden_size,
+                             dropout_p=float(config['dropout']), 
+                             use_attention=True, 
+                             bidirectional=bidirectional, 
+                             rnn_cell='LSTM',
+                             eos_id=tgt.eos_id, 
+                             sos_id=tgt.sos_id)
         # if torch.cuda.is_available():
         #     encoder.cuda()
         #     decoder.cuda()
