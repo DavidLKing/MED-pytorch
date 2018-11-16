@@ -1,7 +1,7 @@
 train model: True
 eval val: True
 eval test: False
-checkpoint_every: 50
+checkpoint_every: 500
 print every: 100
 plot every: 100
 print sample every: 100
@@ -18,7 +18,9 @@ save name: model.test.german.pkl
 # load_model: 2018_11_06_21_33_33/
 # load_model: 2018_11_07_12_08_14/
 load_model: None
-train_path: data/german/train/data.txt
-valid_path: data/german/dev/data.txt
-test_path: data/german/test/data.txt
-output: output.tsv
+train_path: data/russian/train/data.txt
+valid_path: data/russian/dev/data.txt
+test_path: data/russian/test/data.txt
+output: russian-no-vec.tsv
+vectors: /home/david/bin/word2vec/russian.vectors.50-1.bin
+vec_size: 50

@@ -20,7 +20,7 @@ class Rearrange():
         # self.model = vecs.get_model()
         # self.vec_input = []
 
-    def load_lines(self, raw_input):
+    def load_lines(self, feat_struct, raw_input):
         """
         build character vocabs a preprocess the lines for mila-blocks
         also check for OOVs in the russian word vectors
@@ -60,7 +60,12 @@ class Rearrange():
             out = 'OUT='
             featset = []
             for feat in line[1].replace(',', ' ').split():
-                feat = out + feat
+                if feat_struct == 'sigmorphon':
+                    feat = out + feat
+                elif feat_struct == 'unimorph':
+                    feat = feat.split('=')[1]
+                else:
+                    sys.exit("must select unimorph or sigmorphon for feature structure")
                 feat = feat.strip() # .encode('utf-8')
                 # featset.append(feat.encode('utf-8'))
                 featset.append(feat)
@@ -115,7 +120,9 @@ if __name__ == '__main__':
     # for arg in range(len(sys.argv)):
     #     print(arg, "is", sys.argv[arg])
     # for arg in sys.argv[2:]:
-    r = Rearrange(sys.argv[1])
-    lines = r.load_lines(sys.argv[1])
+    print("Usage: python3 preprocess.py unimorph german-task1-train")
+    print("or: python3 preprocess.py sigmorphon german-task1-train")
+    r = Rearrange(sys.argv[2])
+    lines = r.load_lines(sys.argv[1], sys.argv[2])
     outlines = r.realign(lines)
     r.writeout(outlines)

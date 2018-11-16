@@ -11,6 +11,8 @@ from torch.optim.lr_scheduler import StepLR
 import torchtext
 
 import pdb
+import gensim
+
 
 import seq2seq
 from seq2seq.trainer import SupervisedTrainer
@@ -79,6 +81,13 @@ logging.info(opt)
 max_len = config['max_length']
 def len_filter(example):
     return len(example.src) <= max_len and len(example.tgt) <= max_len
+
+# If selected, load word vectors:
+if config['vectors']:
+    vectors = gensim.models.KeyedVectors.load_word2vec_format(config['vectors'], binary=True)
+    vec_dim = vectors['vec_size']
+else:
+    vectors = None
 
 # HACKY CHECK
 if opt.load_checkpoint == 'None':
