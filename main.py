@@ -83,17 +83,18 @@ def len_filter(example):
     return len(example.src) <= max_len and len(example.tgt) <= max_len
 
 # If selected, load word vectors:
-if config['vectors']:
-    vectors = gensim.models.KeyedVectors.load_word2vec_format(config['vectors'], binary=True)
-    vec_dim = vectors['vec_size']
-else:
-    vectors = None
+# if config['vectors']:
+#     vectors = gensim.models.KeyedVectors.load_word2vec_format(config['vectors'], binary=True)
+#     vec_dim = vectors['vec_size']
+# else:
+#     vectors = None
 
 # HACKY CHECK
 if opt.load_checkpoint == 'None':
     opt.load_checkpoint = None
 
 if opt.load_checkpoint is not None:
+    # opt.load_checkpoint = str(opt.load_checkpoint)
     logging.info("loading checkpoint from {}".format(os.path.join(opt.expt_dir, Checkpoint.CHECKPOINT_DIR_NAME, opt.load_checkpoint)))
     checkpoint_path = os.path.join(opt.expt_dir, Checkpoint.CHECKPOINT_DIR_NAME, opt.load_checkpoint)
     checkpoint = Checkpoint.load(checkpoint_path)
