@@ -1,7 +1,10 @@
-import numpy
+import numpy as np
+import pickle as pkl
 import sys
+import gensim
 import pdb
 from os.path import basename
+
 
 class Rearrange():
     def __init__(self, raw_input):
@@ -74,9 +77,13 @@ class Rearrange():
         return lines
 
 
-    def realign(self, lines):
+    def realign(self, lines, vecs):
         outlines = []
+        found_vecs = []
+        found = 0
+        total = 0
         for line in lines:
+            total += 1
             assert(len(line) == 3)
             inform = ''
             outform = ''
@@ -86,12 +93,27 @@ class Rearrange():
             # extra space
             inform += ' '
             # build lemma
-            inform += ' '.join(line[0])
+            lemma = line[0]
+            inform += ' '.join(lemma)
             outform += ' '.join(line[2])
+            if vecs:
+                vec_size = vecs.vector_size
+                if lemma in vecs:
+                    found += 1
+                    found_vecs.append(vecs[lemma])
+                else:
+                    found_vecs.append(np.random.normal(0.0, 0.1, vec_size))
             outlines.append((inform, outform))
-        return outlines
+        print("Found", found, "of", total, "word vectors")
+        print("Coverate:", found / total)
+        # pdb.set_trace()
+        if vecs:
+            assert(len(outlines) == len(found_vecs))
+            return outlines, found_vecs
+        else:
+            return outlines, None
 
-    def writeout(self, outlines):
+    def writeout(self, outlines, vecs):
         outfile = open('data.txt', 'w')
         for in_out_tuple in outlines:
             inline = in_out_tuple[0]
@@ -106,6 +128,10 @@ class Rearrange():
                 tgtfile.write(char + '\n')
             print("source vocab length", len(self.char_vocab_source))
             print("target vocab length", len(self.char_vocab_target))
+        if vecs:
+            print("Writing out vectors:")
+            pkl.dump(vecs, open('vectors.pkl', 'wb'))
+        print("finished")
 
 if __name__ == '__main__':
     # if len(sys.argv) < 3:
@@ -115,9 +141,15 @@ if __name__ == '__main__':
     # for arg in range(len(sys.argv)):
     #     print(arg, "is", sys.argv[arg])
     # for arg in sys.argv[2:]:
-    print("Usage: python3 preprocess.py unimorph german-task1-train")
-    print("or: python3 preprocess.py sigmorphon german-task1-train")
+    print("Usage: python3 preprocess.py unimorph german-task1-train [vectors]")
+    print("or: python3 preprocess.py sigmorphon german-task1-train [vectors]")
+    if 4 <= len(sys.argv):
+        print("Found word vectors in", sys.argv[3], "\nLoading...")
+        vecs = gensim.models.KeyedVectors.load_word2vec_format(sys.argv[3], binary=True)
+        print("Loaded")
+    else:
+        vecs = None
     r = Rearrange(sys.argv[2])
     lines = r.load_lines(sys.argv[1], sys.argv[2])
-    outlines = r.realign(lines)
-    r.writeout(outlines)
+    outlines, vecs = r.realign(lines, vecs)
+    r.writeout(outlines, vecs)

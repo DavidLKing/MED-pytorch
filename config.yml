@@ -18,10 +18,9 @@ save name: model.test.german.pkl
 # load_model: 2018_11_06_21_33_33/
 # load_model: 2018_11_16_09_37_40 
 load_model: None
-train_path: data/spanish/train/data.txt
-valid_path: data/spanish/dev/data.txt
-test_path: data/spanish/test/data.txt
+train_path: data/russian/train/data.txt
+valid_path: data/russian/dev/data.txt
+test_path: data/russian/test/data.txt
 output: spanish-no-freq.tsv
-# vectors: /home/david/bin/word2vec/russian.vectors.50-1.bin
-# vec_size: 50
-interact: True
+ues_vecs: True
+interact: False
