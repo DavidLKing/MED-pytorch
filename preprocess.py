@@ -13,7 +13,6 @@ class Rearrange():
         # self.char_vocab_target['<S>'] = 0
         # self.char_vocab_target['</S>'] = 2
         # self.char_vocab_target['<UNK>'] = 1
-        self.morph_vocab = set()
         self.base = basename(raw_input).split('-')[2]
         self.base_full = basename(raw_input)
         # vecs = vectors(vecfile)
@@ -42,40 +41,36 @@ class Rearrange():
                 if char not in self.char_vocab_source:
                     self.char_vocab_source[char] = source_index
                     source_index += 1
-            # erroneous variable name, I just found out that Faruqui's code does not factor the grammar features
-            # TODO factor features? Leave them as is? Store both?
-            # factored_gram = line[1].split(',')
-            # for feature in factored_gram:
-            #     self.morph_vocab.add(feature)
-            # nonfactored grammatical features
-            gram_feats = line[1].replace(',', ' ')
-            self.morph_vocab.add(gram_feats)
-            wordform = line[2]
-            for char in wordform:
-                # char = char.strip().encode('utf-8')
-                char = char.strip()
-                if char not in self.char_vocab_target:
-                    self.char_vocab_target[char] = targ_index
-                    targ_index += 1
-            out = 'OUT='
-            featset = []
-            for feat in line[1].replace(',', ' ').split():
+            if len(line) > 1: 
                 if feat_struct == 'sigmorphon':
-                    feat = out + feat
+                    wordform = line[2].strip()
+                    feats = line[1].split(',')
+                    feats = [f.split('=')[1] for f in feats]
                 elif feat_struct == 'unimorph':
-                    feat = feat.split('=')[1]
+                    wordform = line[1]
+                    feats = line[2].strip().split(';')
                 else:
                     sys.exit("must select unimorph or sigmorphon for feature structure")
-                feat = feat.strip() # .encode('utf-8')
-                # featset.append(feat.encode('utf-8'))
-                featset.append(feat)
-                if feat not in self.char_vocab_source:
-                    # self.char_vocab_source[feat.encode('utf-8')] = source_index
-                    self.char_vocab_source[feat] = source_index
-                    source_index += 1
-            total += 1
-            l = [line[0], ' '.join(featset), line[2].strip()]
-            lines.append(l)
+                for char in wordform:
+                    char = char.strip()
+                    if char not in self.char_vocab_target:
+                        self.char_vocab_target[char] = targ_index
+                        targ_index += 1
+                out = 'OUT='
+                featset = []
+                # ADD FEATS TO INPUT
+                for feat in feats:
+                    feat = out + feat
+                    feat = feat.strip() 
+                    featset.append(feat)
+                    if feat not in self.char_vocab_source:
+                        self.char_vocab_source[feat] = source_index
+                        source_index += 1
+                total += 1
+                l = [lemma, ' '.join(featset), wordform]
+                lines.append(l)
+            else:
+                print("line", line, "ignored")
         return lines
 
 
@@ -92,7 +87,7 @@ class Rearrange():
             inform += ' '
             # build lemma
             inform += ' '.join(line[0])
-            outform += ' '.join(line[2].strip())
+            outform += ' '.join(line[2])
             outlines.append((inform, outform))
         return outlines
 

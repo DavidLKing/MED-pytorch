@@ -42,12 +42,6 @@ class Rearrange():
                 if char not in self.char_vocab_source:
                     self.char_vocab_source[char] = source_index
                     source_index += 1
-            # erroneous variable name, I just found out that Faruqui's code does not factor the grammar features
-            # TODO factor features? Leave them as is? Store both?
-            # factored_gram = line[1].split(',')
-            # for feature in factored_gram:
-            #     self.morph_vocab.add(feature)
-            # nonfactored grammatical features
             gram_feats = line[1].replace(',', ' ')
             self.morph_vocab.add(gram_feats)
             wordform = line[2]
