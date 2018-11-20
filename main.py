@@ -5,6 +5,7 @@ import sys
 import argparse
 import logging
 import yaml
+import pickle as pkl
 
 import torch
 from torch.optim.lr_scheduler import StepLR
@@ -13,10 +14,12 @@ import torchtext
 import pdb
 import gensim
 
-
 import seq2seq
 from seq2seq.trainer import SupervisedTrainer
 from seq2seq.models import EncoderRNN, DecoderRNN, Seq2seq
+### Vec mods ###
+from seq2seq.models import VecDecoderRNN
+### Done ###
 from seq2seq.loss import Perplexity
 from seq2seq.optim import Optimizer
 from seq2seq.dataset import SourceField, TargetField
@@ -45,7 +48,8 @@ except NameError:
 # Remove default values
 # load arguments from config file
 # set overrides if they're specified in the command line
-with open(sys.argv[2]) as f:
+# with open(sys.argv[2]) as f:
+with open('config.yml') as f:
     config = yaml.safe_load(f)
 
 # TODO make sure these entirely match up with config.yml file
@@ -82,6 +86,14 @@ max_len = config['max_length']
 def len_filter(example):
     return len(example.src) <= max_len and len(example.tgt) <= max_len
 
+def load_vec(path, torchdata):
+    vec_path = path.replace('data.txt', 'vectors.pkl')
+    vecs = pkl.load(open(vec_path, 'rb'))
+    assert(len(vecs) == len(torchdata))
+    for example, v in zip(torchdata, vecs):
+        example.vec = v
+    return torchdata
+
 # If selected, load word vectors:
 # if config['vectors']:
 #     vectors = gensim.models.KeyedVectors.load_word2vec_format(config['vectors'], binary=True)
@@ -115,10 +127,21 @@ else:
         fields=[('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
+
+
+    ## ADDING VECTORS ###
+    if config['use_vecs']:
+        train = load_vec(opt.train_path, train)
+        dev = load_vec(opt.dev_path, dev)
+
+
+
     src.build_vocab(train, max_size=50000)
     tgt.build_vocab(train, max_size=50000)
     input_vocab = src.vocab
     output_vocab = tgt.vocab
+
+    # pdb.set_trace()
 
     # NOTE: If the source field name and the target field name
     # are different from 'src' and 'tgt' respectively, they have
@@ -145,15 +168,27 @@ else:
                              bidirectional=bidirectional, 
                              rnn_cell='LSTM', 
                              variable_lengths=True)
-        decoder = DecoderRNN(len(tgt.vocab), 
-                             max_len, 
-                             hidden_size * 2 if bidirectional else hidden_size,
-                             dropout_p=float(config['dropout']), 
-                             use_attention=True, 
-                             bidirectional=bidirectional, 
-                             rnn_cell='LSTM',
-                             eos_id=tgt.eos_id, 
-                             sos_id=tgt.sos_id)
+        # pdb.set_trace()
+        if config['use_vecs']:
+            decoder = VecDecoderRNN(len(tgt.vocab),
+                                 max_len,
+                                 hidden_size * 2 if bidirectional else hidden_size,
+                                 dropout_p=float(config['dropout']),
+                                 use_attention=True,
+                                 bidirectional=bidirectional,
+                                 rnn_cell='LSTM',
+                                 eos_id=tgt.eos_id,
+                                 sos_id=tgt.sos_id)
+        else:
+            decoder = DecoderRNN(len(tgt.vocab),
+                                 max_len,
+                                 hidden_size * 2 if bidirectional else hidden_size,
+                                 dropout_p=float(config['dropout']),
+                                 use_attention=True,
+                                 bidirectional=bidirectional,
+                                 rnn_cell='LSTM',
+                                 eos_id=tgt.eos_id,
+                                 sos_id=tgt.sos_id)
         # if torch.cuda.is_available():
         #     encoder.cuda()
         #     decoder.cuda()
@@ -179,6 +214,7 @@ else:
                           expt_dir=config['expt_dir'])
                           # expt_dir=opt.expt_dir)
 
+    # TODO add dev eval here for early stopping
     if config['train model']:
         seq2seq = t.train(seq2seq, train,
                           num_epochs=config['epochs'],
