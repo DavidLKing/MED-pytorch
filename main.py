@@ -212,7 +212,8 @@ if config['eval val']:
 
 
 # old interactive testing env
-# while True:
-#     seq_str = raw_input("Type in a source sequence:")
-#     seq = seq_str.strip().split()
-#     print(predictor.predict(seq))
+if config['interact']:
+    while True:
+        seq_str = raw_input("Type in a source sequence:")
+        seq = seq_str.strip().split()
+        print(predictor.predict(seq))

@@ -1,4 +1,4 @@
-train model: False
+train model: True
 eval val: True
 eval test: False
 checkpoint_every: 500
@@ -9,18 +9,19 @@ expt_dir: experiment
 max_length: 50
 num layers: 2
 batch size: 20
-epochs: 50
+epochs: 20
 encoder embed: 300
 decoder embed: 300
 dropout: 0.3
 learning rate: 1.0
 save name: model.test.german.pkl
 # load_model: 2018_11_06_21_33_33/
-load_model: 2018_11_16_09_37_40 
-# load_model: None
-train_path: data/russian/train/data.txt
-valid_path: data/russian/dev/data.txt
-test_path: data/russian/test/data.txt
-output: russian-no-vec.tsv
+# load_model: 2018_11_16_09_37_40 
+load_model: None
+train_path: data/spanish/train/data.txt
+valid_path: data/spanish/dev/data.txt
+test_path: data/spanish/test/data.txt
+output: spanish-no-freq.tsv
 # vectors: /home/david/bin/word2vec/russian.vectors.50-1.bin
 # vec_size: 50
+interact: True
