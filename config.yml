@@ -22,5 +22,5 @@ train_path: data/russian/train/data.txt
 valid_path: data/russian/dev/data.txt
 test_path: data/russian/test/data.txt
 output: spanish-no-freq.tsv
-use_vecs: False
+use_vecs: True
 interact: False
