@@ -3,8 +3,12 @@ My reimplementation of LMU's MED system
 
 It requires [pytorch](http://pytorch.org) and [pytorch-seq2seq](https://github.com/DavidLKing/pytorch-seq2seq) (this is my mocked up version---temp fix), , so make sure you have those installed. 
 
+We also now have git flow. Develop will rapidly change and frequently break. Master and release
+should be more stable.  Just a forewarning though, this is ALL VERY ALPHA STILL. 
+
 Big todos:
 - [x] Add word vectors
+- [ ] Fully integrate pytorch-seq2seq into source code (there were lots of edits to make things work)
 - [ ] Fix model loading bug... currently doesn't consistently load what's in the config file
 - [ ] New develop verison is a bit of a drastic update: update `main.py` to be compatible with new development branch as exemplified in IBM's new `sample.py` 
 - [ ] Set up eval on the test set
