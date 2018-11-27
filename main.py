@@ -13,12 +13,13 @@ import torchtext
 
 import pdb
 import gensim
+import numpy as np
 
 import seq2seq
 from seq2seq.trainer import SupervisedTrainer
 from seq2seq.models import EncoderRNN, DecoderRNN, Seq2seq
 ### Vec mods ###
-from seq2seq.models import VecDecoderRNN
+# from seq2seq.models import VecDecoderRNN
 ### Done ###
 from seq2seq.loss import Perplexity
 from seq2seq.optim import Optimizer
@@ -86,13 +87,25 @@ max_len = config['max_length']
 def len_filter(example):
     return len(example.src) <= max_len and len(example.tgt) <= max_len
 
-def load_vec(path, torchdata):
+def load_vec(path, batch_size):
     vec_path = path.replace('data.txt', 'vectors.pkl')
     vecs = pkl.load(open(vec_path, 'rb'))
-    assert(len(vecs) == len(torchdata))
-    for example, v in zip(torchdata, vecs):
-        example.vec = v
-    return torchdata
+    # for example, v in zip(torchdata, vecs):
+    #     example.vec = v
+    batched = []
+    for b in range((len(vecs) // batch_size) + 1):
+        # pdb.set_trace()
+        bat = []
+        while len(bat) < batch_size:
+            if len(vecs) > 0:
+                # try:
+                bat.append(vecs.pop(0))
+                # except:
+                #     pdb.set_trace()
+            else:
+                break
+        batched.append(bat)
+    return batched
 
 # If selected, load word vectors:
 # if config['vectors']:
@@ -131,10 +144,16 @@ else:
 
     ## ADDING VECTORS ###
     if config['use_vecs']:
-        train = load_vec(opt.train_path, train)
-        dev = load_vec(opt.dev_path, dev)
-
-
+        # train_vecs = load_vec(opt.train_path, config['batch size'])
+        # dev_vecs = load_vec(opt.dev_path, config['batch size'])
+        print("Loading word vectors")
+        vectors = gensim.models.KeyedVectors.load_word2vec_format(config['vecs'], binary=True)
+        print("Vectors loaded")
+    else:
+        # train_vecs = None
+        # dev_vecs = None
+        vectors = None
+    # pdb.set_trace()
 
     src.build_vocab(train, max_size=50000)
     tgt.build_vocab(train, max_size=50000)
@@ -180,9 +199,18 @@ else:
         #                             eos_id=tgt.eos_id,
         #                             sos_id=tgt.sos_id)
         # else:
+        if bidirectional:
+            hidden_size = hidden_size * 2
+        if config['use_vecs']:
+            # aug_size = len(train_vecs[0][0])
+            aug_size = vectors.vector_size
+        else:
+            aug_size = 0
+        # pdb.set_trace()
         decoder = DecoderRNN(len(tgt.vocab),
                              max_len,
-                             hidden_size * 2 if bidirectional else hidden_size,
+                             hidden_size=hidden_size,
+                             aug_size=aug_size,
                              dropout_p=float(config['dropout']),
                              use_attention=True,
                              bidirectional=bidirectional,
@@ -216,14 +244,16 @@ else:
 
     # TODO add dev eval here for early stopping
     if config['train model']:
-        seq2seq = t.train(seq2seq, train,
+        seq2seq = t.train(input_vocab,
+                          seq2seq, train,
                           num_epochs=config['epochs'],
+                          vectors=vectors,
                           dev_data=dev,
                           optimizer=optimizer,
                           teacher_forcing_ratio=0.5,
                           resume=opt.resume)
 
-predictor = Predictor(seq2seq, input_vocab, output_vocab)
+predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
 
 if config['eval val']:
     of = open(config['output'], 'w')

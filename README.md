@@ -4,6 +4,7 @@ My reimplementation of LMU's MED system
 It requires [pytorch](http://pytorch.org) and [pytorch-seq2seq](https://github.com/DavidLKing/pytorch-seq2seq) (this is my mocked up version---temp fix), , so make sure you have those installed. 
 
 Big todos:
+- [x] Add word vectors
 - [ ] Fix model loading bug... currently doesn't consistently load what's in the config file
 - [ ] New develop verison is a bit of a drastic update: update `main.py` to be compatible with new development branch as exemplified in IBM's new `sample.py` 
 - [ ] Set up eval on the test set
@@ -11,7 +12,7 @@ Big todos:
 - [ ] Set up ensembling, possibly as separate script
 - [ ] Add Faruqui attention
 - [ ] Make sure config file and command line options are in sync
-- [ ] Allow saving of model outputs (predictions)
+- [x] Allow saving of model outputs (predictions)
 - [ ] Clean out `results` folder upon final release
 
 `preprocess.py SIGMORPHON_FILE` generates `data.txt`, `vocab.source`, and `vocab.target`.

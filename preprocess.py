@@ -105,7 +105,7 @@ class Rearrange():
                     found_vecs.append(np.random.normal(0.0, 0.1, vec_size))
             outlines.append((inform, outform))
         print("Found", found, "of", total, "word vectors")
-        print("Coverate:", found / total)
+        print("Coverage:", found / total)
         # pdb.set_trace()
         if vecs:
             assert(len(outlines) == len(found_vecs))

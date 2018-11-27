@@ -1,4 +1,4 @@
-train model: True
+train model: False
 eval val: True
 eval test: False
 checkpoint_every: 500
@@ -23,4 +23,5 @@ valid_path: data/russian/dev/data.txt
 test_path: data/russian/test/data.txt
 output: spanish-no-freq.tsv
 use_vecs: True
+vecs: ruscorpora.model.bin
 interact: False
