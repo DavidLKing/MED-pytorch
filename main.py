@@ -49,8 +49,8 @@ except NameError:
 # Remove default values
 # load arguments from config file
 # set overrides if they're specified in the command line
-# with open(sys.argv[2]) as f:
-with open('config.yml') as f:
+with open(sys.argv[2]) as f:
+    # with open('config.yml') as f:
     config = yaml.safe_load(f)
 
 # TODO make sure these entirely match up with config.yml file

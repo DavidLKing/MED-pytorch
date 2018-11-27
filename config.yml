@@ -1,6 +1,5 @@
-train model: False
+train model: True
 eval val: True
-eval test: False
 checkpoint_every: 500
 print every: 100
 plot every: 100
@@ -9,19 +8,20 @@ expt_dir: expirement
 max_length: 50
 num layers: 2
 batch size: 20
-epochs: 20
+epochs: 2
 encoder embed: 300
 decoder embed: 300
 dropout: 0.3
 learning rate: 1.0
-save name: model.test.german.pkl
 # load_model: 2018_11_06_21_33_33/
 # load_model: 2018_11_16_09_37_40/
-load_model: decent/
+#load_model: decent/
+load_model: None
 train_path: data/russian/train/data.txt
 valid_path: data/russian/dev/data.txt
 test_path: data/russian/test/data.txt
-output: spanish-no-freq.tsv
-use_vecs: False
+output: output.tsv
+use_vecs: True
 vecs: ruscorpora.model.bin
+#vecs: nope
 interact: False
