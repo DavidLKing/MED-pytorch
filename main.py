@@ -82,6 +82,19 @@ LOG_FORMAT = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
 logging.basicConfig(format=LOG_FORMAT, level=getattr(logging, opt.log_level.upper()))
 logging.info(opt)
 
+## ADDING VECTORS ###
+if config['use_vecs']:
+    # train_vecs = load_vec(opt.train_path, config['batch size'])
+    # dev_vecs = load_vec(opt.dev_path, config['batch size'])
+    print("Loading word vectors")
+    vectors = gensim.models.KeyedVectors.load_word2vec_format(config['vecs'], binary=True)
+    print("Vectors loaded")
+else:
+    # train_vecs = None
+    # dev_vecs = None
+    vectors = None
+# pdb.set_trace()
+
 # For building the datasets:
 max_len = config['max_length']
 def len_filter(example):
@@ -140,20 +153,6 @@ else:
         fields=[('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
-
-
-    ## ADDING VECTORS ###
-    if config['use_vecs']:
-        # train_vecs = load_vec(opt.train_path, config['batch size'])
-        # dev_vecs = load_vec(opt.dev_path, config['batch size'])
-        print("Loading word vectors")
-        vectors = gensim.models.KeyedVectors.load_word2vec_format(config['vecs'], binary=True)
-        print("Vectors loaded")
-    else:
-        # train_vecs = None
-        # dev_vecs = None
-        vectors = None
-    # pdb.set_trace()
 
     src.build_vocab(train, max_size=50000)
     tgt.build_vocab(train, max_size=50000)

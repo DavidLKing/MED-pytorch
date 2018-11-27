@@ -16,8 +16,8 @@ dropout: 0.3
 learning rate: 1.0
 save name: model.test.german.pkl
 # load_model: 2018_11_06_21_33_33/
-# load_model: 2018_11_16_09_37_40 
-load_model: None
+# load_model: 2018_11_16_09_37_40/
+load_model: 2018_11_27_07_29_32/
 train_path: data/russian/train/data.txt
 valid_path: data/russian/dev/data.txt
 test_path: data/russian/test/data.txt
