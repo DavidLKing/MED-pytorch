@@ -29,3 +29,6 @@ Current sigmorphon2016 German dev score:
 acc on sig set sans adjectives:
 
 `Val accuracy: 609 out of 673 0.9049034175334324`
+
+Russian acc with word vectors:
+`Val accuracy: 1453 out of 1591 0.9132620993086109`
