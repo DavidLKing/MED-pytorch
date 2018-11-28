@@ -1,6 +1,20 @@
 # Personal stuff
 .idea/*
 *un~
+data/russian/*
+data/german-*
+*.bin
+*.tsv
+screenlog.*
+olds/data/russian/
+olds/main.py.backup
+olds/main.py.conflict2
+olds/model.german.pkl
+olds/model.pkl
+olds/model.test.german.pkl
+olds/notes.txt
+olds/test1
+olds/test2
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

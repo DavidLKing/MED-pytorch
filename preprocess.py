@@ -119,15 +119,16 @@ class Rearrange():
             inline = in_out_tuple[0]
             outline = in_out_tuple[1] + '\n'
             outfile.write('\t'.join([inline, outline]))
-        if self.base == 'train':
-            srcfile = open('vocab.source', 'w')
-            tgtfile = open('vocab.target', 'w')
-            for char in self.char_vocab_source:
-                srcfile.write(char + '\n')
-            for char in self.char_vocab_target:
-                tgtfile.write(char + '\n')
-            print("source vocab length", len(self.char_vocab_source))
-            print("target vocab length", len(self.char_vocab_target))
+        # if self.base == 'train':
+        # TODO do we really care?
+        srcfile = open('vocab.source', 'w')
+        tgtfile = open('vocab.target', 'w')
+        for char in self.char_vocab_source:
+            srcfile.write(char + '\n')
+        for char in self.char_vocab_target:
+            tgtfile.write(char + '\n')
+        print("source vocab length", len(self.char_vocab_source))
+        print("target vocab length", len(self.char_vocab_target))
         if vecs:
             print("Writing out vectors:")
             pkl.dump(vecs, open('vectors.pkl', 'wb'))
