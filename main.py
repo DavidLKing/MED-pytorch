@@ -64,7 +64,7 @@ parser.add_argument('--train_path', action='store', dest='train_path',
 parser.add_argument('--dev_path', action='store', dest='dev_path',
                     default=config['valid_path'],
                     help='Path to dev data')
-parser.add_argument('--expt_dir', action='store', dest='expt_dir', default='./experiment',
+parser.add_argument('--expt_dir', action='store', dest='expt_dir', default=config['expt_dir'],
                     help='Path to experiment directory. If load_checkpoint is True, then path to checkpoint directory has to be provided')
 parser.add_argument('--load_checkpoint', action='store', dest='load_checkpoint',
                     default=config['load_model'],
