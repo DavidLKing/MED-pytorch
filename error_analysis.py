@@ -25,8 +25,8 @@ def gen_paradigms(unis):
         line = line.strip().split('\t')
         if len(line) > 1:
             assert(len(line) == 3)
-            lemma = line[0]
-            word = line[1]
+            lemma = line[0].replace(' ', '')
+            word = line[1].replace(' ', '')
             features = line[2]
             if lemma not in paradigms:
                 paradigms[lemma] = {}
@@ -48,10 +48,12 @@ def get_errors(outputs):
     return errors
 
 
-# In[65]:
+# In[5]:
 
 
 unimorph = open('data/russian/rus-fake-train.tsv', 'r')
+train = open('data/russian/train/data.txt', 'r')
+dev = open('data/russian/dev/data.txt', 'r')
 vecs = open('russian-w-vecs.tsv', 'r')
 novecs = open('russian-no-vecs.tsv', 'r')
 paradigms = gen_paradigms(unimorph)
@@ -59,7 +61,7 @@ vec_errors = get_errors(vecs)
 novec_errors = get_errors(novecs)
 
 
-# In[39]:
+# In[6]:
 
 
 def get_cite(form_list):
@@ -74,7 +76,58 @@ def get_cite(form_list):
     return input_forms
 
 
-# In[79]:
+# In[7]:
+
+
+def input_to_vars(line):
+    lemma = []
+    features = []
+    word = []
+    for char in line[0].split(' '):
+        if '=' not in char:
+            # if char == '':
+            #     char = char.replace('', ' ')
+            lemma.append(char)
+        else:
+            features.append(char)
+    lemma = ''.join(lemma)
+    for char in line[1].split(' '):
+        # if char == '':
+        #     char = char.replace('', ' ')
+        word.append(char)
+    word = ''.join(word)
+    return lemma, features, word
+
+
+# In[8]:
+
+
+def i_e_counts(unimorph, paradigms):
+    i_count = 0
+    e_count = 0
+    unimorph.seek(0)
+    for line in unimorph:
+        line = line.strip().split('\t')
+        if len(line) > 1:
+            assert(len(line) == 2)
+            lemma, features, word = input_to_vars(line)
+            if "OUT=V" in features:
+                inform = 'V;PRS;2;SG'
+                if inform in paradigms[lemma]:
+                    second_sing = paradigms[lemma][inform]
+                    _, _, _, affixes = a.diffasstring(lemma, second_sing)
+                    for affix in affixes:
+                        if '+е' in affix or '+ё' in affix:
+                            e_count += 1
+                        else:
+                            i_count += 1
+    return i_count, e_count
+                
+
+
+# In[9]:
+
+
 def class_error(conj_class, affixes):
     class_error = False
     for affix in affixes:
@@ -86,11 +139,18 @@ def class_error(conj_class, affixes):
                 class_error = True
     return class_error
 
-def get_verb_class(inputs, golds, preds, paradigms):
+
+# In[10]:
+
+
+def get_verb_class(inputs, golds, preds, paradigms, i_class_total, e_class_total):
     missing = 0
     total = 0
     error = 0
     class_errors = 0
+    i_class_errors = 0
+    e_class_errors = 0
+    
     for cite, form, pred in zip(inputs, golds, preds):
         total += 1
         form = ''.join(form.split(' '))
@@ -107,12 +167,15 @@ def get_verb_class(inputs, golds, preds, paradigms):
                     if '+е' in affix:
                         conj_class = 'е-conj'
                         error_type = class_error(conj_class, diff_affixes)
+                        e_class_errors += 1
                     elif '+ё' in affix:
                         conj_class = 'ё-conj'
                         error_type = class_error(conj_class, diff_affixes)
+                        e_class_errors += 1
                     else:
                         conj_class = 'и-conj'
                         error_type = class_error(conj_class, diff_affixes)
+                        i_class_errors += 1
                 # print(cite, second_sing, conj_class, form, pred, error_type, diff_affixes )
                 # pdb.set_trace()
                 if error_type:
@@ -121,11 +184,41 @@ def get_verb_class(inputs, golds, preds, paradigms):
                 missing += 1
         else:
             error += 1
+    
     print("Missing", missing, "of", total)
+    print("Total found", total - missing)
     print("Missing", error, "citation forms (errors)")
-    print("Total class error detected:", class_errors)
+    print("Total class error detected:", class_errors, "or", class_errors / (total - missing))
+    print("i_conj", i_class_errors, i_class_errors / (total - missing))
+    print("i_conj error rate", i_class_errors / i_class_total)
+    print("i_conj total", i_class_total)
+    print("e_conj", e_class_errors, e_class_errors / (total - missing))
+    print("e_conj error rate", e_class_errors / e_class_total)
+    print("e_conj total", e_class_total)
 
-# In[78]:
+
+# _Verbs!_
+
+# In[11]:
+
+
+train_i, train_e = i_e_counts(train, paradigms)
+print("Total i_conj in train:", train_i)
+print("Total e_conj in train:", train_e)
+
+
+# ```
+# grep OUT=V data/russian/train/data.txt | wc -l
+# 3690
+# ```
+
+# In[12]:
+
+
+i_class_total, e_class_total = i_e_counts(dev, paradigms)
+
+
+# In[13]:
 
 
 v_errors = pd.DataFrame(vec_errors, columns=['input', 'gold', 'pred'])
@@ -133,5 +226,205 @@ verbs = v_errors[v_errors['input'].str.match('OUT=V')]
 inputs = get_cite(list(verbs['input']))
 golds = list(verbs['gold'])
 preds = list(verbs['pred'])
-get_verb_class(inputs, golds, preds, paradigms)
+get_verb_class(inputs, golds, preds, paradigms, i_class_total, e_class_total)
 
+
+# In[14]:
+
+
+nv_errors = pd.DataFrame(novec_errors, columns=['input', 'gold', 'pred'])
+verbs = nv_errors[nv_errors['input'].str.match('OUT=V')]
+inputs = get_cite(list(verbs['input']))
+golds = list(verbs['gold'])
+preds = list(verbs['pred'])
+get_verb_class(inputs, golds, preds, paradigms, i_class_total, e_class_total)
+
+
+# _Nouns!_
+
+# In[15]:
+
+
+class Gender:
+    def __init__(self, masc, fem, neut, masc_fem):
+        self.masc = masc
+        self.fem = fem
+        self.neut = neut
+        self.masc_fem = masc_fem
+        
+masc = {'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ч', 'ц', 'ш','щ'}
+fem = {'а', 'я'}
+neut = {'о', 'е'}
+masc_fem = {'ь'}
+classes = Gender(masc, fem, neut, masc_fem)
+
+
+# In[16]:
+
+
+def anim_error(lemma, form, single, paradigms, error_total, error_count, found_count):
+#     error = 'not found'
+    
+    if single:
+        inform_acc = 'N;ACC;SG'
+        inform_nom = 'N;NOM;SG'
+        inform_gen = 'N;GEN;SG'
+    else:
+        inform_acc = 'N;ACC;PL'
+        inform_nom = 'N;NOM;PL'
+        inform_gen = 'N;GEN;PL'
+    
+    if lemma in paradigms:
+        if inform_acc in paradigms[lemma] and \
+           inform_gen in paradigms[lemma] and \
+           inform_nom in paradigms[lemma]:
+            assert(paradigms[lemma][inform_acc] != form)
+            if form[-2:] != paradigms[lemma][inform_acc][-2:]:
+                if form[-2:] == paradigms[lemma][inform_gen][-2:] or \
+                   form[-2:] == paradigms[lemma][inform_nom][-2:]:
+                    # if (paradigms[lemma][inform_gen] == paradigms[lemma][inform_acc]) or \
+                    #    (paradigms[lemma][inform_nom] == paradigms[lemma][inform_acc]):
+                    # anim_error = 'anim'
+                    error_count += 1
+                    found_count += 1
+                    error_total += 1
+            elif form[-2:] != paradigms[lemma][inform_gen][-2:] and \
+                 form[-2:] != paradigms[lemma][inform_nom][-2:]:
+                    # anim_error = 'other'
+                    found_count += 1
+                    error_total += 1
+            
+    return error_total, error_count, found_count
+
+
+# In[17]:
+
+
+def error_count(errors, train, dev, classes, paradigms):
+    total = 0
+    found = 0
+    
+    masc_acc_sg_total = 0
+    fem_acc_sg_total = 0
+    neut_acc_sg_total = 0
+    masc_acc_pl_total = 0
+    fem_acc_pl_total = 0
+    neut_acc_pl_total = 0
+    
+    masc_acc_sg_anim_error = 0
+    fem_acc_sg_anim_error = 0
+    neut_acc_sg_anim_error = 0
+    masc_acc_pl_anim_error = 0
+    fem_acc_pl_anim_error = 0
+    neut_acc_pl_anim_error = 0
+    
+    for inputs, gold, pred in zip(errors['input'], errors['gold'], errors['pred']):
+        total += 1
+        lemma, features, form = input_to_vars([inputs, pred])
+        # if lemma == 'геркулесоваякаша':
+        #     pdb.set_trace()
+        if "OUT=N" in features and "OUT=ACC" in features:
+            if "OUT=SG" in features:
+                if lemma[-1] in classes.masc:
+                    masc_acc_sg_total, masc_acc_sg_anim_error, found = anim_error(lemma, 
+                                                                                  form, 
+                                                                                  True, 
+                                                                                  paradigms, 
+                                                                                  masc_acc_sg_total, 
+                                                                                  masc_acc_sg_anim_error, 
+                                                                                  found)
+                elif lemma[-1] in classes.fem:
+                    fem_acc_sg_total, fem_acc_sg_anim_error, found = anim_error(lemma, 
+                                                                                  form, 
+                                                                                  True, 
+                                                                                  paradigms, 
+                                                                                  fem_acc_sg_total, 
+                                                                                  fem_acc_sg_anim_error, 
+                                                                                  found)
+                elif lemma[-1] in classes.neut:
+                    neut_acc_sg_total, neut_acc_sg_anim_error, found = anim_error(lemma, 
+                                                                                  form, 
+                                                                                  True, 
+                                                                                  paradigms, 
+                                                                                  neut_acc_sg_total, 
+                                                                                  neut_acc_sg_anim_error, 
+                                                                                  found)
+            elif "OUT=PL" in features:
+                if lemma[-1] in classes.masc:
+                    masc_acc_pl_total, masc_acc_pl_anim_error, found = anim_error(lemma, 
+                                                                                  form, 
+                                                                                  False, 
+                                                                                  paradigms, 
+                                                                                  masc_acc_pl_total, 
+                                                                                  masc_acc_pl_anim_error, 
+                                                                                  found)
+                elif lemma[-1] in classes.fem:
+                    fem_acc_pl_total, fem_acc_pl_anim_error, found = anim_error(lemma, 
+                                                                                  form, 
+                                                                                  False, 
+                                                                                  paradigms, 
+                                                                                  fem_acc_pl_total, 
+                                                                                  fem_acc_pl_anim_error, 
+                                                                                  found)
+                elif lemma[-1] in classes.neut:
+                    neut_acc_pl_total, neut_acc_pl_anim_error, found = anim_error(lemma, 
+                                                                                  form, 
+                                                                                  False, 
+                                                                                  paradigms, 
+                                                                                  neut_acc_pl_total, 
+                                                                                  neut_acc_pl_anim_error, 
+                                                                                  found)
+    
+    
+    
+    
+    if masc_acc_sg_total > 0:
+        print("masc_acc_sg_anim_error", masc_acc_sg_anim_error, 'or', masc_acc_sg_anim_error / masc_acc_sg_total)
+        print("masc_acc_sg_total", masc_acc_sg_total)
+    
+    if fem_acc_sg_total > 0:
+        print("fem_acc_sg_anim_error", fem_acc_sg_anim_error, 'or', fem_acc_sg_anim_error / fem_acc_sg_total)
+        print("fem_acc_sg_total", fem_acc_sg_total)
+    
+    if neut_acc_sg_total > 0:
+        print("neut_acc_sg_anim_error", neut_acc_sg_anim_error, 'or', neut_acc_sg_anim_error /neut_acc_sg_total )
+        print("neut_acc_sg_total", neut_acc_sg_total)
+
+    if masc_acc_pl_total > 0:
+        print("masc_acc_pl_anim_error", masc_acc_pl_anim_error, 'or', masc_acc_pl_anim_error / masc_acc_pl_total)
+        print("masc_acc_pl_total", masc_acc_pl_total)
+
+    if fem_acc_pl_total > 0:
+        print("fem_acc_pl_anim_error", fem_acc_pl_anim_error, 'or', fem_acc_pl_anim_error / fem_acc_pl_total)
+        print("fem_acc_pl_total", fem_acc_pl_total)
+
+    if neut_acc_pl_total > 0:
+        print("neut_acc_pl_anim_error", neut_acc_pl_anim_error, 'or', neut_acc_pl_anim_error / neut_acc_pl_total)
+        print("neut_acc_pl_total", neut_acc_pl_total)
+    print('found', found, 'paradigm entries for N;ACC;SG/PL of', total)
+
+
+# In[18]:
+
+
+error_count(v_errors, train, dev, classes, paradigms)
+
+
+# ```
+# (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "N;ACC;ANIM" data/russian/rus-fake-train.tsv | wc -l
+# 352
+# (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "N;ACC" data/russian/rus-fake-train.tsv | wc -l
+# 33682
+# (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "N;ACC;SG" data/russian/rus-fake-train.tsv | wc -l
+# 15507
+# (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "N;ACC;PL" data/russian/rus-fake-train.tsv | wc -l
+# 12036
+# (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "OUT=N OUT=ACC OUT=ANIM" data/russian/dev/data.txt | wc -l
+# 23
+# (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "OUT=N OUT=ACC" data/russian/dev/data.txt | wc -l
+# 1514
+# (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "OUT=N OUT=ACC OUT=SG" data/russian/dev/data.txt | wc -l
+# 827
+# (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "OUT=N OUT=ACC OUT=PL" data/russian/dev/data.txt | wc -l
+# 647
+# ```
