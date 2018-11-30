@@ -16,8 +16,8 @@ class Rearrange():
         # self.char_vocab_target['<S>'] = 0
         # self.char_vocab_target['</S>'] = 2
         # self.char_vocab_target['<UNK>'] = 1
-        self.base = basename(raw_input).split('-')[2]
-        self.base_full = basename(raw_input)
+        # self.base = basename(raw_input).split('-')[2]
+        # self.base_full = basename(raw_input)
         # vecs = vectors(vecfile)
         # self.model = vecs.get_model()
         # self.vec_input = []
