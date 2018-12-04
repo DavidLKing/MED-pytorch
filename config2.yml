@@ -5,7 +5,7 @@ print every: 100
 plot every: 100
 print sample every: 100
 #expt_dir: spanish-balanced-gen1
-expt_dir: vecs
+expt_dir: novecs
 max_length: 50
 num layers: 2
 batch size: 20
@@ -16,9 +16,9 @@ dropout: 0.3
 # load_model: 2018_11_06_21_33_33/
 # load_model: 2018_11_16_09_37_40/
 # non vec russian model
-#load_model: 2018_11_27_17_18_32/
+load_model: 2018_11_27_17_18_32/
 # vec russian model
-load_model: 2018_11_28_19_02_18/
+#load_model: 2018_11_28_19_02_18/
 #load_model: decent/
 #load_model: None
 train_path: data/russian/train/data.txt
@@ -26,7 +26,8 @@ valid_path: data/russian/dev/UDdev.txt
 # test_path: data/spanish-sigstyle/test/data.txt
 # valid_path: data/spanish-sigstyle/test/data.txt
 output: UDdev.vecs.tsv
-use_vecs: True
-vecs: ruscorpora.model.bin
-#vecs: nope
+use_vecs: False
+#use_vecs: True
+#vecs: ruscorpora.model.bin
+vecs: nope
 interact: False

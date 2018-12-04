@@ -3,7 +3,7 @@
 
 # In[1]:
 
-import pdb
+
 import difflib
 import pandas as pd
 
@@ -25,6 +25,10 @@ def gen_paradigms(unis):
         line = line.strip().split('\t')
         if len(line) > 1:
             assert(len(line) == 3)
+            # TODO fix space bug
+            # if lemma == 'геркулесоваякаша':
+            # should be геркулесовая каша
+            #     pdb.set_trace()
             lemma = line[0].replace(' ', '')
             word = line[1].replace(' ', '')
             features = line[2]
@@ -84,16 +88,20 @@ def input_to_vars(line):
     features = []
     word = []
     for char in line[0].split(' '):
+        # TODO fix space bug
+        # if lemma == 'геркулесоваякаша':
+        # should be геркулесовая каша
+        #     pdb.set_trace()
         if '=' not in char:
             # if char == '':
-            #     char = char.replace('', ' ')
+                # char = char.replace('', ' ')
             lemma.append(char)
         else:
             features.append(char)
     lemma = ''.join(lemma)
     for char in line[1].split(' '):
         # if char == '':
-        #     char = char.replace('', ' ')
+            # char = char.replace('', ' ')
         word.append(char)
     word = ''.join(word)
     return lemma, features, word
@@ -259,7 +267,7 @@ masc_fem = {'ь'}
 classes = Gender(masc, fem, neut, masc_fem)
 
 
-# In[16]:
+# In[68]:
 
 
 def anim_error(lemma, form, single, paradigms, error_total, error_count, found_count):
@@ -275,21 +283,18 @@ def anim_error(lemma, form, single, paradigms, error_total, error_count, found_c
         inform_gen = 'N;GEN;PL'
     
     if lemma in paradigms:
-        if inform_acc in paradigms[lemma] and \
-           inform_gen in paradigms[lemma] and \
-           inform_nom in paradigms[lemma]:
-            assert(paradigms[lemma][inform_acc] != form)
+        if inform_acc in paradigms[lemma] and            inform_gen in paradigms[lemma] and            inform_nom in paradigms[lemma]:
+            # print(form, paradigms[lemma][inform_acc])
+            # assert(paradigms[lemma][inform_acc] != form)
             if form[-2:] != paradigms[lemma][inform_acc][-2:]:
-                if form[-2:] == paradigms[lemma][inform_gen][-2:] or \
-                   form[-2:] == paradigms[lemma][inform_nom][-2:]:
+                if form[-2:] == paradigms[lemma][inform_gen][-2:] or                    form[-2:] == paradigms[lemma][inform_nom][-2:]:
                     # if (paradigms[lemma][inform_gen] == paradigms[lemma][inform_acc]) or \
                     #    (paradigms[lemma][inform_nom] == paradigms[lemma][inform_acc]):
                     # anim_error = 'anim'
                     error_count += 1
                     found_count += 1
                     error_total += 1
-            elif form[-2:] != paradigms[lemma][inform_gen][-2:] and \
-                 form[-2:] != paradigms[lemma][inform_nom][-2:]:
+            elif form[-2:] != paradigms[lemma][inform_gen][-2:] and                  form[-2:] != paradigms[lemma][inform_nom][-2:]:
                     # anim_error = 'other'
                     found_count += 1
                     error_total += 1
@@ -297,7 +302,54 @@ def anim_error(lemma, form, single, paradigms, error_total, error_count, found_c
     return error_total, error_count, found_count
 
 
-# In[17]:
+# In[69]:
+
+
+def class_count(dev, classes):
+    masc_acc_sg_total = 0
+    fem_acc_sg_total = 0
+    neut_acc_sg_total = 0
+    masc_fem_acc_sg_total = 0
+    masc_acc_pl_total = 0
+    fem_acc_pl_total = 0
+    neut_acc_pl_total = 0
+    masc_fem_acc_pl_total = 0
+    
+    dev.seek(0)
+    
+    for line in dev:
+        line = line.split('\t')
+        if len(line) == 2:
+            lemma, features, word = input_to_vars(line)
+            if 'OUT=N' in features:
+                if 'OUT=ACC' in features:
+                    if 'OUT=SG' in features and lemma[-1] in classes.masc:
+                        masc_acc_sg_total += 1
+                    elif 'OUT=SG' in features and lemma[-1] in classes.fem:
+                        fem_acc_sg_total += 1
+                    elif 'OUT=SG' in features and lemma[-1] in classes.neut:
+                        neut_acc_sg_total += 1
+                    elif 'OUT=SG' in features and lemma[-1] in classes.masc_fem:
+                        masc_fem_acc_sg_total += 1
+                    elif 'OUT=PL' in features and lemma[-1] in classes.masc:
+                        masc_acc_pl_total += 1
+                    elif 'OUT=PL' in features and lemma[-1] in classes.fem:
+                        fem_acc_pl_total += 1
+                    elif 'OUT=PL' in features and lemma[-1] in classes.neut:
+                        neut_acc_pl_total += 1
+                    elif 'OUT=PL' in features and lemma[-1] in classes.masc_fem:
+                        masc_fem_acc_pl_total += 1
+    return masc_acc_sg_total, fem_acc_sg_total, neut_acc_sg_total, masc_fem_acc_sg_total, masc_acc_pl_total, fem_acc_pl_total, neut_acc_pl_total, masc_fem_acc_pl_total
+    
+
+
+# In[70]:
+
+
+class_count(dev, classes)
+
+
+# In[71]:
 
 
 def error_count(errors, train, dev, classes, paradigms):
@@ -307,23 +359,36 @@ def error_count(errors, train, dev, classes, paradigms):
     masc_acc_sg_total = 0
     fem_acc_sg_total = 0
     neut_acc_sg_total = 0
+    masc_fem_acc_sg_total = 0
     masc_acc_pl_total = 0
     fem_acc_pl_total = 0
     neut_acc_pl_total = 0
+    masc_fem_acc_pl_total = 0
+
+    class_counts = class_count(dev, classes)
+    dev_masc_acc_sg_total = class_counts[0]
+    dev_fem_acc_sg_total = class_counts[1]
+    dev_neut_acc_sg_total = class_counts[2]
+    dev_masc_fem_acc_sg_total = class_counts[3]
+    dev_masc_acc_pl_total = class_counts[4]
+    dev_fem_acc_pl_total = class_counts[5]
+    dev_neut_acc_pl_total = class_counts[6]
+    dev_masc_fem_acc_pl_total = class_counts[7]
     
     masc_acc_sg_anim_error = 0
     fem_acc_sg_anim_error = 0
     neut_acc_sg_anim_error = 0
+    masc_fem_acc_sg_anim_error = 0
     masc_acc_pl_anim_error = 0
     fem_acc_pl_anim_error = 0
     neut_acc_pl_anim_error = 0
+    masc_fem_acc_pl_anim_error = 0
     
     for inputs, gold, pred in zip(errors['input'], errors['gold'], errors['pred']):
-        total += 1
         lemma, features, form = input_to_vars([inputs, pred])
-        # if lemma == 'геркулесоваякаша':
-        #     pdb.set_trace()
         if "OUT=N" in features and "OUT=ACC" in features:
+            total += 1
+            # print(inputs, gold, pred)
             if "OUT=SG" in features:
                 if lemma[-1] in classes.masc:
                     masc_acc_sg_total, masc_acc_sg_anim_error, found = anim_error(lemma, 
@@ -348,6 +413,14 @@ def error_count(errors, train, dev, classes, paradigms):
                                                                                   paradigms, 
                                                                                   neut_acc_sg_total, 
                                                                                   neut_acc_sg_anim_error, 
+                                                                                  found)
+                elif lemma[-1] in classes.masc_fem:
+                    masc_fem_acc_sg_total, masc_fem_acc_sg_anim_error, found = anim_error(lemma, 
+                                                                                  form, 
+                                                                                  True, 
+                                                                                  paradigms, 
+                                                                                  masc_fem_acc_sg_total, 
+                                                                                  masc_fem_acc_sg_anim_error, 
                                                                                   found)
             elif "OUT=PL" in features:
                 if lemma[-1] in classes.masc:
@@ -374,40 +447,60 @@ def error_count(errors, train, dev, classes, paradigms):
                                                                                   neut_acc_pl_total, 
                                                                                   neut_acc_pl_anim_error, 
                                                                                   found)
+                elif lemma[-1] in classes.masc_fem:
+                    masc_fem_acc_pl_total, masc_fem_acc_pl_anim_error, found = anim_error(lemma, 
+                                                                                  form, 
+                                                                                  True, 
+                                                                                  paradigms, 
+                                                                                  masc_fem_acc_pl_total, 
+                                                                                  masc_fem_acc_pl_anim_error, 
+                                                                                  found)
     
     
     
     
     if masc_acc_sg_total > 0:
-        print("masc_acc_sg_anim_error", masc_acc_sg_anim_error, 'or', masc_acc_sg_anim_error / masc_acc_sg_total)
+        print("masc_acc_sg_anim_error", masc_acc_sg_anim_error, 'of', dev_masc_acc_sg_total)#masc_acc_sg_anim_error / masc_acc_sg_total)
         print("masc_acc_sg_total", masc_acc_sg_total)
+        print("masc_acc_sg_anim_error rate on dev", masc_acc_sg_anim_error / dev_masc_acc_sg_total)
     
     if fem_acc_sg_total > 0:
-        print("fem_acc_sg_anim_error", fem_acc_sg_anim_error, 'or', fem_acc_sg_anim_error / fem_acc_sg_total)
+        print("fem_acc_sg_anim_error", fem_acc_sg_anim_error, 'of', dev_fem_acc_sg_total)#fem_acc_sg_anim_error / fem_acc_sg_total)
         print("fem_acc_sg_total", fem_acc_sg_total)
+        print("fem_acc_sg_anim_error rate on dev", fem_acc_sg_anim_error / dev_fem_acc_sg_total)
     
     if neut_acc_sg_total > 0:
-        print("neut_acc_sg_anim_error", neut_acc_sg_anim_error, 'or', neut_acc_sg_anim_error /neut_acc_sg_total )
+        print("neut_acc_sg_anim_error", neut_acc_sg_anim_error, 'of', dev_neut_acc_sg_total)#neut_acc_sg_anim_error /neut_acc_sg_total )
         print("neut_acc_sg_total", neut_acc_sg_total)
+        print("neut_acc_sg_anim_error rate on dev", neut_acc_sg_anim_error / dev_neut_acc_sg_total)
+        
+    if masc_fem_acc_sg_total > 0:
+        print("masc_fem_acc_sg_anim_error", masc_fem_acc_sg_anim_error, 'of', dev_masc_fem_acc_sg_total)#neut_acc_sg_anim_error /neut_acc_sg_total )
+        print("masc_fem_acc_sg_total", masc_fem_acc_sg_total)
+        print("masc_fem_acc_sg_anim_error rate on dev", masc_fem_acc_sg_anim_error / dev_masc_fem_acc_sg_total)
 
     if masc_acc_pl_total > 0:
-        print("masc_acc_pl_anim_error", masc_acc_pl_anim_error, 'or', masc_acc_pl_anim_error / masc_acc_pl_total)
+        print("masc_acc_pl_anim_error", masc_acc_pl_anim_error, 'of', dev_masc_acc_pl_total)#masc_acc_pl_anim_error / masc_acc_pl_total)
         print("masc_acc_pl_total", masc_acc_pl_total)
+        print("masc_acc_pl_anim_error rate on dev", masc_acc_pl_anim_error / dev_masc_acc_pl_total)
 
     if fem_acc_pl_total > 0:
-        print("fem_acc_pl_anim_error", fem_acc_pl_anim_error, 'or', fem_acc_pl_anim_error / fem_acc_pl_total)
+        print("fem_acc_pl_anim_error", fem_acc_pl_anim_error, 'of', dev_fem_acc_pl_total)#fem_acc_pl_anim_error / fem_acc_pl_total)
         print("fem_acc_pl_total", fem_acc_pl_total)
+        print("fem_acc_pl_anim_error rate on dev", fem_acc_pl_anim_error / dev_fem_acc_pl_total)
 
     if neut_acc_pl_total > 0:
-        print("neut_acc_pl_anim_error", neut_acc_pl_anim_error, 'or', neut_acc_pl_anim_error / neut_acc_pl_total)
+        print("neut_acc_pl_anim_error", neut_acc_pl_anim_error, 'of', dev_neut_acc_pl_total)#neut_acc_pl_anim_error / neut_acc_pl_total)
         print("neut_acc_pl_total", neut_acc_pl_total)
+        print("neut_acc_pl_anim_error rate on dev", neut_acc_pl_anim_error / dev_neut_acc_pl_total)
+        
+    if masc_fem_acc_sg_total > 0:
+        print("masc_fem_acc_pl_anim_error", masc_fem_acc_pl_anim_error, 'of', dev_masc_fem_acc_pl_total)#neut_acc_sg_anim_error /neut_acc_sg_total )
+        print("masc_fem_acc_pl_total", masc_fem_acc_pl_total)
+        print("masc_fem_acc_pl_anim_error rate on dev", masc_fem_acc_pl_anim_error / dev_masc_fem_acc_pl_total)
+    
     print('found', found, 'paradigm entries for N;ACC;SG/PL of', total)
-
-
-# In[18]:
-
-
-error_count(v_errors, train, dev, classes, paradigms)
+    print("sanity check", sum(list(class_counts)))
 
 
 # ```
@@ -428,3 +521,15 @@ error_count(v_errors, train, dev, classes, paradigms)
 # (pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ grep "OUT=N OUT=ACC OUT=PL" data/russian/dev/data.txt | wc -l
 # 647
 # ```
+
+# In[72]:
+
+
+error_count(v_errors, train, dev, classes, paradigms)
+
+
+# In[73]:
+
+
+error_count(nv_errors, train, dev, classes, paradigms)
+
