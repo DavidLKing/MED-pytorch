@@ -25,7 +25,7 @@ train_path: data/russian/train/data.txt
 valid_path: data/russian/dev/UDdev.txt
 # test_path: data/spanish-sigstyle/test/data.txt
 # valid_path: data/spanish-sigstyle/test/data.txt
-output: UDdev.vecs.tsv
+output: UDdev.no.vecs.tsv
 use_vecs: False
 #use_vecs: True
 #vecs: ruscorpora.model.bin
