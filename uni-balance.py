@@ -31,7 +31,11 @@ for line in unis:
             unimorph[form].append(joint)
 
 outlines = []
-for pair in counts:
+devlines = []
+
+random.shuffle(counts)
+
+for pair in counts[0:3000]:
     count = pair[0]
     form = pair[1]
     if form in unimorph:
@@ -41,10 +45,36 @@ for pair in counts:
             match = match.split('\t')
             lemma = match[0]
             feats = match[1]
-            outlines.append('\t'.join([lemma, form, feats])+ '\n')
+            line = '\t'.join([lemma, form, feats]) + '\n'
+            devlines.append(line)
             freq += 1
+
+
+for pair in counts[3000:]:
+    count = pair[0]
+    form = pair[1]
+    if form in unimorph:
+        freq = 0
+        match = random.choice(unimorph[form])
+        match = match.split('\t')
+        lemma = match[0]
+        feats = match[1]
+        line = '\t'.join([lemma, form, feats]) + '\n'
+        if line not in devlines:
+            while freq < count:
+                outlines.append('\t'.join([lemma, form, feats])+ '\n')
+                freq += 1
+
+
+print('outlines', len(outlines))
+print('devlines', len(devlines))
+
 
 random.shuffle(outlines)
 outfile = open('uni.supple.overreg.balanced.tsv', 'w')
 for line in outlines:
     outfile.write(line)
+random.shuffle(outlines)
+devfile = open('uni.supple.overreg.balanced.dev.tsv', 'w')
+for line in devlines:
+    devfile.write(line)

@@ -185,7 +185,8 @@ else:
                              hidden_size, 
                              bidirectional=bidirectional, 
                              rnn_cell='LSTM', 
-                             variable_lengths=True)
+                             variable_lengths=True,
+                             n_layers=config['num layers'])
         # pdb.set_trace()
         # if config['use_vecs']:
         #     decoder = VecDecoderRNN(len(tgt.vocab),
@@ -215,7 +216,8 @@ else:
                              bidirectional=bidirectional,
                              rnn_cell='LSTM',
                              eos_id=tgt.eos_id,
-                             sos_id=tgt.sos_id)
+                             sos_id=tgt.sos_id,
+                             n_layers=config['num layers'])
         # if torch.cuda.is_available():
         #     encoder.cuda()
         #     decoder.cuda()

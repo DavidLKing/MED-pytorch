@@ -1,0 +1,40 @@
+Email update:
+	48590 total lines
+	no-vec: Val accuracy: 43059 out of 48590 0.8861699938258901
+	   vec: Val accuracy: 43338 out of 48590 0.8919119160321054
+	   
+	no-vec errors:
+	(pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ python pullerrors.py UDdev.no.vecs.w.info.tsv | cut -d ' ' -f 1-3 | sort | uniq -c
+		945 OUT=N OUT=ACC OUT=PL
+		771 OUT=N OUT=ACC OUT=SG
+		124 OUT=N OUT=DAT OUT=PL
+		244 OUT=N OUT=DAT OUT=SG
+		145 OUT=N OUT=ESS OUT=PL
+		352 OUT=N OUT=ESS OUT=SG
+		852 OUT=N OUT=GEN OUT=PL
+		778 OUT=N OUT=GEN OUT=SG
+		185 OUT=N OUT=INS OUT=PL
+		440 OUT=N OUT=INS OUT=SG
+		428 OUT=N OUT=NOM OUT=PL
+		267 OUT=N OUT=NOM OUT=SG
+	vec errors:
+	(pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ python pullerrors.py UDdev.no.vecs.tsv | cut -d ' ' -f 1-3 | sort | uniq -c
+		816 OUT=N OUT=ACC OUT=PL
+		670 OUT=N OUT=ACC OUT=SG
+		101 OUT=N OUT=DAT OUT=PL
+		222 OUT=N OUT=DAT OUT=SG
+		136 OUT=N OUT=ESS OUT=PL
+		295 OUT=N OUT=ESS OUT=SG
+		884 OUT=N OUT=GEN OUT=PL
+		754 OUT=N OUT=GEN OUT=SG
+		182 OUT=N OUT=INS OUT=PL
+		423 OUT=N OUT=INS OUT=SG
+		410 OUT=N OUT=NOM OUT=PL
+		358 OUT=N OUT=NOM OUT=SG
+		
+(pytorch-seq2seq) david@Arjuna:~/bin/git/MED-pytorch$ python mcnemar.py UDdev.no.vecs.w.info.tsv UDdev.vecs.w.info.tsv 
+
+	McNemar's Chi-squared test with continuity correction
+
+data:  matrix(c(41261, 1798, 2077, 3454), 2, 2)
+McNemar's chi-squared = 19.944, df = 1, p-value = 7.973e-06
