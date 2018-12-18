@@ -67,12 +67,13 @@ for line in ud_nouns:
             form = ' '.join(form)
             if form not in uniforms:
                 uniUDs.add(" ".join(keeps) + '\t' + feats + '\t' + form)
-        # else:
-        #     pdb.set_trace()
+        else:
+            print('feats', feats)
+            print('keeps', keeps)
 
 # print(len(uniUDs))
 # print()
 
 # pdb.set_trace()
-for line in sorted(uniUDs):
-    print(line)
+# for line in sorted(uniUDs):
+    # print(line)
