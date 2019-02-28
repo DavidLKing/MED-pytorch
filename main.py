@@ -10,6 +10,7 @@ import pickle as pkl
 import torch
 from torch.optim.lr_scheduler import StepLR
 import torchtext
+from torchtext.data import Field
 
 import pdb
 import gensim
@@ -36,6 +37,28 @@ try:
     raw_input          # Python 2
 except NameError:
     raw_input = input  # Python 3
+
+def add_vectors(exes, input_vocab=None, word_vectors=None, vector_features=False):
+    if word_vectors is not None:
+        data_vectors = t.build_vec_batch(
+            input_vocab, [ex.src for ex in exes], word_vectors)
+    else:
+        data_vectors = np.zeros((len(exes), 0))
+
+    if vector_features:
+        vecSrcs = [ex.vector for ex in exes]
+        vecTargs = [ex.vecTarg for ex in exes]
+        # s|t x batch x vdim
+        fvecs = np.array([vecSrcs, vecTargs])
+        # rearrange to batch x [vdim x s|t]
+        fvecs = np.swapaxes(fvecs, 0, 1)
+        fvecs = np.reshape(fvecs, (fvecs.shape[0], 
+                                   fvecs.shape[1] * fvecs.shape[2]))
+        # concat to other representation
+        data_vectors = np.hstack([data_vectors, fvecs])
+
+    for ex, vi in zip(exes.examples, data_vectors):
+        ex.vector = vi
 
 # Sample usage:
 #     # training
@@ -75,6 +98,10 @@ parser.add_argument('--resume', action='store_true', dest='resume',
 parser.add_argument('--log-level', dest='log_level',
                     default='info',
                     help='Logging level.')
+parser.add_argument("--vector-features", dest="vector_features",
+                    action="store_true",
+                    default=config["vector_features"],
+                    help="If true, grammatical features are provided as dense vectors vecSrc and vecTarg. Input must be in JSON format.")
 
 opt = parser.parse_args()
 
@@ -94,6 +121,8 @@ else:
     # dev_vecs = None
     vectors = None
 # pdb.set_trace()
+
+use_vectors = opt.vector_features or (vectors is not None)
 
 # For building the datasets:
 max_len = config['max_length']
@@ -140,19 +169,48 @@ if opt.load_checkpoint is not None:
     input_vocab = checkpoint.input_vocab
     output_vocab = checkpoint.output_vocab
 else:
-    # Prepare dataset
-    src = SourceField()
-    tgt = TargetField()
-    train = torchtext.data.TabularDataset(
-        path=opt.train_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
-        filter_pred=len_filter
-    )
-    dev = torchtext.data.TabularDataset(
-        path=opt.dev_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
-        filter_pred=len_filter
-    )
+    if not opt.vector_features:
+        # Prepare dataset
+        src = SourceField()
+        tgt = TargetField()
+        train = torchtext.data.TabularDataset(
+            path=opt.train_path, format='tsv',
+            fields=[('src', src), ('tgt', tgt)],
+            filter_pred=len_filter
+        )
+        dev = torchtext.data.TabularDataset(
+            path=opt.dev_path, format='tsv',
+            fields=[('src', src), ('tgt', tgt)],
+            filter_pred=len_filter
+        )
+    else:
+        # load JSON dataset with control vectors
+        print("Vector feature mode on.")
+        src = SourceField()
+        tgt = TargetField()
+        vecSrc = Field(sequential=False, use_vocab=False,
+                       batch_first=True, dtype=torch.float)
+        vecTarg = Field(sequential=False, use_vocab=False,
+                       batch_first=True, dtype=torch.float)
+
+        train = torchtext.data.TabularDataset(
+            path=opt.train_path, format='json',
+            fields={ "src" : ('src', src),
+                     "targ" : ('tgt', tgt),
+                     "vecSrc" :  ("vector", vecSrc),
+                     "vecTarg" :  ("vecTarg", vecTarg),
+                 },
+            filter_pred=len_filter
+        )
+        dev = torchtext.data.TabularDataset(
+            path=opt.dev_path, format='json',
+            fields={ "src" : ('src', src),
+                     "targ" : ('tgt', tgt),
+                     "vecSrc" :  ("vector", vecSrc),
+                     "vecTarg" :  ("vecTarg", vecTarg),
+                 },
+            filter_pred=len_filter
+        )
 
     src.build_vocab(train, max_size=50000)
     tgt.build_vocab(train, max_size=50000)
@@ -205,6 +263,11 @@ else:
             aug_size = vectors.vector_size
         else:
             aug_size = 0
+
+        if opt.vector_features:
+            featureDim = len(train.examples[0].vector)
+            aug_size += 2 * featureDim
+
         # pdb.set_trace()
         decoder = DecoderRNN(len(tgt.vocab),
                              max_len,
@@ -243,31 +306,58 @@ else:
 
     # TODO add dev eval here for early stopping
     if config['train model']:
+        add_vectors(train, input_vocab, vectors, opt.vector_features)
+        add_vectors(dev, input_vocab, vectors, opt.vector_features)
+
+        # pdb.set_trace()
         seq2seq = t.train(input_vocab,
                           seq2seq, train,
                           num_epochs=config['epochs'],
-                          vectors=vectors,
+                          vectors=use_vectors,
                           dev_data=dev,
                           optimizer=optimizer,
                           teacher_forcing_ratio=0.5,
                           resume=opt.resume)
 
-predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
+predictor = Predictor(seq2seq, input_vocab, output_vocab)
 
 if config['eval val']:
     of = open(config['output'], 'w')
     # TODO add option to save output
     correct = 0
     total = 0
-    src = SourceField()
-    tgt = TargetField()
-    dev = torchtext.data.TabularDataset(
-        path=opt.dev_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
-        filter_pred=len_filter
-    )
+    if not opt.vector_features:
+        src = SourceField()
+        tgt = TargetField()
+        dev = torchtext.data.TabularDataset(
+            path=opt.dev_path, format='tsv',
+            fields=[('src', src), ('tgt', tgt)],
+            filter_pred=len_filter
+        )
+    else:
+        # load JSON dataset with control vectors
+        print("Vector feature mode on.")
+        src = SourceField()
+        tgt = TargetField()
+        vecSrc = Field(sequential=False, use_vocab=False,
+                       batch_first=True, dtype=torch.float)
+        vecTarg = Field(sequential=False, use_vocab=False,
+                       batch_first=True, dtype=torch.float)
+
+        dev = torchtext.data.TabularDataset(
+            path=opt.dev_path, format='json',
+            fields={ "src" : ('src', src),
+                     "targ" : ('tgt', tgt),
+                     "vecSrc" :  ("vector", vecSrc),
+                     "vecTarg" :  ("vecTarg", vecTarg),
+                 },
+            filter_pred=len_filter
+        )
+
+    add_vectors(dev, input_vocab, vectors, opt.vector_features)
+
     for ex in dev.examples:
-        guess = predictor.predict(ex.src)
+        guess = predictor.predict(ex.src, ex.vector)
         # [1:] tgt starts with <bos> but model output doesn't
         if guess == ex.tgt[1:]:
             correct += 1
