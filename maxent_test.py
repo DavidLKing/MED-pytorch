@@ -13,7 +13,7 @@ ud_train = './UD_Russian-SynTagRus/ru_syntagrus-ud-train.conllu'
 ud_dev = './UD_Russian-SynTagRus/ru_syntagrus-ud-dev.conllu'
 ud_test = './UD_Russian-SynTagRus/ru_syntagrus-ud-test.conllu'
 
-unimorph = open('data/russian/rus-fake-train.tsv', 'r')
+unimorph = open('data/russian/uni/rus-fake-train.tsv', 'r')
 paradigms = gen_paradigms(unimorph)
 
 print("loading word vectors")

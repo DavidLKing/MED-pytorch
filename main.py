@@ -5,7 +5,11 @@ import sys
 import argparse
 import logging
 import yaml
+import tqdm
 import pickle as pkl
+
+# FOR _csv.Error: field larger than field limit (131072)
+import csv
 
 import torch
 from torch.optim.lr_scheduler import StepLR
@@ -18,6 +22,7 @@ import numpy as np
 import seq2seq
 from seq2seq.trainer import SupervisedTrainer
 from seq2seq.models import EncoderRNN, DecoderRNN, Seq2seq
+from seq2seq.models import TopKDecoder
 ### Vec mods ###
 # from seq2seq.models import VecDecoderRNN
 ### Done ###
@@ -28,6 +33,9 @@ from seq2seq.evaluator import Predictor
 from seq2seq.util.checkpoint import Checkpoint
 
 from micha_condit import cond_prob
+
+# FOR _csv.Error: field larger than field limit (131072)
+csv.field_size_limit(sys.maxsize)
 
 if torch.cuda.is_available():
     torch.device('cuda')
@@ -100,7 +108,11 @@ else:
 # For building the datasets:
 max_len = config['max_length']
 def len_filter(example):
+    # try:
     return len(example.src) <= max_len and len(example.tgt) <= max_len
+    # except:
+    #     pdb.set_trace()
+
 
 def load_vec(path, batch_size):
     vec_path = path.replace('data.txt', 'vectors.pkl')
@@ -223,7 +235,9 @@ else:
         # if torch.cuda.is_available():
         #     encoder.cuda()
         #     decoder.cuda()
+        # topk_decoder = TopKDecoder(decoder, 3)
         seq2seq = Seq2seq(encoder, decoder)
+        # seq2seq = Seq2seq(encoder, topk_decoder)
         if torch.cuda.is_available():
             seq2seq.cuda()
 
@@ -258,6 +272,9 @@ else:
 
 predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
 
+# seq2top = Seq2seq(seq2seq.encoder, )
+# topk_predictor = Predictor(seq2top, input_vocab, output_vocab, vectors)
+
 if config['eval val']:
     of = open(config['output'], 'w')
     # TODO add option to save output
@@ -271,13 +288,64 @@ if config['eval val']:
         filter_pred=len_filter
     )
     for ex in dev.examples:
-        guess = predictor.predict(ex.src)
+        try:
+            guess = predictor.predict(ex.src)
+        except:
+            pdb.set_trace()
+        # guess_n, scores = predictor.predict_n(ex.src)
+        # pdb.set_trace()
+        # topk_guess = topk_predictor.predict(ex.src)
         # [1:] tgt starts with <bos> but model output doesn't
+        # normal eval
         if guess == ex.tgt[1:]:
             correct += 1
+        # top k
+        # for guesses in guess_n:
+        #     if guesses == ex.tgt[1:]:
+        #         correct += 1
         total += 1
+        # normal write out
         of.write('\t'.join([' '.join(ex.src), ' '.join(ex.tgt[1:-1]), ' '.join(guess[0:-1])]) + '\n')
+        # topk write out
+        # for predform, score in zip(guess_n, scores):
+        #     of.write('\t'.join([' '.join(ex.src), ' '.join(ex.tgt[1:-1]), ' '.join(predform[0:-1]), str(score)]) + '\n')
     print("Val accuracy:", correct, "out of", total, correct / total)
+
+
+# old interactive testing env
+if config['ud_out']:
+    outfile = open(config['ud_out_file'], 'w')
+    lines = open(config['ud_file'], 'r').readlines()
+    for line in tqdm.tqdm(lines):
+        line = line.strip().split('\t')
+        newline = line
+        if len(line) > 6:
+            feats = line[5]
+            feats = feats.split('|')
+            if feats != ['_']:
+                # Needed for japanese:
+                # if feats == ['_']:
+                #     feats = ['None']
+                lemma = line[1]
+                pos = line[3]
+                other_pos = line[4]
+                head_rel = line[7]
+
+                feats = ' '.join(feats) + ' '
+                feats = pos + ' ' + feats
+                feats = other_pos + ' ' + feats
+                feats = head_rel + ' ' + feats
+                lemma = ' '.join(lemma)
+
+                seq_str = feats + lemma
+                seq = seq_str.strip().split()
+                out_seq = predictor.predict(seq)[0:-1]
+                outform = ''.join(out_seq)
+                newline[2] = outform
+            else:
+                newline[2] = line[1]
+        outfile.write('\t'.join(newline) + '\n')
+
 
 
 # old interactive testing env

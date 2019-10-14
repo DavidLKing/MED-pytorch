@@ -1,4 +1,4 @@
-
+import pdb
 # coding: utf-8
 
 # In[1]:
@@ -55,7 +55,7 @@ def get_errors(outputs):
 # In[5]:
 
 
-unimorph = open('data/russian/rus-fake-train.tsv', 'r')
+unimorph = open('data/russian/uni/rus-fake-train.tsv', 'r')
 train = open('data/russian/train/data.txt', 'r')
 dev = open('data/russian/dev/data.txt', 'r')
 vecs = open('russian-w-vecs.tsv', 'r')
@@ -113,6 +113,11 @@ def input_to_vars(line):
 def i_e_counts(unimorph, paradigms):
     i_count = 0
     e_count = 0
+    i_imp = 0
+    e_imp = 0
+    i_per = 0
+    e_per = 0
+    missing = 0
     unimorph.seek(0)
     for line in unimorph:
         line = line.strip().split('\t')
@@ -121,14 +126,30 @@ def i_e_counts(unimorph, paradigms):
             lemma, features, word = input_to_vars(line)
             if "OUT=V" in features:
                 inform = 'V;PRS;2;SG'
-                if inform in paradigms[lemma]:
-                    second_sing = paradigms[lemma][inform]
-                    _, _, _, affixes = a.diffasstring(lemma, second_sing)
-                    for affix in affixes:
-                        if '+е' in affix or '+ё' in affix:
-                            e_count += 1
-                        else:
-                            i_count += 1
+                if lemma in paradigms:
+                    if inform in paradigms[lemma]:
+                        second_sing = paradigms[lemma][inform]
+                        _, _, _, affixes = a.diffasstring(lemma, second_sing)
+                        for affix in affixes:
+                            if '+е' in affix or '+ё' in affix:
+                                e_count += 1
+                                if 'OUT=IPFV' in features:
+                                    e_imp += 1
+                                elif 'OUT=PFV' in features:
+                                    e_per += 1
+                            else:
+                                i_count += 1
+                                if 'OUT=IPFV' in features:
+                                    i_imp += 1
+                                elif 'OUT=PFV' in features:
+                                    i_per += 1
+                else:
+                    missing += 1
+    print("Missing citation forms", missing)
+    print("i-conj + impf", i_imp)
+    print("i-conj + perf", i_per)
+    print("e-conj + impf", e_imp)
+    print("e-conj + per", e_per)
     return i_count, e_count
                 
 
@@ -197,10 +218,10 @@ def get_verb_class(inputs, golds, preds, paradigms, i_class_total, e_class_total
     print("Total found", total - missing)
     print("Missing", error, "citation forms (errors)")
     print("Total class error detected:", class_errors, "or", class_errors / (total - missing))
-    print("i_conj", i_class_errors, i_class_errors / (total - missing))
+    print("i_conj errors", i_class_errors, i_class_errors / (total - missing))
     print("i_conj error rate", i_class_errors / i_class_total)
     print("i_conj total", i_class_total)
-    print("e_conj", e_class_errors, e_class_errors / (total - missing))
+    print("e_conj errors", e_class_errors, e_class_errors / (total - missing))
     print("e_conj error rate", e_class_errors / e_class_total)
     print("e_conj total", e_class_total)
 

@@ -52,8 +52,12 @@ class Rearrange():
                 elif feat_struct == 'unimorph':
                     wordform = line[1]
                     feats = line[2].strip().split(';')
+                elif feat_struct == 'unideps':
+                    wordform = line[1]
+                    # pdb.set_trace()
+                    feats = line[2].strip().split('|')
                 else:
-                    sys.exit("must select unimorph or sigmorphon for feature structure")
+                    sys.exit("must select unimorph, unideps, or sigmorphon for feature structure")
                 for char in wordform:
                     char = char.strip()
                     if char not in self.char_vocab_target:
