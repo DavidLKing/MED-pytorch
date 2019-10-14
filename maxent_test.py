@@ -1,24 +1,100 @@
+#!/usr/bin/env python3
+
 import sys
 import pdb
 import gensim
 import difflib
+import argparse
 
 from affixcheck import affixes
-from error_analysis import gen_paradigms
 
 a = affixes()
 
-vec_file = 'ruscorpora.model.bin'
-ud_train = './UD_Russian-SynTagRus/ru_syntagrus-ud-train.conllu'
-ud_dev = './UD_Russian-SynTagRus/ru_syntagrus-ud-dev.conllu'
-ud_test = './UD_Russian-SynTagRus/ru_syntagrus-ud-test.conllu'
+parser = argparse.ArgumentParser()
+parser.add_argument('-e', '--embeddings',
+                    type=str,
+                    required=True,
+                    default=None,
+                    help='Word embeddings file (binary)')
+parser.add_argument('-no', '--noun_output',
+                    type=str,
+                    required=True,
+                    default=None,
+                    help='Noun output file')
+parser.add_argument('-vo', '--verb_output',
+                    type=str,
+                    required=True,
+                    default=None,
+                    help='Verb output file')
+parser.add_argument('-udt', '--unidep_train',
+                    type=str,
+                    required=True,
+                    default=None,
+                    help='Universal Dependency training file')
+parser.add_argument('-udd', '--unidep_dev',
+                    type=str,
+                    required=True,
+                    default=None,
+                    help='Universal Dependency development file')
+parser.add_argument('-ude', '--unidep_eval',
+                    type=str,
+                    required=True,
+                    default=None,
+                    help='Universal Dependency testing file')
+parser.add_argument('-uni', '--unimorph',
+                    type=str,
+                    required=True,
+                    default=None,
+                    help='Unimorph file')
 
-unimorph = open('data/russian/uni/rus-fake-train.tsv', 'r')
+opt = parser.parse_args()
+
+vec_file = opt.embeddings
+ud_train = opt.unidep_train
+ud_dev = opt.unidep_dev
+ud_test = opt.unidep_eval
+
+unimorph = open(opt.unimorph, 'r')
+
+# Feel free to hard code stuff too if that's easier for you
+# vec_file = 'ruscorpora.model.bin'
+# ud_train = './UD_Russian-SynTagRus/ru_syntagrus-ud-train.conllu'
+# ud_dev = './UD_Russian-SynTagRus/ru_syntagrus-ud-dev.conllu'
+# ud_test = './UD_Russian-SynTagRus/ru_syntagrus-ud-test.conllu'
+#
+# unimorph = open('data/russian/uni/rus-fake-train.tsv', 'r')
+
+
+# Paradigm extraction
+
+def gen_paradigms(unis):
+    paradigms = {}
+    for line in unis:
+        line = line.strip().split('\t')
+        if len(line) > 1:
+            assert(len(line) == 3)
+            # TODO fix space bug
+            # if lemma == 'геркулесоваякаша':
+            # should be геркулесовая каша
+            #     pdb.set_trace()
+            lemma = line[0].replace(' ', '')
+            word = line[1].replace(' ', '')
+            features = line[2]
+            if lemma not in paradigms:
+                paradigms[lemma] = {}
+            if features not in paradigms[lemma]:
+                paradigms[lemma][features] = word
+    return paradigms
+
+
+
 paradigms = gen_paradigms(unimorph)
 
 print("loading word vectors")
 vecs = gensim.models.KeyedVectors.load_word2vec_format(vec_file, binary=True)
 print("loading UDs")
+
+
 
 ################## VERB CLASS STUFF ###########################
 def get_verb_class(cite, paradigms):
@@ -89,7 +165,7 @@ test_nouns, test_verbs = load_UDs(ud_test, vecs, paradigms)
 
 print("Writing files")
 
-with open('./maxenttest/nouns.txt', 'w') as of:
+with open(opt.noun_output, 'w') as of:
     of.write("TRAIN\n")
     write_data(train_nouns, of)
     of.write("DEV\n")
@@ -97,7 +173,7 @@ with open('./maxenttest/nouns.txt', 'w') as of:
     of.write("TEST\n")
     write_data(test_nouns, of)
 
-with open('./maxenttest/verbs.txt', 'w') as of:
+with open(opt.verb_output, 'w') as of:
     of.write("TRAIN\n")
     write_data(train_verbs, of)
     of.write("DEV\n")
