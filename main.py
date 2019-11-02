@@ -59,9 +59,29 @@ except NameError:
 # Remove default values
 # load arguments from config file
 # set overrides if they're specified in the command line
-with open(sys.argv[2]) as f:
-    # with open('config.yml') as f:
-    config = yaml.safe_load(f)
+
+def initconfig():
+    config = {
+            'train_path' : './',
+            'valid_path' : './',
+            'expt_dir' : './',
+            'load_model' : 'None'
+            }
+    return config
+
+if len(sys.argv) > 2:
+    _file = sys.argv[2]
+    if os.path.isfile(_file):
+        with open(_file) as f:
+            # with open('config.yml') as f:
+            config = yaml.safe_load(f)
+    else:
+        config = initconfig()
+else:
+    config = initconfig()
+
+
+
 
 # TODO make sure these entirely match up with config.yml file
 parser = argparse.ArgumentParser()
