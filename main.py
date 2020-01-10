@@ -333,38 +333,39 @@ if config['eval val']:
 
 
 # old interactive testing env
-if config['ud_out']:
-    outfile = open(config['ud_out_file'], 'w')
-    lines = open(config['ud_file'], 'r').readlines()
-    for line in tqdm.tqdm(lines):
-        line = line.strip().split('\t')
-        newline = line
-        if len(line) > 6:
-            feats = line[5]
-            feats = feats.split('|')
-            if feats != ['_']:
-                # Needed for japanese:
-                # if feats == ['_']:
-                #     feats = ['None']
-                lemma = line[1]
-                pos = line[3]
-                other_pos = line[4]
-                head_rel = line[7]
+if 'ud_out' in config:
+    if config['ud_out']:
+        outfile = open(config['ud_out_file'], 'w')
+        lines = open(config['ud_file'], 'r').readlines()
+        for line in tqdm.tqdm(lines):
+            line = line.strip().split('\t')
+            newline = line
+            if len(line) > 6:
+                feats = line[5]
+                feats = feats.split('|')
+                if feats != ['_']:
+                    # Needed for japanese:
+                    # if feats == ['_']:
+                    #     feats = ['None']
+                    lemma = line[1]
+                    pos = line[3]
+                    other_pos = line[4]
+                    head_rel = line[7]
 
-                feats = ' '.join(feats) + ' '
-                feats = pos + ' ' + feats
-                feats = other_pos + ' ' + feats
-                feats = head_rel + ' ' + feats
-                lemma = ' '.join(lemma)
+                    feats = ' '.join(feats) + ' '
+                    feats = pos + ' ' + feats
+                    feats = other_pos + ' ' + feats
+                    feats = head_rel + ' ' + feats
+                    lemma = ' '.join(lemma)
 
-                seq_str = feats + lemma
-                seq = seq_str.strip().split()
-                out_seq = predictor.predict(seq)[0:-1]
-                outform = ''.join(out_seq)
-                newline[2] = outform
-            else:
-                newline[2] = line[1]
-        outfile.write('\t'.join(newline) + '\n')
+                    seq_str = feats + lemma
+                    seq = seq_str.strip().split()
+                    out_seq = predictor.predict(seq)[0:-1]
+                    outform = ''.join(out_seq)
+                    newline[2] = outform
+                else:
+                    newline[2] = line[1]
+            outfile.write('\t'.join(newline) + '\n')
 
 
 
