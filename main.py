@@ -295,6 +295,9 @@ predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
 # seq2top = Seq2seq(seq2seq.encoder, )
 # topk_predictor = Predictor(seq2top, input_vocab, output_vocab, vectors)
 
+if config['pull embeddings']:
+    out_vecs = {}
+
 if config['eval val']:
     of = open(config['output'], 'w')
     # TODO add option to save output
@@ -309,7 +312,7 @@ if config['eval val']:
     )
     for ex in dev.examples:
         try:
-            guess = predictor.predict(ex.src)
+            guess, enc_out = predictor.predict(ex.src)
         except:
             pdb.set_trace()
         # guess_n, scores = predictor.predict_n(ex.src)
@@ -325,11 +328,35 @@ if config['eval val']:
         #         correct += 1
         total += 1
         # normal write out
-        of.write('\t'.join([' '.join(ex.src), ' '.join(ex.tgt[1:-1]), ' '.join(guess[0:-1])]) + '\n')
+        srced = ' '.join(ex.src)
+        tgted = ' '.join(ex.tgt[1:-1])
+        guessed = ' '.join(guess[0:-1])
+        of.write('\t'.join([srced, tgted, guessed]) + '\n')
         # topk write out
         # for predform, score in zip(guess_n, scores):
         #     of.write('\t'.join([' '.join(ex.src), ' '.join(ex.tgt[1:-1]), ' '.join(predform[0:-1]), str(score)]) + '\n')
+        if config['pull embeddings']:
+            # TODO first try averaging
+            # (Pdb)
+            # test[3].mean(-1).shape
+            # torch.Size([1, 13])
+            # (Pdb)
+            # test[3].mean(-2).shape
+            # torch.Size([1, 600])
+            embedding = enc_out.mean(-2)
+            # TODO should I look into whether we get different encodings?
+            out_vecs[srced] = {}
+            out_vecs[srced]['src'] = srced
+            out_vecs[srced]['tgt'] = tgted
+            out_vecs[srced]['guess'] = guessed
+            out_vecs[srced]['embed'] = embedding
+
     print("Val accuracy:", correct, "out of", total, correct / total)
+
+if config['pull embeddings']:
+    print("Saving embeddings to", config['embeddings file'])
+    pkl.dump(out_vecs, open(config['embeddings file'], 'wb'))
+
 
 
 # old interactive testing env

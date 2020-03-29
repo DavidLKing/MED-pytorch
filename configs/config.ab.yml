@@ -1,0 +1,30 @@
+train model: False
+eval val: True
+checkpoint_every: 5000
+print every: 100
+plot every: 100
+print sample every: 100
+expt_dir: ab-testing
+#expt_dir: topk-testing
+max_length: 50
+num layers: 2
+#batch size: 20
+batch size: 1
+epochs: 30
+encoder embed: 300
+decoder embed: 300
+dropout: 0.3
+#load_model: 2019_08_19_03_32_51/
+#load_model: 30epocks.soft/
+load_model: None
+train_path: data/ablang/ab/train/data.txt
+#valid_path: data/russian/dev/UDdev.txt
+valid_path: data/ablang/ab/dev/data.txt
+#test_path: data/german-balanced/dev/data.txt
+# test_path: data/spanish-sigstyle/test/data.txt
+# valid_path: data/spanish-sigstyle/test/data.txt
+output: ab-testing.tsv
+use_vecs: False
+# vecs: russian-300-train.stemmed.bin
+# vecs: nope
+interact: True
