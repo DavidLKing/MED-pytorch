@@ -15,6 +15,20 @@ olds/model.test.german.pkl
 olds/notes.txt
 olds/test1
 olds/test2
+configs/*
+*.pdf
+*.xz
+*.yml
+vecs/*
+*.csv
+spanish-*
+ger-*
+data/*
+ru-*
+russian-*
+*.conllu
+*.csv
+*.backup
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -193,8 +193,6 @@ else:
     input_vocab = src.vocab
     output_vocab = tgt.vocab
 
-    # pdb.set_trace()
-
     # NOTE: If the source field name and the target field name
     # are different from 'src' and 'tgt' respectively, they have
     # to be set explicitly before any training or inference
@@ -202,6 +200,7 @@ else:
     # seq2seq.tgt_field_name = 'tgt'
 
     # Prepare loss
+    # pdb.set_trace()
     weight = torch.ones(len(tgt.vocab))
     pad = tgt.vocab.stoi[tgt.pad_token]
     loss = Perplexity(weight, pad)
@@ -260,16 +259,16 @@ else:
         # seq2seq = Seq2seq(encoder, topk_decoder)
         if torch.cuda.is_available():
             seq2seq.cuda()
-
+git b
         for param in seq2seq.parameters():
             param.data.uniform_(-0.08, 0.08)
 
         # Optimizer and learning rate scheduler can be customized by
         # explicitly constructing the objects and pass to the trainer.
         #
-        # optimizer = Optimizer(torch.optim.Adam(seq2seq.parameters()), max_grad_norm=5)
-        # scheduler = StepLR(optimizer.optimizer, 1)
-        # optimizer.set_scheduler(scheduler)
+        optimizer = Optimizer(torch.optim.Adam(seq2seq.parameters()), max_grad_norm=5)
+        scheduler = StepLR(optimizer.optimizer, 1)
+        optimizer.set_scheduler(scheduler)
 
     # train
     t = SupervisedTrainer(loss=loss,

@@ -37,7 +37,7 @@ class Rearrange():
         for presplit in open(raw_input, 'r').readlines():
         # for presplit in open(raw_input, 'r'):
             line = presplit.split('\t')
-            lemma = line[0]
+            lemma = line[0].lower()
             for char in lemma:
                 # char = char.strip().encode('utf-8')
                 char = char.strip()
@@ -46,16 +46,23 @@ class Rearrange():
                     source_index += 1
             if len(line) > 1: 
                 if feat_struct == 'sigmorphon':
-                    wordform = line[2].strip()
+                    wordform = line[2].strip().lower()
                     feats = line[1].split(',')
                     feats = [f.split('=')[1] for f in feats]
                 elif feat_struct == 'unimorph':
-                    wordform = line[1]
+                    wordform = line[1].lower()
                     feats = line[2].strip().split(';')
                 elif feat_struct == 'unideps':
-                    wordform = line[1]
+                    lemma = line[2].lower()
+                    wordform = line[1].lower()
                     # pdb.set_trace()
-                    feats = line[2].strip().split('|')
+                    pos = line[3]
+                    pos2 = line[4]
+                    feats = line[5].strip().split('|')
+                    if not pos == "_":
+                        feats += [pos]
+                    if not pos2 == "_":
+                        feats += [pos2]
                 else:
                     sys.exit("must select unimorph, unideps, or sigmorphon for feature structure")
                 for char in wordform:
