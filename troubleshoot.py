@@ -42,28 +42,44 @@ if torch.cuda.is_available():
 else:
     torch.device('cpu')
 
-train_path = "data/ru/train/data.txt"
-valid_path = "data/ru/dev/data.txt"
+ud_t = "data/fi/train/data.txt"
+ud_d = "data/fi/dev/data.txt"
 
-pdb.set_trace()
+srst_t = "/home/david/bin/git/srst18/data19/ru/train/data.txt"
+srst_d = "/home/david/bin/git/srst18/data19/ru/dev/data.txt"
 
-# Prepare dataset
-src = SourceField()
-tgt = TargetField()
-train = torchtext.data.TabularDataset(
-    path=train_path, format='tsv',
-    fields=[('src', src), ('tgt', tgt)],
-    filter_pred=len_filter
-)
-dev = torchtext.data.TabularDataset(
-    path=dev_path, format='tsv',
-    fields=[('src', src), ('tgt', tgt)],
-    filter_pred=len_filter
-)
+def len_filter(example):
+    max_len = 50
+    return len(example.src) <= max_len and len(example.tgt) <= max_len
 
-src.build_vocab(train, max_size=50000)
-tgt.build_vocab(train, max_size=50000)
-input_vocab = src.vocab
-output_vocab = tgt.vocab
+def gen_data(train_path, dev_path):
+    # Prepare dataset
+    src = SourceField()
+    tgt = TargetField()
+    train = torchtext.data.TabularDataset(
+        path=train_path, format='tsv',
+        fields=[('src', src), ('tgt', tgt)],
+        filter_pred=len_filter
+    )
+    dev = torchtext.data.TabularDataset(
+        path=dev_path, format='tsv',
+        fields=[('src', src), ('tgt', tgt)],
+        filter_pred=len_filter
+    )
+
+    src.build_vocab(train, max_size=50000)
+    tgt.build_vocab(train, max_size=50000)
+    input_vocab = src.vocab
+    output_vocab = tgt.vocab
+    return train, dev, input_vocab, output_vocab
+
+ud_train, ud_dev, ud_in, ud_out = gen_data(ud_t, ud_d)
+
+# (Pdb) ud_train.examples[0].src
+# ['OUT=Animacy=Inan', 'OUT=Case=Nom', 'OUT=Gender=Fem', 'OUT=Number=Sing', 'OUT=NOUN', 'а', 'н', 'к', 'е', 'т', 'а']
+# (Pdb) ud_train.examples[0].tgt
+# ['<sos>', 'а', 'н', 'к', 'е', 'т', 'а', '<eos>']
+
+srst_train, srst_dev, srst_in, srst_out = gen_data(srst_t, srst_d)
 
 pdb.set_trace()

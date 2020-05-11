@@ -55,7 +55,6 @@ class Rearrange():
                 elif feat_struct == 'unideps':
                     lemma = line[2].lower()
                     wordform = line[1].lower()
-                    # pdb.set_trace()
                     pos = line[3]
                     pos2 = line[4]
                     feats = line[5].strip().split('|')
@@ -74,17 +73,28 @@ class Rearrange():
                 featset = []
                 # ADD FEATS TO INPUT
                 for feat in feats:
-                    feat = out + feat
-                    feat = feat.strip() 
-                    featset.append(feat)
-                    if feat not in self.char_vocab_source:
-                        self.char_vocab_source[feat] = source_index
-                        source_index += 1
+                    if '_' not in feat:
+                        feat = out + feat
+                        feat = feat.strip()
+                        featset.append(feat)
+                        if feat not in self.char_vocab_source:
+                            self.char_vocab_source[feat] = source_index
+                            source_index += 1
                 total += 1
+                if '_' in ' '.join(featset):
+                    pdb.set_trace()
                 l = [lemma, ' '.join(featset), wordform]
-                lines.append(l)
-            else:
-                print("line", line, "ignored")
+                string_check = ' '.join(l).lower()
+                if "_" in string_check:
+                    continue
+                elif "punct" in string_check:
+                    continue
+                elif "#" in string_check:
+                    continue
+                else:
+                    lines.append(l)
+            # else:
+            #     print("line", line, "ignored")
         return lines
 
 
