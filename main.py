@@ -11,6 +11,8 @@ import pickle as pkl
 # FOR _csv.Error: field larger than field limit (131072)
 import csv
 
+from tqdm import tqdm
+
 import torch
 from torch.optim.lr_scheduler import StepLR
 import torchtext
@@ -36,11 +38,6 @@ from micha_condit import cond_prob
 
 # FOR _csv.Error: field larger than field limit (131072)
 csv.field_size_limit(sys.maxsize)
-
-if torch.cuda.is_available():
-    torch.device('cuda')
-else:
-    torch.device('cpu')
 
 try:
     raw_input          # Python 2
@@ -105,8 +102,26 @@ parser.add_argument('--resume', action='store_true', dest='resume',
 parser.add_argument('--log-level', dest='log_level',
                     default='info',
                     help='Logging level.')
+parser.add_argument('--device', dest='device_place_holder',
+                    help='Device for CUDA: -1 = cpu, 0+ = gpu.\nMultiGPU not supported yet')
 
 opt = parser.parse_args()
+
+# pdb.set_trace()
+
+if 'device' in config:
+    if config['device'] == '-1':
+        torch.device('cpu')
+        DEVICE = 'cpu'
+    else:
+        torch.device('cuda:' + str(config['device']))
+        DEVICE = 'cuda:' + str(config['device'])
+elif torch.cuda.is_available():
+    torch.device('cuda')
+    DEVICE = 'cuda'
+else:
+    torch.device('cpu')
+    DEVICE = 'cpu'
 
 LOG_FORMAT = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
 logging.basicConfig(format=LOG_FORMAT, level=getattr(logging, opt.log_level.upper()))
@@ -200,10 +215,9 @@ else:
     # seq2seq.tgt_field_name = 'tgt'
 
     # Prepare loss
-    # pdb.set_trace()
     weight = torch.ones(len(tgt.vocab))
     pad = tgt.vocab.stoi[tgt.pad_token]
-    loss = Perplexity(weight, pad)
+    loss = Perplexity(DEVICE, weight, pad)
     if torch.cuda.is_available():
         loss.cuda()
 
@@ -245,6 +259,7 @@ else:
                              hidden_size=hidden_size,
                              aug_size=aug_size,
                              dropout_p=float(config['dropout']),
+                             input_dropout_p=float(config['dropout']),
                              use_attention=True,
                              bidirectional=bidirectional,
                              rnn_cell='LSTM',
@@ -258,7 +273,10 @@ else:
         seq2seq = Seq2seq(encoder, decoder)
         # seq2seq = Seq2seq(encoder, topk_decoder)
         if torch.cuda.is_available():
+            # pdb.set_trace()
+            # seq2seq.to(DEVICE)
             seq2seq.cuda()
+            # pdb.set_trace()
 
         for param in seq2seq.parameters():
             param.data.uniform_(-0.08, 0.08)
@@ -289,6 +307,7 @@ else:
                           teacher_forcing_ratio=0.5,
                           resume=opt.resume)
 
+# pdb.set_trace()
 predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
 
 # seq2top = Seq2seq(seq2seq.encoder, )
@@ -296,6 +315,34 @@ predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
 
 if config['pull embeddings']:
     out_vecs = {}
+
+
+if config['feat embeddings']:
+    feats = {}
+    of = open(config['feat output'], 'wb')
+    # TODO add option to save output
+    src = SourceField()
+    tgt = TargetField()
+    # pdb.set_trace()
+    for key in tqdm(input_vocab.freqs.keys()):
+        try:
+            guess, enc_out = predictor.predict([key])
+        except:
+            pdb.set_trace()
+        # TODO first try averaging
+        # (Pdb)
+        # test[3].mean(-1).shape
+        # torch.Size([1, 13])
+        # (Pdb)
+        # test[3].mean(-2).shape
+        # torch.Size([1, 600])
+        feats[key] = {}
+        feats[key]['src'] = key
+        feats[key]['tgt'] = key
+        feats[key]['guess'] = ''.join(guess)
+        feats[key]['embed'] = enc_out
+    pkl.dump(feats, of)
+    of.close()
 
 if config['eval val']:
     of = open(config['output'], 'w')
@@ -309,7 +356,7 @@ if config['eval val']:
         fields=[('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
-    for ex in dev.examples:
+    for ex in tqdm(dev.examples):
         try:
             guess, enc_out = predictor.predict(ex.src)
         except:
