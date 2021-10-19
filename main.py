@@ -208,6 +208,11 @@ else:
     input_vocab = src.vocab
     output_vocab = tgt.vocab
 
+    # trying to separate the feats and inputs
+    feats = [x for x in src.vocab.freqs if len(x) > 1]
+    # example of getting multihot vector:
+    # [1 if x in test_feats else 0 for x in feats]
+
     # NOTE: If the source field name and the target field name
     # are different from 'src' and 'tgt' respectively, they have
     # to be set explicitly before any training or inference
@@ -227,13 +232,15 @@ else:
         # Initialize model
         hidden_size = config['encoder embed']
         bidirectional = True
-        encoder = EncoderRNN(len(src.vocab), 
-                             max_len, 
+        encoder = EncoderRNN(len(src.vocab),
+                             max_len,
                              hidden_size, 
                              bidirectional=bidirectional, 
                              rnn_cell='LSTM', 
                              variable_lengths=True,
-                             n_layers=config['num layers'])
+                             n_layers=config['num layers'],
+                             features=feats
+                             )
         # pdb.set_trace()
         # if config['use_vecs']:
         #     decoder = VecDecoderRNN(len(tgt.vocab),
