@@ -38,7 +38,7 @@ for line in lines:
                 # print(feats)
                 # pdb.set_trace()
 
-                feats = ' '.join(feats) + ' '
+                feats = ' '.join(feats)
                 feats = pos + ' ' + feats
                 feats = other_pos + ' ' + feats
                 feats = head_rel + ' ' + feats
@@ -46,7 +46,7 @@ for line in lines:
                 lemma = ' '.join(lemma)
 
                 outfile.write('\t'.join(
-                    [feats + lemma, wordform]
+                    [feats, lemma, wordform]
                 ) + '\n')
 
 with open('vocab.source', 'w') as of:

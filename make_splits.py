@@ -38,3 +38,6 @@ if __name__ == '__main__':
     os.system('cp vocab.target train/vocab.target')
     os.system('cp vocab.target dev/vocab.target')
     os.system('cp vocab.target test/vocab.target')
+    os.system('cp vocab.feats train/vocab.feats')
+    os.system('cp vocab.feats dev/vocab.feats')
+    os.system('cp vocab.feats test/vocab.feats')

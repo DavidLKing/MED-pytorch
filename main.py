@@ -191,25 +191,30 @@ if opt.load_checkpoint is not None:
 else:
     # Prepare dataset
     src = SourceField()
+    feats = SourceField()
     tgt = TargetField()
+
+
     train = torchtext.data.TabularDataset(
         path=opt.train_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
+        fields=[('feats', feats), ('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
     dev = torchtext.data.TabularDataset(
         path=opt.dev_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
+        fields=[('feats', feats), ('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
 
     src.build_vocab(train, max_size=50000)
+    feats.build_vocab(train, max_size=50000)
     tgt.build_vocab(train, max_size=50000)
     input_vocab = src.vocab
+    feats_vocab = feats.vocab
     output_vocab = tgt.vocab
 
     # trying to separate the feats and inputs
-    feats = [x for x in src.vocab.freqs if len(x) > 1]
+    # feats = [x for x in src.vocab.freqs if len(x) > 1]
     # example of getting multihot vector:
     # [1 if x in test_feats else 0 for x in feats]
 
@@ -231,15 +236,18 @@ else:
     if not opt.resume:
         # Initialize model
         hidden_size = config['encoder embed']
+        # TODO is this ideal?
+        feat_hidden_size = len(feats.vocab) // 2
         bidirectional = True
-        encoder = EncoderRNN(len(src.vocab),
+        encoder = EncoderRNN(len(src.vocab), len(feats.vocab),
                              max_len,
-                             hidden_size, 
+                             hidden_size,  feat_hidden_size,
                              bidirectional=bidirectional, 
                              rnn_cell='LSTM', 
                              variable_lengths=True,
-                             n_layers=config['num layers'],
-                             features=feats
+                             n_layers=config['num layers']
+                             #,
+                             # features=feats
                              )
         # pdb.set_trace()
         # if config['use_vecs']:
