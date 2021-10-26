@@ -313,7 +313,7 @@ else:
 
     # TODO add dev eval here for early stopping
     if config['train model']:
-        seq2seq = t.train(input_vocab,
+        seq2seq = t.train(input_vocab, feats_vocab,
                           seq2seq, train,
                           num_epochs=config['epochs'],
                           vectors=vectors,
