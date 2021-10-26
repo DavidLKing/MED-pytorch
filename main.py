@@ -271,7 +271,7 @@ else:
         # pdb.set_trace()
         decoder = DecoderRNN(len(tgt.vocab),
                              max_len,
-                             hidden_size=hidden_size,
+                             hidden_size=hidden_size + (feat_hidden_size * 2),
                              aug_size=aug_size,
                              dropout_p=float(config['dropout']),
                              input_dropout_p=float(config['dropout']),
