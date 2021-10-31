@@ -187,7 +187,9 @@ if opt.load_checkpoint is not None:
     checkpoint = Checkpoint.load(checkpoint_path)
     seq2seq = checkpoint.model
     input_vocab = checkpoint.input_vocab
+    feats_vocab = checkpoint.feats_vocab
     output_vocab = checkpoint.output_vocab
+    pdb.set_trace()
 else:
     # Prepare dataset
     src = SourceField()
@@ -241,9 +243,11 @@ else:
         bidirectional = True
         encoder = EncoderRNN(len(src.vocab), len(feats.vocab),
                              max_len,
-                             hidden_size,  feat_hidden_size,
-                             bidirectional=bidirectional, 
-                             rnn_cell='LSTM', 
+                             # TODO can we make these be different sizes?
+                             # hidden_size,  feat_hidden_size,
+                             hidden_size, hidden_size,
+                             bidirectional=bidirectional,
+                             rnn_cell='LSTM',
                              variable_lengths=True,
                              n_layers=config['num layers']
                              #,
@@ -271,7 +275,7 @@ else:
         # pdb.set_trace()
         decoder = DecoderRNN(len(tgt.vocab),
                              max_len,
-                             hidden_size=hidden_size + (feat_hidden_size * 2),
+                             hidden_size=hidden_size,
                              aug_size=aug_size,
                              dropout_p=float(config['dropout']),
                              input_dropout_p=float(config['dropout']),
@@ -323,7 +327,7 @@ else:
                           resume=opt.resume)
 
 # pdb.set_trace()
-predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
+predictor = Predictor(seq2seq, input_vocab, feats_vocab, output_vocab, vectors)
 
 # seq2top = Seq2seq(seq2seq.encoder, )
 # topk_predictor = Predictor(seq2top, input_vocab, output_vocab, vectors)
@@ -337,12 +341,14 @@ if config['feat embeddings']:
     of = open(config['feat output'], 'wb')
     # TODO add option to save output
     src = SourceField()
+    feat = SourceField()
     tgt = TargetField()
     # pdb.set_trace()
     for key in tqdm(input_vocab.freqs.keys()):
         try:
             guess, enc_out = predictor.predict([key])
         except:
+            print("guess, enc_out = predictor.predict([key]) didn't work")
             pdb.set_trace()
         # TODO first try averaging
         # (Pdb)
@@ -365,16 +371,18 @@ if config['eval val']:
     correct = 0
     total = 0
     src = SourceField()
+    feat = SourceField()
     tgt = TargetField()
     dev = torchtext.data.TabularDataset(
         path=opt.dev_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
+        fields=[('feat', feat), ('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
     for ex in tqdm(dev.examples):
         try:
-            guess, enc_out = predictor.predict(ex.src)
+            guess, enc_out = predictor.predict(ex.src, ex.feat)
         except:
+            print("guess, enc_out = predictor.predict(ex.src, , ex.feat) didn't work")
             pdb.set_trace()
         # guess_n, scores = predictor.predict_n(ex.src)
         # pdb.set_trace()
