@@ -398,6 +398,7 @@ if config['eval val']:
         total += 1
         # normal write out
         srced = ' '.join(ex.src)
+        feats = ' '.join(ex.feat)
         tgted = ' '.join(ex.tgt[1:-1])
         guessed = ' '.join(guess[0:-1])
         of.write('\t'.join([srced, tgted, guessed]) + '\n')
@@ -416,6 +417,7 @@ if config['eval val']:
             # TODO should I look into whether we get different encodings?
             out_vecs[srced] = {}
             out_vecs[srced]['src'] = srced
+            out_vecs[srced]['feats'] = feats
             out_vecs[srced]['tgt'] = tgted
             out_vecs[srced]['guess'] = guessed
             out_vecs[srced]['embed'] = embedding
