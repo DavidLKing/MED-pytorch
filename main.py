@@ -189,7 +189,7 @@ if opt.load_checkpoint is not None:
     input_vocab = checkpoint.input_vocab
     feats_vocab = checkpoint.feats_vocab
     output_vocab = checkpoint.output_vocab
-    pdb.set_trace()
+    # pdb.set_trace()
 else:
     # Prepare dataset
     src = SourceField()
