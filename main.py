@@ -381,11 +381,11 @@ if config['eval val']:
         filter_pred=len_filter
     )
     for ex in tqdm(dev.examples):
-        try:
-            guess, enc_out = predictor.predict(ex.src, ex.feat)
-        except:
-            print("guess, enc_out = predictor.predict(ex.src, , ex.feat) didn't work")
-            pdb.set_trace()
+        # try:
+        guess, enc_out, embeddings = predictor.predict(ex.src, ex.feat)
+        # except:
+        #     print("guess, enc_out = predictor.predict(ex.src, , ex.feat) didn't work")
+        #     pdb.set_trace()
         # guess_n, scores = predictor.predict_n(ex.src)
         # pdb.set_trace()
         # topk_guess = topk_predictor.predict(ex.src)
@@ -415,7 +415,8 @@ if config['eval val']:
             # (Pdb)
             # test[3].mean(-2).shape
             # torch.Size([1, 600])
-            embedding = enc_out.mean(-2)
+            # embedding = enc_out.mean(-2)
+            embedding = np.asarray(embeddings).mean(0)
             # TODO should I look into whether we get different encodings?
             out_vecs[srced] = {}
             out_vecs[srced]['src'] = srced
