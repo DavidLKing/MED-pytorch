@@ -241,11 +241,11 @@ else:
         # TODO is this ideal?
         feat_hidden_size = len(feats.vocab) // 2
         bidirectional = True
-        encoder = EncoderRNN(len(src.vocab), len(feats.vocab),
+        encoder = EncoderRNN(len(src.vocab), feats.vocab,
                              max_len,
                              # TODO can we make these be different sizes?
-                             # hidden_size,  feat_hidden_size,
-                             hidden_size, hidden_size,
+                             hidden_size,  feat_hidden_size,
+                             # hidden_size, hidden_size,
                              bidirectional=bidirectional,
                              rnn_cell='LSTM',
                              variable_lengths=True,
@@ -271,10 +271,12 @@ else:
             # aug_size = len(train_vecs[0][0])
             aug_size = vectors.vector_size
         else:
-            aug_size = 0
+            # aug_size = 0
+            aug_size = feat_hidden_size
         # pdb.set_trace()
         decoder = DecoderRNN(len(tgt.vocab),
                              max_len,
+                             feat_hidden_size,
                              hidden_size=hidden_size,
                              aug_size=aug_size,
                              dropout_p=float(config['dropout']),

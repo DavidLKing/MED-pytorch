@@ -16,7 +16,7 @@ for line in open(filename, 'r'):
     # letters = [x for x in inputs if len(x) == 1]
     feats.reverse()
     # new_inputs = ' '.join(feats + letters)
-    new_line = '\t'.join([feats, letters, outputs]) + '\n'
+    new_line = '\t'.join([' '.join(feats), letters, outputs]) + '\n'
     outfile.write(new_line)
 
 outfile.close()
