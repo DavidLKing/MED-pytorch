@@ -9,6 +9,7 @@ from os.path import basename
 class Rearrange():
     def __init__(self, raw_input):
         self.char_vocab_source = {}
+        self.feat_vocab = {}
         self.char_vocab_target = {}
         # self.char_vocab_source['<S>'] = 0
         # self.char_vocab_source['</S>'] = 2
@@ -33,6 +34,7 @@ class Rearrange():
         total = 0
         lines = []
         source_index = 3
+        feat_index = 0
         targ_index = 3
         for presplit in open(raw_input, 'r').readlines():
         # for presplit in open(raw_input, 'r'):
@@ -77,9 +79,9 @@ class Rearrange():
                         feat = out + feat
                         feat = feat.strip()
                         featset.append(feat)
-                        if feat not in self.char_vocab_source:
-                            self.char_vocab_source[feat] = source_index
-                            source_index += 1
+                        if feat not in self.feat_vocab:
+                            self.feat_vocab[feat] = feat_index
+                            feat_index += 1
                 total += 1
                 if '_' in ' '.join(featset):
                     pdb.set_trace()
@@ -110,13 +112,15 @@ class Rearrange():
             outform = ''
             # inform += '<S> '
             # build features
-            inform += line[1]
+            # inform += line[1]
             # extra space
-            inform += ' '
+            # inform += ' '
             # build lemma
-            lemma = line[0]
-            inform += ' '.join(lemma)
+            lemma = ' '.join(line[0])
+            feats = line[1]
+            # inform += ' '.join(lemma)
             outform += ' '.join(line[2])
+            # pdb.set_trace()
             if vecs:
                 vec_size = vecs.vector_size
                 if lemma in vecs:
@@ -124,7 +128,7 @@ class Rearrange():
                     found_vecs.append(vecs[lemma])
                 else:
                     found_vecs.append(np.random.normal(0.0, 0.1, vec_size))
-            outlines.append((inform, outform))
+            outlines.append((feats, lemma, outform))
         print("Found", found, "of", total, "word vectors")
         print("Coverage:", found / total)
         # pdb.set_trace()
@@ -137,18 +141,22 @@ class Rearrange():
     def writeout(self, outlines, vecs):
         outfile = open('data.txt', 'w')
         for in_out_tuple in outlines:
-            inline = in_out_tuple[0]
-            outline = in_out_tuple[1] + '\n'
-            outfile.write('\t'.join([inline, outline]))
+            # inline = in_out_tuple[0]
+            # outline = in_out_tuple[1] + '\n'
+            outfile.write('\t'.join(in_out_tuple) + '\n')
         # if self.base == 'train':
         # TODO do we really care?
         srcfile = open('vocab.source', 'w')
+        featfile = open('vocab.feats', 'w')
         tgtfile = open('vocab.target', 'w')
         for char in self.char_vocab_source:
             srcfile.write(char + '\n')
+        for char in self.feat_vocab:
+            featfile.write(char + '\n')
         for char in self.char_vocab_target:
             tgtfile.write(char + '\n')
         print("source vocab length", len(self.char_vocab_source))
+        print("feat vocab length", len(self.feat_vocab))
         print("target vocab length", len(self.char_vocab_target))
         if vecs:
             print("Writing out vectors:")

@@ -11,6 +11,8 @@ import pickle as pkl
 # FOR _csv.Error: field larger than field limit (131072)
 import csv
 
+from tqdm import tqdm
+
 import torch
 from torch.optim.lr_scheduler import StepLR
 import torchtext
@@ -36,11 +38,6 @@ from micha_condit import cond_prob
 
 # FOR _csv.Error: field larger than field limit (131072)
 csv.field_size_limit(sys.maxsize)
-
-if torch.cuda.is_available():
-    torch.device('cuda')
-else:
-    torch.device('cpu')
 
 try:
     raw_input          # Python 2
@@ -105,8 +102,26 @@ parser.add_argument('--resume', action='store_true', dest='resume',
 parser.add_argument('--log-level', dest='log_level',
                     default='info',
                     help='Logging level.')
+parser.add_argument('--device', dest='device_place_holder',
+                    help='Device for CUDA: -1 = cpu, 0+ = gpu.\nMultiGPU not supported yet')
 
 opt = parser.parse_args()
+
+# pdb.set_trace()
+
+if 'device' in config:
+    if config['device'] == '-1':
+        torch.device('cpu')
+        DEVICE = 'cpu'
+    else:
+        torch.device('cuda:' + str(config['device']))
+        DEVICE = 'cuda:' + str(config['device'])
+elif torch.cuda.is_available():
+    torch.device('cuda')
+    DEVICE = 'cuda'
+else:
+    torch.device('cpu')
+    DEVICE = 'cpu'
 
 LOG_FORMAT = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
 logging.basicConfig(format=LOG_FORMAT, level=getattr(logging, opt.log_level.upper()))
@@ -172,26 +187,38 @@ if opt.load_checkpoint is not None:
     checkpoint = Checkpoint.load(checkpoint_path)
     seq2seq = checkpoint.model
     input_vocab = checkpoint.input_vocab
+    feats_vocab = checkpoint.feats_vocab
     output_vocab = checkpoint.output_vocab
+    # pdb.set_trace()
 else:
     # Prepare dataset
     src = SourceField()
+    feats = SourceField()
     tgt = TargetField()
+
+
     train = torchtext.data.TabularDataset(
         path=opt.train_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
+        fields=[('feats', feats), ('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
     dev = torchtext.data.TabularDataset(
         path=opt.dev_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
+        fields=[('feats', feats), ('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
 
     src.build_vocab(train, max_size=50000)
+    feats.build_vocab(train, max_size=50000)
     tgt.build_vocab(train, max_size=50000)
     input_vocab = src.vocab
+    feats_vocab = feats.vocab
     output_vocab = tgt.vocab
+
+    # trying to separate the feats and inputs
+    # feats = [x for x in src.vocab.freqs if len(x) > 1]
+    # example of getting multihot vector:
+    # [1 if x in test_feats else 0 for x in feats]
 
     # NOTE: If the source field name and the target field name
     # are different from 'src' and 'tgt' respectively, they have
@@ -200,10 +227,9 @@ else:
     # seq2seq.tgt_field_name = 'tgt'
 
     # Prepare loss
-    # pdb.set_trace()
     weight = torch.ones(len(tgt.vocab))
     pad = tgt.vocab.stoi[tgt.pad_token]
-    loss = Perplexity(weight, pad)
+    loss = Perplexity(DEVICE, weight, pad)
     if torch.cuda.is_available():
         loss.cuda()
 
@@ -212,14 +238,21 @@ else:
     if not opt.resume:
         # Initialize model
         hidden_size = config['encoder embed']
+        # TODO is this ideal?
+        feat_hidden_size = len(feats.vocab) // 2
         bidirectional = True
-        encoder = EncoderRNN(len(src.vocab), 
-                             max_len, 
-                             hidden_size, 
-                             bidirectional=bidirectional, 
-                             rnn_cell='LSTM', 
+        encoder = EncoderRNN(len(src.vocab), feats.vocab,
+                             max_len,
+                             # TODO can we make these be different sizes?
+                             hidden_size,  feat_hidden_size,
+                             # hidden_size, hidden_size,
+                             bidirectional=bidirectional,
+                             rnn_cell='LSTM',
                              variable_lengths=True,
-                             n_layers=config['num layers'])
+                             n_layers=config['num layers']
+                             #,
+                             # features=feats
+                             )
         # pdb.set_trace()
         # if config['use_vecs']:
         #     decoder = VecDecoderRNN(len(tgt.vocab),
@@ -238,13 +271,16 @@ else:
             # aug_size = len(train_vecs[0][0])
             aug_size = vectors.vector_size
         else:
-            aug_size = 0
+            # aug_size = 0
+            aug_size = feat_hidden_size
         # pdb.set_trace()
         decoder = DecoderRNN(len(tgt.vocab),
                              max_len,
+                             feat_hidden_size,
                              hidden_size=hidden_size,
                              aug_size=aug_size,
                              dropout_p=float(config['dropout']),
+                             input_dropout_p=float(config['dropout']),
                              use_attention=True,
                              bidirectional=bidirectional,
                              rnn_cell='LSTM',
@@ -258,7 +294,10 @@ else:
         seq2seq = Seq2seq(encoder, decoder)
         # seq2seq = Seq2seq(encoder, topk_decoder)
         if torch.cuda.is_available():
+            # pdb.set_trace()
+            # seq2seq.to(DEVICE)
             seq2seq.cuda()
+            # pdb.set_trace()
 
         for param in seq2seq.parameters():
             param.data.uniform_(-0.08, 0.08)
@@ -280,7 +319,7 @@ else:
 
     # TODO add dev eval here for early stopping
     if config['train model']:
-        seq2seq = t.train(input_vocab,
+        seq2seq = t.train(input_vocab, feats_vocab,
                           seq2seq, train,
                           num_epochs=config['epochs'],
                           vectors=vectors,
@@ -289,7 +328,8 @@ else:
                           teacher_forcing_ratio=0.5,
                           resume=opt.resume)
 
-predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
+# pdb.set_trace()
+predictor = Predictor(seq2seq, input_vocab, feats_vocab, output_vocab, vectors)
 
 # seq2top = Seq2seq(seq2seq.encoder, )
 # topk_predictor = Predictor(seq2top, input_vocab, output_vocab, vectors)
@@ -297,23 +337,55 @@ predictor = Predictor(seq2seq, input_vocab, output_vocab, vectors)
 if config['pull embeddings']:
     out_vecs = {}
 
+
+if config['feat embeddings']:
+    feats = {}
+    of = open(config['feat output'], 'wb')
+    # TODO add option to save output
+    src = SourceField()
+    feat = SourceField()
+    tgt = TargetField()
+    # pdb.set_trace()
+    for key in tqdm(input_vocab.freqs.keys()):
+        try:
+            guess, enc_out = predictor.predict([key])
+        except:
+            print("guess, enc_out = predictor.predict([key]) didn't work")
+            pdb.set_trace()
+        # TODO first try averaging
+        # (Pdb)
+        # test[3].mean(-1).shape
+        # torch.Size([1, 13])
+        # (Pdb)
+        # test[3].mean(-2).shape
+        # torch.Size([1, 600])
+        feats[key] = {}
+        feats[key]['src'] = key
+        feats[key]['tgt'] = key
+        feats[key]['guess'] = ''.join(guess)
+        feats[key]['embed'] = enc_out
+    pkl.dump(feats, of)
+    of.close()
+
 if config['eval val']:
     of = open(config['output'], 'w')
     # TODO add option to save output
     correct = 0
     total = 0
     src = SourceField()
+    feat = SourceField()
     tgt = TargetField()
     dev = torchtext.data.TabularDataset(
         path=opt.dev_path, format='tsv',
-        fields=[('src', src), ('tgt', tgt)],
+        fields=[('feat', feat), ('src', src), ('tgt', tgt)],
         filter_pred=len_filter
     )
-    for ex in dev.examples:
-        try:
-            guess, enc_out = predictor.predict(ex.src)
-        except:
-            pdb.set_trace()
+    for ex in tqdm(dev.examples):
+        # try:
+        guess, enc_out, embeddings = predictor.predict(ex.src, ex.feat)
+        # except:
+        #     print("guess, enc_out = predictor.predict(ex.src, , ex.feat) didn't work")
+        #     pdb.set_trace()
         # guess_n, scores = predictor.predict_n(ex.src)
         # pdb.set_trace()
         # topk_guess = topk_predictor.predict(ex.src)
@@ -328,6 +400,7 @@ if config['eval val']:
         total += 1
         # normal write out
         srced = ' '.join(ex.src)
+        feats = ' '.join(ex.feat)
         tgted = ' '.join(ex.tgt[1:-1])
         guessed = ' '.join(guess[0:-1])
         of.write('\t'.join([srced, tgted, guessed]) + '\n')
@@ -342,10 +415,12 @@ if config['eval val']:
             # (Pdb)
             # test[3].mean(-2).shape
             # torch.Size([1, 600])
-            embedding = enc_out.mean(-2)
+            # embedding = enc_out.mean(-2)
+            embedding = np.asarray(embeddings).mean(0)
             # TODO should I look into whether we get different encodings?
             out_vecs[srced] = {}
             out_vecs[srced]['src'] = srced
+            out_vecs[srced]['feats'] = feats
             out_vecs[srced]['tgt'] = tgted
             out_vecs[srced]['guess'] = guessed
             out_vecs[srced]['embed'] = embedding
