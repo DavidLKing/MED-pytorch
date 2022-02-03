@@ -1,4 +1,7 @@
 # Personal stuff
+.*
+old/*
+*.pkl
 .idea/*
 *un~
 data/russian/*
