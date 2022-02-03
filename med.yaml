@@ -1,0 +1,51 @@
+name: med
+channels:
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=main
+  - _openmp_mutex=4.5=1_gnu
+  - ca-certificates=2021.9.30=h06a4308_1
+  - certifi=2021.5.30=py39h06a4308_0
+  - ld_impl_linux-64=2.35.1=hcecfb41_1
+  - libedit=3.1.20191231=h14c3975_1
+  - libffi=3.3=he6710b0_2
+  - libgcc-ng=9.3.0=h9cbead1_17
+  - libgomp=9.3.0=h9cbead1_17
+  - libstdcxx-ng=9.3.0=h2ae2ef3_17
+  - ncurses=6.2=he6710b0_1
+  - openssl=1.1.1l=h7f8727e_0
+  - pip=21.2.4=py39h06a4308_0
+  - python=3.9.1=hdb3f193_2
+  - readline=8.1=h27cfd23_0
+  - setuptools=52.0.0=py39h06a4308_0
+  - sqlite=3.33.0=h62c20be_0
+  - tk=8.6.10=hbc83047_0
+  - tzdata=2020f=h52ac0ba_0
+  - wheel=0.36.2=pyhd3eb1b0_0
+  - xz=5.2.5=h7b6447c_0
+  - zlib=1.2.11=h7b6447c_3
+  - pip:
+    - chardet==4.0.0
+    - click==8.0.3
+    - dill==0.3.3
+    - gensim==3.8.3
+    - idna==2.10
+    - nltk==3.6.5
+    - numpy==1.20.1
+    - packaging==21.0
+    - pillow==8.1.0
+    - pyparsing==2.4.7
+    - pyyaml==5.4.1
+    - regex==2021.10.8
+    - requests==2.25.1
+    - scipy==1.6.0
+    - six==1.15.0
+    - smart-open==4.1.2
+    - torch==1.7.1
+    - torchtext==0.8.1
+    - torchvision==0.8.2
+    - tqdm==4.56.0
+    - typing-extensions==3.7.4.3
+    - urllib3==1.26.3
+    - webencodings==0.5.1
+prefix: /home/david/miniconda3/envs/med
