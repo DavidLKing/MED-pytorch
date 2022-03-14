@@ -15,7 +15,8 @@ from tqdm import tqdm
 
 import torch
 from torch.optim.lr_scheduler import StepLR
-import torchtext
+import torchtext.legacy as torchtext
+# import torchtext as torchtext
 
 import pdb
 import gensim
