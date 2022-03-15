@@ -35,7 +35,7 @@ from seq2seq.dataset import SourceField, TargetField
 from seq2seq.evaluator import Predictor
 from seq2seq.util.checkpoint import Checkpoint
 
-from micha_condit import cond_prob
+# from micha_condit import cond_prob
 
 # FOR _csv.Error: field larger than field limit (131072)
 csv.field_size_limit(sys.maxsize)
@@ -477,12 +477,15 @@ if config['interact']:
     cellOut = "OUT=case=NOM OUT=gen=FEM OUT=num=SG".split(' ')
     formIn = list('abgelegen')
     formsOut = [list('katze'), list('abgelene'), list('abgelegene')]
-    c = cond_prob()
-    probs = c.condPr(formIn, formsOut, cellIn, cellOut, seq2seq, input_vocab, output_vocab)
-    print(probs)
+    # c = cond_prob()
+    # probs = c.condPr(formIn, formsOut, cellIn, cellOut, seq2seq, input_vocab, output_vocab)
+    # print(probs)
     print("Press q to continue to interactive mode.")
-    pdb.set_trace()
+    # pdb.set_trace()
     while True:
-        seq_str = raw_input("Type in a source sequence:")
-        seq = seq_str.strip().split()
-        print(predictor.predict(seq))
+        seq_str = raw_input("Type in a source sequence:\ne.g. noun plural|||c a t")
+        split_seq = seq_str.strip().split('|||')
+        assert(len(split_seq)==2),"There should be a sequence of features, followed by three pipes ('|||'), followed by characters"
+        seq = split_seq[1].split() 
+        feat_seq = split_seq[0].split()
+        print(predictor.predict(seq, feat_seq))
