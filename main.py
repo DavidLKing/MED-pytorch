@@ -320,11 +320,12 @@ else:
 
     # TODO add dev eval here for early stopping
     if config['train model']:
-        seq2seq = t.train(input_vocab, feats_vocab,
+        seq2seq = t.train(input_vocab, feats_vocab, output_vocab,
                           seq2seq, train,
                           num_epochs=config['epochs'],
                           vectors=vectors,
                           dev_data=dev,
+                          pull_per_epoch=config['pull per epoch'],
                           optimizer=optimizer,
                           teacher_forcing_ratio=0.5,
                           resume=opt.resume)
@@ -386,7 +387,7 @@ if config['eval val']:
         guess, enc_out, embeddings = predictor.predict(ex.src, ex.feat)
         # except:
         #     print("guess, enc_out = predictor.predict(ex.src, , ex.feat) didn't work")
-        #     pdb.set_trace()
+        # pdb.set_trace()
         # guess_n, scores = predictor.predict_n(ex.src)
         # pdb.set_trace()
         # topk_guess = topk_predictor.predict(ex.src)
