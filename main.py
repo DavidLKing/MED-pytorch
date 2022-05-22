@@ -326,6 +326,7 @@ else:
                           vectors=vectors,
                           dev_data=dev,
                           pull_per_epoch=config['pull per epoch'],
+                          expt_dir=config['expt_dir'],
                           optimizer=optimizer,
                           teacher_forcing_ratio=0.5,
                           resume=opt.resume)
