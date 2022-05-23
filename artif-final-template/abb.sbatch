@@ -13,7 +13,7 @@
 module load python/3.6-conda5.2
 module load cuda
 
-cd /home/david/bin/git/MED-pytorch
+cd /users/PAS0418/osu8940/MED-pytorch
 
 source activate med
 
