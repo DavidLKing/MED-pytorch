@@ -4,10 +4,10 @@
 #SBATCH --ntasks=4
 #SBATCH --gpus-per-node=1
 #SBATCH --mem=16gb
-#SBATCH --job-name=aab-0.50-50
+#SBATCH --job-name=exp_string
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=osu8940
-#SBATCH --output=aab-0.50-50.%j
+#SBATCH --output=exp_string.%j
 #SBATCH --account=PZS1006
 
 module load python/3.6-conda5.2
