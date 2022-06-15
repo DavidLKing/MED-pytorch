@@ -272,8 +272,8 @@ else:
             # aug_size = len(train_vecs[0][0])
             aug_size = vectors.vector_size
         else:
-            # aug_size = 0
-            aug_size = feat_hidden_size
+            aug_size = 0
+            # aug_size = feat_hidden_size
         # pdb.set_trace()
         decoder = DecoderRNN(len(tgt.vocab),
                              max_len,
