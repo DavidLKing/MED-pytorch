@@ -7,7 +7,7 @@ for dropout in 0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 
                  for file in ${newname}/*.yml
                     do
                         sed -i "s/-0.5-50-testing/-${dropout}-${network}-testing/g" ${file}
-                        sed -i "s/embed: 50/embed: ${network}/g" ${file}
+                        sed -i "s/embed: 150/embed: ${network}/g" ${file}
                         sed -i "s/dropout: 0.5/dropout: ${dropout}/g" ${file}
                     done
         done
