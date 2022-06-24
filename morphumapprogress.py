@@ -46,7 +46,7 @@ from sklearn import (manifold, datasets, decomposition, ensemble,
                      discriminant_analysis, random_projection, neighbors,
                      metrics)
 from sklearn.cluster import dbscan, OPTICS
-from sklearn.metrics import normalized_mutual_info_score, homogeneity_completeness_v_measure
+from sklearn.metrics import normalized_mutual_info_score, homogeneity_completeness_v_measure, silhouette_score
 
 import plotly.offline as py
 import plotly.express as px
@@ -662,9 +662,15 @@ def make_dataframe(umap_output, distribution, model_output, filename):
       'x': [],
       # 'z': [],
       'y': [],
+      'silh': [],
       'epoch': []
   }
+  embeddings = np.asarray([model_output[x]['embed'] for x in distribution])
+  # TODO Labels are currently same as finals. Should be replaced with infl class function
+  labels = [model_output[x]['tgt'][-3] for x in distribution]
+  silh = silhouette_score(embeddings.squeeze(), labels)
   for coords, inputs in zip(umap_output, distribution):
+    info_dict['silh'].append(silh)
     pred = ''.join(model_output[inputs]['guess'].split())
     tgt = ''.join(model_output[inputs]['tgt'].split())
     letters = ''.join(model_output[inputs]['src'].split())
@@ -736,5 +742,10 @@ def show_fig(dataset):
 
   # fig.show()
   fig.write_html(sys.argv[1] + ".html", auto_play=False)
+
+  silh_fig = px.line(data_frame=dataset, x="epoch", y="silh")
+  silh_fig.update_layout(title=LANGUAGE + "Silhouette Scores over Epochs")
+  # silh_fig.show()
+  silh_fig.write_html(sys.argv[1] + "-silh.html", auto_play=False)
 
 show_fig(master_df)
