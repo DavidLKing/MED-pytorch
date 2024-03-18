@@ -40,35 +40,36 @@ datas = {
   'label': []
 }
 
-for size in tqdm(os.listdir(prefix)):
-  # pdb.set_trace()
-  # dumb mac .DS_Store thing
-  if "/." not in prefix + "/" + size:
-    runs = os.listdir(prefix + "/" + size)
-    for run in runs:
-      if "/." not in prefix + "/" + size + '/' + run:
-        epochs = os.listdir(prefix + "/" + size + '/' + run)
-        try:
-          final_epoch = sorted(sorted(epochs), key=len)[-2]
-        except:
-          print("Not enough output {}".format(size + ' ' + run))
-          continue
-        # pdb.set_trace()
-        scores = knnhomog.get_score("/".join([
-          prefix,
-          size,
-          run,
-          final_epoch
-        ]), manually_set_exp='nometa_nested')
-        for label in scores:
-          datas['size'].append(size)
-          datas['score'].append(scores[label])
-          datas['label'].append(label)
-      else:
-          print("Skipping {}".format(size))
+for files in tqdm(os.listdir(prefix)):
+  if not files in ['tsvs', 'logs']:
+    exp, size, run = files.split('-')
+    # pdb.set_trace()
+    epochs = os.listdir(prefix + "/" + files)
+    try:
+      final_epoch = sorted(sorted(epochs), key=len)[-2]
+    except:
+      print("Not enough output {}".format(size + ' ' + run))
+      continue
+    # pdb.set_trace()
+    scores = knnhomog.get_score("/".join([
+      prefix,
+      files,
+      final_epoch
+    ]))
+    # , manually_set_exp='nometa_nested')
+    for label in scores:
+      datas['size'].append(size)
+      datas['score'].append(scores[label])
+      datas['label'].append(label)
+  else:
+      print("Skipping {}".format(size))
+
+df = pd.DataFrame(datas)
+
+df.to_csv('{}.tsv'.format(exp), sep='\t')
 
 fig = px.box(
-  data_frame=pd.DataFrame(datas),
+  data_frame=df,
   x='size',
   y='score',
   color='label',
@@ -76,9 +77,9 @@ fig = px.box(
   # barmode='group'
 )
 
-fig.update_layout(title="KNN Homogeneity Scores by Network Size")
+fig.update_layout(title="KNN Homogeneity Scores by Network Size for {}".format(exp))
 # fig.update_layout(xaxis={'categoryorder':'total descending'})
 fig.update_layout(xaxis={'categoryorder':'category ascending'})
 fig.show()
-fig.write_html('temp.html', auto_play=False)
+fig.write_html('{}.html'.format(exp), auto_play=False)
 print("Finished writer figure")

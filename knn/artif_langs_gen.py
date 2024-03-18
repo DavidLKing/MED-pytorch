@@ -48,6 +48,13 @@ class GenLangs:
             '3': 'OUT=2'
         }
 
+        self.pertzova_prefixes = {
+            '1': 'OUT=CLU=0 OUT=PL=0',
+            '2': 'OUT=CLU=0 OUT=PL=1',
+            '3': 'OUT=CLU=1 OUT=PL=0',
+            '4': 'OUT=CLU=1 OUT=PL=1',
+        }
+
         self.contrary_classes = {
             'A' : ['a', 'a', 'b'],
             'B' : ['c', 'd', 'c'],
@@ -58,6 +65,12 @@ class GenLangs:
             'A': ['a', 'a', 'b'],
             'B': ['c', 'c', 'd'],
             'C': ['e', 'f', 'g']
+        }
+
+        self.pertzova_simple_classes = {
+            'A': ['a', 'b', 'b', 'a'],
+            'B': ['c', 'd', 'e', 'f'],
+            'C': ['g', 'h', 'i', 'j'],
         }
 
         self.simple_big_classes = {
@@ -322,7 +335,10 @@ class GenLangs:
 
     def gen_paradigm(self, prefixes, classes, stem, affixes, which_class):
         paradigm = []
-        struct = classes[which_class]
+        try:
+            struct = classes[which_class]
+        except:
+            pdb.set_trace()
         assert(len(prefixes) == len(struct))
         # sorted to prevent mutable misordering
         for slot, cell in zip(sorted(prefixes), struct):
@@ -455,6 +471,11 @@ class GenLangs:
                                                 x,
                                                 self.affixes,
                                                 y)
+        pertzova_get = lambda x, y, z: self.gen_paradigm(self.pertzova_prefixes,
+                                                z,
+                                                x,
+                                                self.affixes,
+                                                y)
 
         # self.gen_paradigm(self.prefixes, z, x, self.affixes, y)
         # pdb.set_trace()
@@ -490,11 +511,15 @@ class GenLangs:
         b_simple = sorted(set().union(*[get(x, 'B', self.simple_classes) for x in b_class]))
         c_simple = sorted(set().union(*[get(x, 'C', self.simple_classes) for x in c_class]))
 
+        a_pertz_simple = sorted(set().union(*[pertzova_get(x, 'A', self.pertzova_simple_classes) for x in a_class]))
+        b_pertz_simple = sorted(set().union(*[pertzova_get(x, 'B', self.pertzova_simple_classes) for x in b_class]))
+        c_pertz_simple = sorted(set().union(*[pertzova_get(x, 'C', self.pertzova_simple_classes) for x in c_class]))
+
         big_a_simple = sorted(set().union(*[get(x, 'A', self.simple_big_classes) for x in a_class]))
         big_b_simple = sorted(set().union(*[get(x, 'B', self.simple_big_classes) for x in b_class]))
         big_c_simple = sorted(set().union(*[get(x, 'C', self.simple_big_classes) for x in c_class]))
-        big_d_simple = sorted(set().union(*[get(x, 'C', self.simple_big_classes) for x in d_class]))
-        big_e_simple = sorted(set().union(*[get(x, 'C', self.simple_big_classes) for x in e_class]))
+        big_d_simple = sorted(set().union(*[get(x, 'D', self.simple_big_classes) for x in d_class]))
+        big_e_simple = sorted(set().union(*[get(x, 'E', self.simple_big_classes) for x in e_class]))
 
         a_aba = sorted(set().union(*[get(x, 'A', self.aba_classes) for x in a_class]))
         b_aba = sorted(set().union(*[get(x, 'B', self.aba_classes) for x in b_class]))
@@ -539,6 +564,7 @@ class GenLangs:
         nometa_nested = nometa_a_nested + nometa_b_nested + nometa_c_nested
         contrarys = a_contrary + b_contrary + c_contrary
         simples = a_simple + b_simple + c_simple
+        pertzova_simples = a_pertz_simple + b_pertz_simple + c_pertz_simple
         big_simples = big_a_simple + big_b_simple + big_c_simple + big_d_simple + big_e_simple
         abas = a_aba + b_aba + c_aba
         aabs = a_aab + b_aab + c_aab
@@ -557,6 +583,7 @@ class GenLangs:
         random.shuffle(nometa_nested)
         random.shuffle(contrarys)
         random.shuffle(simples)
+        random.shuffle(pertzova_simples)
         random.shuffle(big_simples)
         random.shuffle(abas)
         random.shuffle(abbs)
@@ -604,6 +631,8 @@ class GenLangs:
         self.writeout(contrarys, 'contrary')
 
         self.writeout(simples, 'simple')
+        
+        self.writeout(pertzova_simples, 'pertzova_simple')
 
         self.writeout(big_simples, 'big_simple')
 
