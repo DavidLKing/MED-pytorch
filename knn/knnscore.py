@@ -19,6 +19,7 @@ class KNN_Homog_Score:
   def load_pickle(self, filename):
 
     # filename = sys.argv[1]
+    # pdb.set_trace()
     model_output = pkl.load(open(filename, 'rb'))
     points = [model_output[x]['embed'] for x in model_output]
 
@@ -50,7 +51,7 @@ class KNN_Homog_Score:
       if manually_set_exp:
           lang_prefix = manually_set_exp
       else:
-          lang_prefix = filename.split('/')[-1]
+          lang_prefix = filename.split('/')[-2]
       fn_to_paradigm = {
           'big_simple' : self.lang.simple_big_classes,
           'aab' : self.lang.aab_classes,
@@ -71,14 +72,11 @@ class KNN_Homog_Score:
           paradigm = fn_to_paradigm[lang_prefix]
       else:
           # This is dumb, but this is how we're getting the paradigm
-          # upto = lang_prefix.index('0') - 1
-          # para_type = lang_prefix[0:upto]
-          # pdb.set_trace()
-          para_type = filename.split('/')[-3]
+          upto = lang_prefix.index('0') - 1
+          para_type = lang_prefix[0:upto]
           paradigm = fn_to_paradigm[para_type]
 
       points, affixes, in1, in2, cells = self.load_pickle(filename)
-      # pdb.set_trace()
 
       # Getting infl class
       # ic for ic in paradigm if affix in affixes
